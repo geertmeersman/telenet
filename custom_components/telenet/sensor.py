@@ -76,7 +76,7 @@ async def async_setup_entry(
                     "start_date": start_date, 
                     "end_date": end_date, 
                     "product_details":session.telemeter_product_details(subscription.get("specurl")),
-                    "product_daily_usage":session.productDailyUsage("internet",identifier,start_date,end_date)
+                    "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date)
                 }
             subscriptions = session.productSubscriptions("MOBILE")
             for subscription in subscriptions:
@@ -154,13 +154,13 @@ async def async_setup_entry(
         infosensor_data.append([
             f"$.internet_subscriptions.{subscription}.identifier",
             "internet", 
-            "daily usage", 
+            "daily usages", 
             "mdi:summit", 
             DATA_GIGABYTES, 
-            f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0].totalUsage.peak",
+            f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage.peak",
             [
-                f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0].totalUsage", 
-                f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0]"
+                f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage", 
+                f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0]"
             ],
             f"$.internet_subscriptions.{subscription}"
         ])
@@ -481,8 +481,8 @@ class InternetSensor(GlobalSensor):
             "extended_usage":               f"{usage.get('extendedUsage').get('volume')} {usage.get('extendedUsage').get('unit')}",
             "extended_usage_price":         f"{usage.get('extendedUsage').get('price')} {usage.get('extendedUsage').get('currency')}",
             "peak_usage":                   usage.get('peakUsage').get('usedUnits'),
-            "offpeak_usage":                round(get_json_dict_path(subscription, "$.product_daily_usage.internetUsage[0].totalUsage.offPeak"), 1),
-            "total_usage_with_offpeak":     usage.get('peakUsage').get('usedUnits')+round(get_json_dict_path(subscription, "$.product_daily_usage.internetUsage[0].totalUsage.offPeak"), 1),
+            "offpeak_usage":                round(get_json_dict_path(subscription, "$.product_daily_usages.internetUsage[0].totalUsage.offPeak"), 1),
+            "total_usage_with_offpeak":     usage.get('peakUsage').get('usedUnits')+round(get_json_dict_path(subscription, "$.product_daily_usages.internetUsage[0].totalUsage.offPeak"), 1),
             "used_percentage":              self.state,
             "period_used_percentage":       period_used_percentage,
             "period_remaining_percentage":  (100-period_used_percentage),
