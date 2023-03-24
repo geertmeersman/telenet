@@ -1,23 +1,36 @@
 import asyncio
-from datetime import datetime, timedelta, time, tzinfo, timezone
+from datetime import datetime, time, timedelta, timezone, tzinfo
 import itertools
 import time as t
-import voluptuous as vol
-from homeassistant.const import ATTR_ATTRIBUTION
+
+from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    ATTR_ATTRIBUTION,
+    CURRENCY_EURO,
+    DATA_GIGABYTES,
+    PERCENTAGE,
+    TIME_MINUTES,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
-from . import DOMAIN, NAME, VERSION, WEBSITE, _LOGGER, DATETIME_FORMAT, UPDATE_INTERVAL, CONNECTION_RETRY
-from .utils import *
-from homeassistant.const import PERCENTAGE, CURRENCY_EURO, TIME_MINUTES, DATA_GIGABYTES
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorStateClass,
+import voluptuous as vol
+
+from . import (
+    _LOGGER,
+    CONNECTION_RETRY,
+    DATETIME_FORMAT,
+    DOMAIN,
+    NAME,
+    UPDATE_INTERVAL,
+    VERSION,
+    WEBSITE,
 )
+from .utils import *
 
 EUR_ICON = "mdi:currency-eur"
 DATA_ICON = "mdi:web"
@@ -433,28 +446,35 @@ class InternetSensor(GlobalSensor):
         subscription = self.subscription
         usage = subscription.get("usage").get("internet")
         product = subscription.get("product_details").get("product")
-        period_length = (datetime.strptime(subscription.get("end_date"), DATETIME_FORMAT) - datetime.strptime(subscription.get("start_date"), DATETIME_FORMAT)).days
+        period_length = datetime.strptime(subscription.get("end_date"), DATETIME_FORMAT) - datetime.strptime(subscription.get("start_date"), DATETIME_FORMAT)
+        period_length_days = period_length.days
+        period_length_seconds = period_length.total_seconds()
+        period_used = datetime.now() - datetime.strptime(subscription.get("start_date"), DATETIME_FORMAT)
+        period_used_seconds = period_used.total_seconds()
+        period_used_percentage = round(100*period_used_seconds/period_length_seconds,1)
+
         attributes = {
-            ATTR_ATTRIBUTION:         NAME,
-            "last_sync":              self._data.get("last_sync"),
-            "identifier":             subscription.get("identifier"),
-            "last_update":            usage.get('totalUsage').get('lastUsageDate'),
-            "start_date":             subscription.get("start_date"),
-            "end_date":               subscription.get("end_date"),
-            "days_until":             usage.get('daysUntil'),
-            "total_usage":            f"{usage.get('totalUsage').get('units')} {usage.get('totalUsage').get('unitType')}",
-            "wifree_usage":           f"{usage.get('wifreeUsage').get('usedUnits')} {usage.get('wifreeUsage').get('unitType')}",
-            "allocated_usage":        f"{usage.get('allocatedUsage').get('units')} {usage.get('allocatedUsage').get('unitType')}",
-            "extended_usage":         f"{usage.get('extendedUsage').get('volume')} {usage.get('extendedUsage').get('unit')}",
-            "extended_usage_price":   f"{usage.get('extendedUsage').get('price')} {usage.get('extendedUsage').get('currency')}",
-            "peak_usage":             usage.get('peakUsage').get('usedUnits'),
-            "offpeak_usage":          usage.get('totalUsage').get('units') - usage.get('peakUsage').get('usedUnits'),
-            "used_percentage":        self.state,
-            "period_used_percentage": round(100*(period_length-int(usage.get('daysUntil')))/period_length),
-            "squeezed":               self.state>=100,
-            "period_length":          period_length,
-            "product_label":          f"{get_localized(self._language, product.get('localizedcontent')).get('name')}",
-            "sales_price":            f"{product.get('characteristics').get('salespricevatincl').get('value')} {product.get('characteristics').get('salespricevatincl').get('unit')}",
+            ATTR_ATTRIBUTION:               NAME,
+            "last_sync":                    self._data.get("last_sync"),
+            "identifier":                   subscription.get("identifier"),
+            "last_update":                  usage.get('totalUsage').get('lastUsageDate'),
+            "start_date":                   subscription.get("start_date"),
+            "end_date":                     subscription.get("end_date"),
+            "days_until":                   usage.get('daysUntil'),
+            "total_usage":                  f"{usage.get('totalUsage').get('units')} {usage.get('totalUsage').get('unitType')}",
+            "wifree_usage":                 f"{usage.get('wifreeUsage').get('usedUnits')} {usage.get('wifreeUsage').get('unitType')}",
+            "allocated_usage":              f"{usage.get('allocatedUsage').get('units')} {usage.get('allocatedUsage').get('unitType')}",
+            "extended_usage":               f"{usage.get('extendedUsage').get('volume')} {usage.get('extendedUsage').get('unit')}",
+            "extended_usage_price":         f"{usage.get('extendedUsage').get('price')} {usage.get('extendedUsage').get('currency')}",
+            "peak_usage":                   usage.get('peakUsage').get('usedUnits'),
+            "offpeak_usage":                usage.get('totalUsage').get('units') - usage.get('peakUsage').get('usedUnits'),
+            "used_percentage":              self.state,
+            "period_used_percentage":       period_used_percentage,
+            "period_remaining_percentage":  (100-period_used_percentage),
+            "squeezed":                     self.state>=100,
+            "period_length":                period_length_days,
+            "product_label":                f"{get_localized(self._language, product.get('localizedcontent')).get('name')}",
+            "sales_price":                  f"{product.get('characteristics').get('salespricevatincl').get('value')} {product.get('characteristics').get('salespricevatincl').get('unit')}",
         }
         service = ""
         for services in product.get("services"):
