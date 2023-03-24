@@ -8,3 +8,4 @@ Telenet custom component for Home Assistant, allowing to monitor your mobile and
 - Add the 'Telenet' integration via HA Settings > 'Devices and Services' > 'Integrations'
 - Provide your Telenet BE username and password
 
+
