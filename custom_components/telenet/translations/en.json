@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Set up your Telenet to allow usage monitoring",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "language": "Language"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect"
+    },
+    "abort": {
+      "already_configured": "Already configured",
+      "unknown": "Unknown"
+    }
+  }
+}

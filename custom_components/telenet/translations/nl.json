@@ -1,0 +1,20 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Configureer Telenet om je verbruik te volgen",
+        "data": {
+          "username": "Gebruiker",
+          "password": "Wachtwoord"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Onmogelijk te verbinden"
+    },
+    "abort": {
+      "already_configured": "Reeds geconfigureerd",
+      "unknown": "Ongekend"
+    }
+  }
+}

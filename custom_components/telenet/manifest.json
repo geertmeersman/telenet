@@ -1,0 +1,14 @@
+{
+    "domain": "telenet",
+    "name": "Telenet",
+    "website": "https://mijn.telenet.be/mijntelenet/",
+    "codeowners": ["@geertmeersman"],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/geertmeersman/telenet",
+    "integration_type": "hub",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/geertmeersman/telenet/issues",
+    "requirements": [],
+    "version": "0.1.0"
+}
