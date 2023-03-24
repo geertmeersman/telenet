@@ -11,6 +11,7 @@ _LOGGER = logging.getLogger(__name__)
 DATETIME_FORMAT = '%Y-%m-%d'
 UPDATE_INTERVAL = timedelta(minutes=15)
 CONNECTION_RETRY = 2
+REQUEST_TIMEOUT = 20
 WEBSITE = "https://mijn.telenet.be/mijntelenet/"
 
 manifestfile = Path(__file__).parent / 'manifest.json'

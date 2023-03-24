@@ -1,13 +1,13 @@
 from datetime import date, datetime, timedelta
 import json
-import logging
 import re
 
 from jsonpath import jsonpath
 import requests
 
-_LOGGER = logging.getLogger(__name__)
-REQUEST_TIMEOUT = 20
+from .const import _LOGGER, REQUEST_TIMEOUT
+
+
 def sizeof_fmt(num, suffix="b"):
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:
