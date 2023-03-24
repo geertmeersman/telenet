@@ -1,7 +1,6 @@
 {
     "domain": "telenet",
     "name": "Telenet",
-    "website": "https://mijn.telenet.be/mijntelenet/",
     "codeowners": ["@geertmeersman"],
     "config_flow": true,
     "dependencies": [],
