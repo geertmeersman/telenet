@@ -20,7 +20,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 import voluptuous as vol
 
-from . import (
+from .const import (
     _LOGGER,
     CONNECTION_RETRY,
     DATETIME_FORMAT,
