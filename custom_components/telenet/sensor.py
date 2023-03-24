@@ -1,8 +1,12 @@
 import asyncio
-from datetime import datetime, time, timedelta, timezone, tzinfo
+from datetime import date, datetime, time, timedelta, timezone, tzinfo
 import itertools
 import time as t
 
+from homeassistant.components.binary_sensor import (
+    BinarySensorDeviceClass,
+    BinarySensorEntity,
+)
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -65,16 +69,15 @@ async def async_setup_entry(
                 billcycle = session.billCycles("internet",identifier, 1)
                 start_date = billcycle.get('billCycles')[0].get("startDate")
                 end_date = billcycle.get('billCycles')[0].get("endDate")
-                usage = session.productUsage("internet",identifier,start_date,end_date)
-                product_details = session.telemeter_product_details(subscription.get("specurl"))
                 data["internet_subscriptions"][identifier] = {
-                                                                "identifier": identifier, 
-                                                                "subscription_info": subscription, 
-                                                                "usage": usage, 
-                                                                "start_date": start_date, 
-                                                                "end_date": end_date, 
-                                                                "product_details":product_details
-                                                             }
+                    "identifier": identifier, 
+                    "subscription_info": subscription, 
+                    "usage": session.productUsage("internet",identifier,start_date,end_date), 
+                    "start_date": start_date, 
+                    "end_date": end_date, 
+                    "product_details":session.telemeter_product_details(subscription.get("specurl")),
+                    "product_daily_usage":session.productDailyUsage("internet",identifier,start_date,end_date)
+                }
             subscriptions = session.productSubscriptions("MOBILE")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
@@ -85,21 +88,21 @@ async def async_setup_entry(
                 else:
                     usage = session.mobileUsage(identifier)
                 data["mobile_subscriptions"][identifier] =  {
-                                                                "identifier": identifier, 
-                                                                "subscription_info": subscription, 
-                                                                "usage": usage, 
-                                                                "bundleusage":bundleusage
-                                                             }
+                    "identifier": identifier, 
+                    "subscription_info": subscription, 
+                    "usage": usage, 
+                    "bundleusage":bundleusage
+                 }
             for plan in data["plan_info"]:
                 if plan['productType'] == "bundle":
                     identifier = plan.get("identifier")
                     bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
                     data["mobile_subscriptions"][identifier] =  {
-                                                                    "identifier": identifier, 
-                                                                    "subscription_info": plan, 
-                                                                    "usage": None, 
-                                                                    "bundleusage":bundleusage
-                                                                 }
+                        "identifier": identifier, 
+                        "subscription_info": plan, 
+                        "usage": None, 
+                        "bundleusage":bundleusage
+                     }
         except AssertionError:
             _LOGGER.error("[async_setup_entry|data_update] AssertionError, expecting another http return code")
             return False
@@ -130,9 +133,9 @@ async def async_setup_entry(
         await asyncio.sleep(10)
 
     sensors = []
+    infosensor_data = []
 
     for s_idx, subscription in enumerate(data["internet_subscriptions"]):
-        _LOGGER.debug(f"[Construct] InternetSensor {data['internet_subscriptions'][subscription]['identifier']}")
         sensor = InternetSensor(
             coordinator, 
             language,
@@ -148,7 +151,19 @@ async def async_setup_entry(
         )
         await sensor.update()
         sensors.append(sensor)
-    infosensor_data = []
+        infosensor_data.append([
+            f"$.internet_subscriptions.{subscription}.identifier",
+            "internet", 
+            "daily usage", 
+            "mdi:summit", 
+            DATA_GIGABYTES, 
+            f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0].totalUsage.peak",
+            [
+                f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0].totalUsage", 
+                f"$.internet_subscriptions.{subscription}.product_daily_usage.internetUsage[0]"
+            ],
+            f"$.internet_subscriptions.{subscription}"
+        ])
     for p_idx, plan in enumerate(data["plan_info"]):
         _LOGGER.debug(f"[Construct] Plan InfoSensor {plan['identifier']}")
         infosensor_data.append([
@@ -335,7 +350,6 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        _LOGGER.debug(f"[GlobalSensor] In update {self.unique_id}")
         return
 
     @property
@@ -467,7 +481,8 @@ class InternetSensor(GlobalSensor):
             "extended_usage":               f"{usage.get('extendedUsage').get('volume')} {usage.get('extendedUsage').get('unit')}",
             "extended_usage_price":         f"{usage.get('extendedUsage').get('price')} {usage.get('extendedUsage').get('currency')}",
             "peak_usage":                   usage.get('peakUsage').get('usedUnits'),
-            "offpeak_usage":                usage.get('totalUsage').get('units') - usage.get('peakUsage').get('usedUnits'),
+            "offpeak_usage":                round(get_json_dict_path(subscription, "$.product_daily_usage.internetUsage[0].totalUsage.offPeak"), 1),
+            "total_usage_with_offpeak":     usage.get('peakUsage').get('usedUnits')+round(get_json_dict_path(subscription, "$.product_daily_usage.internetUsage[0].totalUsage.offPeak"), 1),
             "used_percentage":              self.state,
             "period_used_percentage":       period_used_percentage,
             "period_remaining_percentage":  (100-period_used_percentage),

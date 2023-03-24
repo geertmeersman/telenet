@@ -1,8 +1,10 @@
+from datetime import date, datetime, timedelta
 import json
 import logging
-from datetime import date, datetime, timedelta
-import requests, re
+import re
+
 from jsonpath import jsonpath
+import requests
 
 _LOGGER = logging.getLogger(__name__)
 REQUEST_TIMEOUT = 20
@@ -27,7 +29,7 @@ def get_localized(language, localizedcontent):
             return lang
     return localizedcontent[0]
 
-class TelenetSession(object):
+class TelenetSession:
     def __init__(self, username, password):
         self.username = username
         self.password = password
@@ -91,6 +93,10 @@ class TelenetSession(object):
     
     def productUsage(self, productType, productIdentifier,startDate, endDate):
         response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/usage?fromDate={startDate}&toDate={endDate}","productUsage", None, 200)
+        return response.json()
+
+    def productDailyUsage(self, productType, productIdentifier,fromDate, toDate):
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/dailyusage?billcycle=CURRENT&fromDate={fromDate}&toDate={toDate}","productDailyUsage", None, 200)
         return response.json()
 
     def productSubscriptions(self, productType):
