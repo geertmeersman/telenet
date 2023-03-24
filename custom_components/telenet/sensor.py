@@ -27,19 +27,21 @@ import voluptuous as vol
 from .const import (
     _LOGGER,
     CONNECTION_RETRY,
+    DATA_ICON,
     DATETIME_FORMAT,
     DOMAIN,
+    EUR_ICON,
     NAME,
+    PEAK_ICON,
+    PLAN_ICON,
+    SMS_ICON,
     UPDATE_INTERVAL,
     VERSION,
+    VOICE_ICON,
     WEBSITE,
 )
 from .utils import *
 
-EUR_ICON = "mdi:currency-eur"
-DATA_ICON = "mdi:web"
-SMS_ICON = "mdi:message-processing"
-VOICE_ICON = "mdi:phone"
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -155,7 +157,7 @@ async def async_setup_entry(
             f"$.internet_subscriptions.{subscription}.identifier",
             "internet", 
             "daily usages", 
-            "mdi:summit", 
+            PEAK_ICON, 
             DATA_GIGABYTES, 
             f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage.peak",
             [
@@ -170,7 +172,7 @@ async def async_setup_entry(
             f"$.plan_info[{p_idx}].identifier",
             "plan", 
             None, 
-            "mdi:file-eye", 
+            PLAN_ICON, 
             "", 
             f"$.plan_info[{p_idx}].label",
             [f"$.plan_info[{p_idx}]"],
@@ -423,7 +425,7 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
     def icon(self) -> str:
         """Shows the correct icon this sensor."""
         if self._icon is None:
-            return "mdi:information"
+            return PLAN_ICON
         return self._icon
 
 class InternetSensor(GlobalSensor):

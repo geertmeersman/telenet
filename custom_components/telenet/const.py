@@ -14,6 +14,13 @@ CONNECTION_RETRY = 2
 REQUEST_TIMEOUT = 20
 WEBSITE = "https://mijn.telenet.be/mijntelenet/"
 
+EUR_ICON = "mdi:currency-eur"
+DATA_ICON = "mdi:web"
+SMS_ICON = "mdi:message-processing"
+VOICE_ICON = "mdi:phone"
+PEAK_ICON = "mdi:summit"
+PLAN_ICON = "mdi:file-eye"
+
 manifestfile = Path(__file__).parent / 'manifest.json'
 with open(manifestfile) as json_file:
     manifest_data = json.load(json_file)
