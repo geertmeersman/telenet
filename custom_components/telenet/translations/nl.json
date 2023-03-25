@@ -5,7 +5,8 @@
         "description": "Configureer Telenet om je verbruik te volgen",
         "data": {
           "username": "Gebruiker",
-          "password": "Wachtwoord"
+          "password": "Wachtwoord",
+          "language": "Taal"
         }
       }
     },
