@@ -14,6 +14,8 @@ Telenet custom component for Home Assistant, allowing to monitor your mobile and
 
 ## Sensors logic
 The integration creates for each subscription linked to your account the following sensors
+
+The following flowchart is rendered using mermaid. If you see code instead, you can always see the flowchart [here](https://github.com/geertmeersman/telenet).
 ```mermaid
 flowchart LR
     planInfo(planInfo)
