@@ -48,3 +48,13 @@ flowchart LR
     Mobile --> MobileInfoSensor_voice{{Mobile InfoSensor voice usage}}
     Mobile --> MobileInfoSensor_outOfBundle{{Mobile InfoSensor outOfBundle}}
 ```
+## Screenshots
+|Description|Screenshot
+|-|-
+Config flow|![Config flow](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/config_flow.png)
+All-Internet & Usage Based Pricing sensors|![All-Internet & Usage Based Pricing](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/all_internet_pvv.png)
+Internet sensor|![Internet sensor](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/internet_sensor.png)
+Plan sensor|![Plan sensor](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/plan_sensor.png)
+ONE for 2 bundle sensors|![ONE for 2 bundle sensors](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/bundle_sensors.png)
+
+
