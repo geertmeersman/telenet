@@ -20,6 +20,9 @@ SMS_ICON = "mdi:message-processing"
 VOICE_ICON = "mdi:phone"
 PEAK_ICON = "mdi:summit"
 PLAN_ICON = "mdi:file-eye"
+MODEM_ICON = "mdi:lan-connect"
+NETWORK_ICON = "mdi:lan"
+WIFI_ICON = "mdi:wifi"
 
 manifestfile = Path(__file__).parent / 'manifest.json'
 with open(manifestfile) as json_file:

@@ -31,7 +31,9 @@ from .const import (
     DATETIME_FORMAT,
     DOMAIN,
     EUR_ICON,
+    MODEM_ICON,
     NAME,
+    NETWORK_ICON,
     PEAK_ICON,
     PLAN_ICON,
     SMS_ICON,
@@ -39,6 +41,7 @@ from .const import (
     VERSION,
     VOICE_ICON,
     WEBSITE,
+    WIFI_ICON,
 )
 from .utils import *
 
@@ -71,14 +74,19 @@ async def async_setup_entry(
                 billcycle = session.billCycles("internet",identifier, 1)
                 start_date = billcycle.get('billCycles')[0].get("startDate")
                 end_date = billcycle.get('billCycles')[0].get("endDate")
+                modem = session.modems(identifier)
+
                 data["internet_subscriptions"][identifier] = {
                     "identifier": identifier, 
                     "subscription_info": subscription, 
                     "usage": session.productUsage("internet",identifier,start_date,end_date), 
                     "start_date": start_date, 
                     "end_date": end_date, 
-                    "product_details":session.telemeter_product_details(subscription.get("specurl")),
-                    "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date)
+                    "product_details":session.product_details(subscription.get("specurl")),
+                    "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date),
+                    "modem": modem,
+                    "network_topology": session.network_topology(modem.get("mac")),
+                    "wireless_settings": session.wireless_settings(modem.get("mac"), identifier)
                 }
             subscriptions = session.productSubscriptions("MOBILE")
             for subscription in subscriptions:
@@ -153,19 +161,54 @@ async def async_setup_entry(
         )
         await sensor.update()
         sensors.append(sensor)
-        infosensor_data.append([
-            f"$.internet_subscriptions.{subscription}.identifier",
-            "internet", 
-            "daily usages", 
-            PEAK_ICON, 
-            DATA_GIGABYTES, 
-            f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage.peak",
+        infosensor_data += [
             [
-                f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage", 
-                f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0]"
+                f"$.internet_subscriptions.{subscription}.identifier",
+                "internet", 
+                "daily usages", 
+                PEAK_ICON, 
+                DATA_GIGABYTES, 
+                f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage.peak",
+                [
+                    f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0].totalUsage", 
+                    f"$.internet_subscriptions.{subscription}.product_daily_usages.internetUsage[0]"
+                ],
+                f"$.internet_subscriptions.{subscription}"
             ],
-            f"$.internet_subscriptions.{subscription}"
-        ])
+            [
+                f"$.internet_subscriptions.{subscription}.identifier",
+                "internet", 
+                "modem", 
+                MODEM_ICON, 
+                "", 
+                f"$.internet_subscriptions.{subscription}.modem.name",
+                [
+                    f"$.internet_subscriptions.{subscription}.modem"
+                ]
+            ],
+            [
+                f"$.internet_subscriptions.{subscription}.identifier",
+                "internet", 
+                "network",
+                NETWORK_ICON, 
+                "", 
+                f"$.internet_subscriptions.{subscription}.network_topology.model",
+                [
+                    f"$.internet_subscriptions.{subscription}.network_topology"
+                ]
+            ],
+            [
+                f"$.internet_subscriptions.{subscription}.identifier",
+                "internet", 
+                "wifi",
+                WIFI_ICON, 
+                "", 
+                f"$.internet_subscriptions.{subscription}.wireless_settings.wirelessEnabled",
+                [
+                    f"$.internet_subscriptions.{subscription}.wireless_settings"
+                ]
+            ]
+        ]
     for p_idx, plan in enumerate(data["plan_info"]):
         _LOGGER.debug(f"[Construct] Plan InfoSensor {plan['identifier']}")
         infosensor_data.append([

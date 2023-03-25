@@ -71,16 +71,8 @@ class TelenetSession:
         response = self.callTelenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","userdetails", None, 200)
         return response.json()
 
-    def telemeter(self):
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/public/?p=internetusage,internetusagereminder","telemeter", None, 200)
-        return response.json()
-
-    def telemeter_product_details(self, url):
-        response = self.callTelenet(url,"telemeter_product_details",None, 200)
-        return response.json()
-        
-    def mobile(self):
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/public/?p=mobileusage","mobile", None, 200)
+    def product_details(self, url):
+        response = self.callTelenet(url,"product_details",None, 200)
         return response.json()
         
     def planInfo(self):
@@ -112,4 +104,16 @@ class TelenetSession:
             response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundleIdentifier}/usages?type=bundle&lineIdentifier={lineIdentifier}","mobileBundleUsage lineIdentifier", None, 200)
         else:
             response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundleIdentifier}/usages?type=bundle","mobileBundleUsage bundle", None, 200)
+        return response.json()
+
+    def modems(self, productIdentifier):
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems?productIdentifier={productIdentifier}","modems", None, 200)
+        return response.json()
+
+    def network_topology(self, mac):
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true","modems", None, 200)
+        return response.json()
+
+    def wireless_settings(self, mac, productIdentifier):
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={productIdentifier}","modems", None, 200)
         return response.json()
