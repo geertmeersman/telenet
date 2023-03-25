@@ -1,5 +1,5 @@
 <img src="https://github.com/geertmeersman/telenet/raw/main/images/brand/logo.png"
-     alt="Mobile Vikings"
+     alt="Telenet"
      align="right" 
      style="width: 200px;margin-right: 10px;" />
 # Telenet for Home Assistant
