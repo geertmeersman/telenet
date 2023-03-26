@@ -1,8 +1,8 @@
 name: Release
 on:
   push:
-    branches:
-      - release-candidate
+    tags:
+      - 'v*'
 jobs:
   version_upgrade_github_release:
     runs-on: ubuntu-latest
@@ -10,35 +10,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set Version and increment
-        run: echo "::set-env name=VERSION::$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
+      - name: Set Version
+        run: echo "::set-env name=VERSION::$(cat VERSION)"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
-      - name: Update version in 'VERSION' and 'manifest.json' and push changes
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-          GITHUB_REPO: ${{ github.event.repository.name }}
-        run: |
-          echo "Updating to version $VERSION"
-          echo $VERSION > VERSION
-          sed -i 's/"version": "[0-9\.]*"/"version": "'$VERSION'"/g' custom_components/$GITHUB_REPO/manifest.json
-          git status
-          git config --global user.email "geertmeersman@users.noreply.github.com"
-          git config --global user.name "Github Actions"
-          git add VERSION custom_components/$GITHUB_REPO/manifest.json
-          git commit -m "Update Version to $VERSION"
-          git tag -a $VERSION -m "New release for version $VERSION"
-          git tag
-          git push
-      
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          fromTag : 0.2.0
           configurationJson: |
             {
               "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
@@ -53,3 +35,12 @@ jobs:
                 }
               ]
             }
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          draft: false
+          prerelease: false
