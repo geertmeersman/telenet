@@ -18,13 +18,100 @@ jobs:
         uses: hugo19941994/delete-draft-releases@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: readme
-        id: readme
-        run: echo "readme=`cat README.md`" >> $GITHUB_OUTPUT
-
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        with:
+          configurationJson: |
+            {
+              "categories": [
+                {
+                  "title": "## 🚀 Features",
+                  "labels": ["feature"]
+                },
+                {
+                  "title": "## 🐛 Fixes",
+                  "labels": ["fix"]
+                },
+                {
+                  "title": "## 🧪 Tests",
+                  "labels": ["test"]
+                },
+                {
+                  "title": "## 🧪 Tests and some 🪄 Magic",
+                  "labels": ["test", "magic"],
+                  "exclude_labels": ["no-magic"],
+                  "exhaustive": true,
+                  "empty_content": "- no matching PRs",
+                  "rules": [
+                    {
+                      "pattern": "open",
+                      "on_property": "status",
+                      "flags": "gu"
+                    }
+                  ]
+                }
+              ],
+              "ignore_labels": [
+                "ignore"
+              ],
+              "sort": {
+                "order": "ASC",
+                "on_property": "mergedAt"
+              },
+              "template": "${{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n${{UNCATEGORIZED}}\n</details>",
+              "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}",
+              "empty_template": "- no changes",
+              "label_extractor": [
+                {
+                  "pattern": "(.) (.+)",
+                  "target": "$1",
+                  "flags": "gu"
+                },
+                {
+                  "pattern": "\\[Issue\\]",
+                  "on_property": "title",
+                  "method": "match"
+                }
+              ],
+              "duplicate_filter": {
+                "pattern": "\\[ABC-....\\]",
+                "on_property": "title",
+                "method": "match"
+              },
+              "transformers": [
+                {
+                  "pattern": "[\\-\\*] (\\[(...|TEST|CI|SKIP)\\])( )?(.+?)\n(.+?[\\-\\*] )(.+)",
+                  "target": "- $4\n  - $6"
+                }
+              ],
+              "trim_values": false,
+              "max_tags_to_fetch": 200,
+              "max_pull_requests": 200,
+              "max_back_track_time_days": 365,
+              "exclude_merge_branches": [
+                "Owner/qa"
+              ],
+              "tag_resolver": {
+                "method": "semver",
+                "filter": {
+                  "pattern": "api-(.+)",
+                  "flags": "gu"
+                }
+              },
+              "base_branches": [
+                "dev"
+              ]
+          }
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          body: ${{steps.github_release.outputs.changelog}}
+          draft: true
+          prerelease: true
+      """
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -34,4 +121,5 @@ jobs:
           release_name: Release ${{ env.VERSION }}
           draft: true
           prerelease: true
-          body: ${{steps.readme.outputs.readme}}
+          body: ${{steps.github_release.outputs.changelog}}
+      """
