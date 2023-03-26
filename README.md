@@ -1,3 +1,5 @@
+<!-- [START BADGES] -->
+<!-- [END BADGES] -->
 <img src="https://github.com/geertmeersman/telenet/raw/main/images/brand/logo.png"
      alt="Telenet"
      align="right" 
