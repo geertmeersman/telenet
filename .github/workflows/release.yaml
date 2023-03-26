@@ -111,15 +111,3 @@ jobs:
           body: ${{steps.github_release.outputs.changelog}}
           draft: true
           prerelease: true
-      """
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.VERSION }}
-          release_name: Release ${{ env.VERSION }}
-          draft: true
-          prerelease: true
-          body: ${{steps.github_release.outputs.changelog}}
-      """
