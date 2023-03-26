@@ -15,26 +15,9 @@ jobs:
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v3
+      - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          configurationJson: |
-            {
-              "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
-              "categories": [
-                {
-                    "title": "## 💬 Other",
-                    "labels": ["other"]
-                },
-                {
-                    "title": "## 📦 Dependencies",
-                    "labels": ["dependencies"]
-                }
-              ]
-            }
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -44,4 +27,4 @@ jobs:
           release_name: Release ${{ env.VERSION }}
           draft: false
           prerelease: false
-          body: ${{steps.github_release.outputs.changelog}}
+#          body: ${{steps.github_release.outputs.changelog}}
