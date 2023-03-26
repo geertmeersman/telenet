@@ -28,6 +28,7 @@ jobs:
           git config --global user.name "Github Actions"
           git add VERSION custom_components/$GITHUB_REPO/manifest.json
           git commit -m "Update Version to $VERSION"
+          git tag $VERSION
           git push
       
       - name: Build Changelog
