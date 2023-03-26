@@ -21,12 +21,9 @@ jobs:
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: ls
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-          GITHUB_REPO: ${{ github.event.repository.name }}
-        run: |
-          ls
+      - name: readme
+        id: readme
+        run: echo "readme=`cat README.md`" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -37,4 +34,4 @@ jobs:
           release_name: Release ${{ env.VERSION }}
           draft: true
           prerelease: true
-#          body: ${{steps.github_release.outputs.changelog}}
+          body: ${{steps.readme.outputs.readme}}
