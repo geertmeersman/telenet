@@ -7,13 +7,20 @@ jobs:
   version_upgrade_github_release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout main branch code
         uses: actions/checkout@v3
+        with:
+          ref: main
 
       - name: Set Version and increment
         run: echo "::set-env name=VERSION::$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+      - name: Checkout release-candidate branch code
+        uses: actions/checkout@v3
+        with:
+          ref: release-candidate
 
       - name: Update version in 'VERSION' and 'manifest.json' and push changes
         env:
