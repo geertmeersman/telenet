@@ -44,3 +44,4 @@ jobs:
           release_name: Release ${{ env.VERSION }}
           draft: false
           prerelease: false
+          body: ${{steps.github_release.outputs.changelog}}
