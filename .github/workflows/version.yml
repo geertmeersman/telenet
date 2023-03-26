@@ -42,3 +42,4 @@ jobs:
           git tag -a $VERSION -m "New release for version $VERSION"
           git tag
           git push
+          exit 0
