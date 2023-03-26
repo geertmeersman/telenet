@@ -12,11 +12,13 @@ jobs:
 
       - name: Set Version and increment
         run: echo "::set-env name=VERSION::'$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
       - name: Update version in 'VERSION' and 'manifest.json' and push changes
         run: |
           echo $VERSION > VERSION
           sed -i 's/"version": "[0-9\.]*"/"version": "'"$VERSION"'"/g' custom_components/${{ github.event.repository.name }}/manifest.json
           git status
+
+          git add VERSION custom_components/${{ github.event.repository.name }}/manifest.json
+          git commit -m "Update version"
+          git push
