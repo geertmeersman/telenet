@@ -53,7 +53,7 @@ jobs:
               },
               {
                 "badge": "https://img.shields.io/github/last-commit/${{ env.repo_owner }}/${{ env.repo_name }}",
-                "alt": "github last-commi"t,
+                "alt": "github last-commit",
                 "link": "${{ env.repo_url }}/commits"
               },
               {
