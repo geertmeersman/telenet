@@ -1,0 +1,33 @@
+name: Release
+on:
+  push:
+    branches:
+      - release-candidate
+jobs:
+  version_upgrade_github_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Version and increment
+        run: echo "::set-env name=VERSION::$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+      - name: Update version in 'VERSION' and 'manifest.json' and push changes
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: |
+          echo "Updating to version $VERSION"
+          echo $VERSION > VERSION
+          sed -i 's/"version": "v[0-9\.]*"/"version": "'$VERSION'"/g' custom_components/$GITHUB_REPO/manifest.json
+          git status
+          git config --global user.email "geertmeersman@users.noreply.github.com"
+          git config --global user.name "Github Actions"
+          git add VERSION custom_components/$GITHUB_REPO/manifest.json
+          git commit -m "Update Version to $VERSION"
+          git tag -a $VERSION -m "New release for version $VERSION"
+          git tag
+          git push

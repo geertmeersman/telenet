@@ -2,9 +2,9 @@ name: Add Badges
 on:
   push:
     branches:
-      - main
+      - release-candidate    
 jobs:
-  run:
+  wow-actions_add-badges:
     runs-on: ubuntu-latest
     steps:
       - uses: wow-actions/add-badges@v1
