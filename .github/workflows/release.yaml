@@ -29,6 +29,7 @@ jobs:
           git add VERSION custom_components/$GITHUB_REPO/manifest.json
           git commit -m "Update Version to $VERSION"
           git tag -a $VERSION -m "New release for version $VERSION"
+          git tags
           git push
       
       - name: Build Changelog
