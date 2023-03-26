@@ -23,7 +23,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           ignorePreReleases: true
-          #configuration: "release-config/configuration.json"
+          # configuration: "release-config/configuration.json"
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -31,6 +31,6 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}
-          draft: true
-          prerelease: true
+          #draft: true
+          #prerelease: true
           body: ${{steps.github_release.outputs.changelog}}
