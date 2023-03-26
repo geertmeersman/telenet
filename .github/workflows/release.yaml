@@ -14,7 +14,10 @@ jobs:
         run: echo "::set-env name=VERSION::$(cat VERSION)"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-
+      - name: Delete drafts
+        uses: hugo19941994/delete-draft-releases@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
