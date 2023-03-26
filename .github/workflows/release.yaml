@@ -23,7 +23,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           ignorePreReleases: true
-          #configuration: "release-config/configuration.json"
+          # configuration: "release-config/configuration.json"
       - name: Create Release
         uses: actions/create-release@v1
         env:
