@@ -63,62 +63,93 @@ async def async_setup_entry(
 
     def data_update():
         """Fetch Telenet data."""
-        try:
-            #_LOGGER.debug(f"[async_setup_entry|update start]")
-            data["user_details"] = session.login()
-            data["plan_info"] = session.planInfo()
-            data["last_sync"] = datetime.now()
-            subscriptions = session.productSubscriptions("INTERNET")
-            for subscription in subscriptions:
-                identifier = subscription.get("identifier")
-                billcycle = session.billCycles("internet",identifier, 1)
-                start_date = billcycle.get('billCycles')[0].get("startDate")
-                end_date = billcycle.get('billCycles')[0].get("endDate")
-                modem = session.modems(identifier)
+        def clean_ipv6(data):
+            _LOGGER.debug("[clean_ipv6] " + str(data))
+            if isinstance(data, list):
+                for idx, item in enumerate(data):
+                    if "ipType" in item and "ipAddress" in item:
+                        if item["ipType"] == "IPv6":
+                            _LOGGER.debug(f"[async_setup_entry|data_update] IPv6 address removed: {item}")
+                            del data[idx]
+                    else:
+                        data[idx] = clean_ipv6(data[idx])
+            else:
+                for idx, property in enumerate(data):
+                    if isinstance(data.get(property), (bool,str)):
+                        data[property] = data.get(property)
+                    else:
+                        if isinstance(data.get(property), list):
+                            if len(data[property]) == 0:
+                                data[property] = []
+                            else:
+                                data[property] = clean_ipv6(data.get(property))
+                        else:
+                            data[property] = clean_ipv6(data.get(property))
+            return data
 
-                data["internet_subscriptions"][identifier] = {
-                    "identifier": identifier, 
-                    "subscription_info": subscription, 
-                    "usage": session.productUsage("internet",identifier,start_date,end_date), 
-                    "start_date": start_date, 
-                    "end_date": end_date, 
-                    "product_details":session.product_details(subscription.get("specurl")),
-                    "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date),
-                    "modem": modem,
-                    "network_topology": session.network_topology(modem.get("mac")),
-                    "wireless_settings": session.wireless_settings(modem.get("mac"), identifier)
-                }
-            subscriptions = session.productSubscriptions("MOBILE")
-            for subscription in subscriptions:
-                identifier = subscription.get("identifier")
-                bundleusage = None
-                if subscription.get('productType') == 'bundle':
-                    usage = session.mobileBundleUsage(subscription.get('bundleIdentifier'),identifier)
-                    bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
-                else:
-                    usage = session.mobileUsage(identifier)
+        #try:
+        #_LOGGER.debug(f"[async_setup_entry|update start]")
+        data["user_details"] = session.login()
+        data["plan_info"] = session.planInfo()
+        data["last_sync"] = datetime.now()
+        subscriptions = session.productSubscriptions("INTERNET")
+        for subscription in subscriptions:
+            identifier = subscription.get("identifier")
+            billcycle = session.billCycles("internet",identifier, 1)
+            start_date = billcycle.get('billCycles')[0].get("startDate")
+            end_date = billcycle.get('billCycles')[0].get("endDate")
+            modem = session.modems(identifier)
+            wireless_settings = session.wireless_settings(modem.get("mac"), identifier)
+            wifi_qr = None
+            if "networkKey" in wireless_settings.get('singleSSIDRoamingSettings'):
+                network_key = wireless_settings.get('singleSSIDRoamingSettings').get('networkKey').replace(':', r'\:' )
+                wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
+            data["internet_subscriptions"][identifier] = {
+                "identifier": identifier, 
+                "subscription_info": subscription, 
+                "usage": session.productUsage("internet",identifier,start_date,end_date), 
+                "start_date": start_date, 
+                "end_date": end_date, 
+                "product_details":session.product_details(subscription.get("specurl")),
+                "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date),
+                "modem": modem,
+                "network_topology": clean_ipv6(session.network_topology(modem.get("mac"))),
+                "wireless_settings": wireless_settings,
+                "wifi_qr": wifi_qr
+            }
+        subscriptions = session.productSubscriptions("MOBILE")
+        for subscription in subscriptions:
+            identifier = subscription.get("identifier")
+            bundleusage = None
+            if subscription.get('productType') == 'bundle':
+                usage = session.mobileBundleUsage(subscription.get('bundleIdentifier'),identifier)
+                bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
+            else:
+                usage = session.mobileUsage(identifier)
+            data["mobile_subscriptions"][identifier] =  {
+                "identifier": identifier, 
+                "subscription_info": subscription, 
+                "usage": usage, 
+                "bundleusage":bundleusage
+             }
+        for plan in data["plan_info"]:
+            if plan['productType'] == "bundle":
+                identifier = plan.get("identifier")
+                bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
                 data["mobile_subscriptions"][identifier] =  {
                     "identifier": identifier, 
-                    "subscription_info": subscription, 
-                    "usage": usage, 
+                    "subscription_info": plan, 
+                    "usage": None, 
                     "bundleusage":bundleusage
                  }
-            for plan in data["plan_info"]:
-                if plan['productType'] == "bundle":
-                    identifier = plan.get("identifier")
-                    bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
-                    data["mobile_subscriptions"][identifier] =  {
-                        "identifier": identifier, 
-                        "subscription_info": plan, 
-                        "usage": None, 
-                        "bundleusage":bundleusage
-                     }
+        """
         except AssertionError:
             _LOGGER.error("[async_setup_entry|data_update] AssertionError, expecting another http return code")
             return False
         except Exception as ex:
             _LOGGER.error(f"[async_setup_entry|data_update] Failure {ex}")
             return False
+        """
         _LOGGER.debug(f"[async_setup_entry|data_update] New data fetched")
 
     async def async_data_update():
@@ -207,6 +238,15 @@ async def async_setup_entry(
                 [
                     f"$.internet_subscriptions.{subscription}.wireless_settings"
                 ]
+            ],
+            [
+                f"$.internet_subscriptions.{subscription}.identifier",
+                "internet", 
+                "wifi qr",
+                WIFI_ICON, 
+                "", 
+                f"$.internet_subscriptions.{subscription}.wifi_qr",
+                None
             ]
         ]
     for p_idx, plan in enumerate(data["plan_info"]):
