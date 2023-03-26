@@ -12,6 +12,8 @@ jobs:
 
       - name: Set Version and increment
         run: echo "::set-env name=VERSION::'$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
       - name: Update version in 'VERSION' and 'manifest.json' and push changes
         run: |
