@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set Version and increment
-        run: echo "::set-env name=VERSION::'$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
+        run: echo "::set-env name=VERSION::$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
