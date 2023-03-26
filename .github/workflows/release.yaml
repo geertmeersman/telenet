@@ -31,6 +31,6 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}
-          draft: true
-          prerelease: true
+          #draft: true
+          #prerelease: true
           body: ${{steps.github_release.outputs.changelog}}
