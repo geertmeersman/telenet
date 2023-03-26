@@ -23,11 +23,13 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v3
         with:
           configuration: "release-config/configuration.json"
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
-          name: Release ${{ env.VERSION }}
-          body: ${{steps.github_release.outputs.changelog}}
+          release_name: Release ${{ env.VERSION }}
           draft: true
           prerelease: true
+          body: ${{steps.github_release.outputs.changelog}}
