@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set Version and increment
         run: echo "::set-env name=VERSION::'$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Updating to version $VERSION"
           echo $VERSION > VERSION
-          sed -i 's/"version": "[0-9\.]*"/"version": "'"$VERSION"'"/g' custom_components/$GITHUB_REPO/manifest.json
+          sed -i 's/"version": "[0-9\.]*"/"version": "'$VERSION'"/g' custom_components/$GITHUB_REPO/manifest.json
           git status
           git config --global user.email "geertmeersman@users.noreply.github.com"
           git config --global user.name "Github Actions"
