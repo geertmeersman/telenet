@@ -21,6 +21,13 @@ jobs:
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: ls
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: |
+          ls
+
       - name: Create Release
         uses: actions/create-release@v1
         env:
