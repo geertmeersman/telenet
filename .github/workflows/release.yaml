@@ -29,3 +29,9 @@ jobs:
           git add VERSION custom_components/$GITHUB_REPO/manifest.json
           git commit -m "Update Version to $VERSION"
           git push
+      
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
