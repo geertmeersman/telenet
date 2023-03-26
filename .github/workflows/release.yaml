@@ -18,11 +18,12 @@ jobs:
       - name: Update version in 'VERSION' and 'manifest.json' and push changes
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          GITHUB_REPO: ${{ github.event.repository.name }}
         run: |
           echo $VERSION > VERSION
-          sed -i 's/"version": "[0-9\.]*"/"version": "'"$VERSION"'"/g' custom_components/$REPO_NAME/manifest.json
+          sed -i 's/"version": "[0-9\.]*"/"version": "'"$VERSION"'"/g' custom_components/$GITHUB_REPO/manifest.json
           git status
 
-          git add VERSION custom_components/$REPO_NAME/manifest.json
+          git add VERSION custom_components/$GITHUB_REPO/manifest.json
           git commit -m "Update version"
           git push
