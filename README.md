@@ -1,4 +1,15 @@
 <!-- [START BADGES] -->
+<!-- Please keep comment here to allow auto update -->
+[![MIT License](https://img.shields.io/github/license/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/geertmeersman/telenet/pulls)
+[![build](https://img.shields.io/github/actions/workflow/status/geertmeersman/telenet/hacs.yml?branch=main?logo=github)](https://github.com/geertmeersman/telenet/actions/workflows/hacs.yml)
+[![manifest version](https://img.shields.io/github/manifest-json/v/geertmeersman/telenet/master?filename=custom_components%2Ftelenet%2Fmanifest.json)](https://github.com/geertmeersman/telenet)
+[![github release](https://img.shields.io/github/v/release/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/releases)
+[![github release date](https://img.shields.io/github/release-date/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/releases)
+[![github last-commit](https://img.shields.io/github/last-commit/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/commits)
+[![github contributors](https://img.shields.io/github/contributors/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/graphs/contributors)
+[![Python](https://img.shields.io/badge/Python-FFD43B?logo=python)](https://github.com/geertmeersman/telenet/search?l=python)
 <!-- [END BADGES] -->
 <img src="https://github.com/geertmeersman/telenet/raw/main/images/brand/logo.png"
      alt="Telenet"

@@ -2,7 +2,7 @@ name: Add Badges
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -17,22 +17,22 @@ jobs:
           badges: |
             [
               {
-                "badge": "https://img.shields.io/github/license/${{ env.repo_owner }}/${{ env.repo_name }}?style=flat-square",
+                "badge": "https://img.shields.io/github/license/${{ env.repo_owner }}/${{ env.repo_name }}",
                 "alt": "MIT License",
                 "link": "${{ env.repo_url }}/blob/master/LICENSE"
               },
               {
-                "badge": "https://img.shields.io/github/issues/${{ env.repo_owner }}/${{ env.repo_name }}?style=for-the-badge",
+                "badge": "https://img.shields.io/github/issues/${{ env.repo_owner }}/${{ env.repo_name }}",
                 "alt": "GitHub issues",
                 "link": "https://github.com/${{ env.repo_owner }}/${{ env.repo_name }}/issues"
               },
               {
-                "badge": "https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat-square",
+                "badge": "https://img.shields.io/badge/PRs-Welcome-brightgreen.svg",
                 "alt": "PRs Welcome",
                 "link": "${{ env.repo_url }}/pulls"
               },
               {
-                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main?logo=github&style=flat-square",
+                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main?logo=github",
                 "alt": "build",
                 "link": "${{ env.repo_url }}/actions/workflows/hacs.yml"
               },
@@ -53,7 +53,7 @@ jobs:
               },
               {
                 "badge": "https://img.shields.io/github/last-commit/${{ env.repo_owner }}/${{ env.repo_name }}",
-                "alt": "github last-commi"t,
+                "alt": "github last-commit",
                 "link": "${{ env.repo_url }}/commits"
               },
               {
