@@ -22,7 +22,8 @@ jobs:
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v3
         with:
-          configuration: "release-config/configuration.json"
+          ignorePreReleases: true
+          #configuration: "release-config/configuration.json"
       - name: Create Release
         uses: actions/create-release@v1
         env:
