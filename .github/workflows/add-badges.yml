@@ -1,6 +1,8 @@
 name: Add Badges
 on:
   push:
+    branches:
+      - release-candidate    
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -51,7 +53,7 @@ jobs:
               },
               {
                 "badge": "https://img.shields.io/github/last-commit/${{ env.repo_owner }}/${{ env.repo_name }}",
-                "alt": "github last-commit",
+                "alt": "github last-commi"t,
                 "link": "${{ env.repo_url }}/commits"
               },
               {
