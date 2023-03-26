@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set Version and increment
+        run: echo "::set-env name=VERSION::'$(cat VERSION | awk -F. -v OFS=. '{$NF += 1 ; print}')"
+
+      - name: Update version in 'VERSION' and 'manifest.json' and push changes
+        run: |
+          echo $VERSION > VERSION
+          sed -i 's/"version": "[0-9\.]*"/"version": "'"$VERSION"'"/g' custom_components/${{ github.event.repository.name }}/manifest.json
+          git status
