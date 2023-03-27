@@ -9,10 +9,10 @@ on:
       - labeled
       - unlabeled
 
-#concurrency:
-#  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
-#  cancel-in-progress: true
-  
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check_semver_labels:
     name: Check Semver labels
