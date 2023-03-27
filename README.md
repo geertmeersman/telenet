@@ -17,7 +17,7 @@
      style="width: 200px;margin-right: 10px;" />
 # Telenet for Home Assistant
 
-Telenet custom component for Home Assistant, allowing to monitor your mobile and internet usage
+Telenet custom component for Home Assistant, allowing to monitor your mobile, internet and dtv usage
 
 ## Installation
 - [HACS](https://hacs.xyz/): search for Telenet in HACS integrations and download it
