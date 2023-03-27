@@ -14,25 +14,17 @@ concurrency:
 
 jobs:
   title-checker:
-    name: Check PR title
+    name: PR Checks
     runs-on: "ubuntu-latest"
     steps:
       - uses: aslafy-z/conventional-pr-title-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  check_semver_labels:
-    name: Check Semver labels
-
-    steps:
       - name: Check for Semver labels
         uses: danielchabr/pr-labels-checker@v3.1
         with:
           hasSome: major,minor,patch
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-
-  check_cc_labels:
-    name: Check conventional commits labels
-    steps:
       - uses: danielchabr/pr-labels-checker@v3.1
         with:
           hasSome: feature,fix,changed,deprecated,removed,security,docs,dependencies
