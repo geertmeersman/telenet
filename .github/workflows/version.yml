@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - release-candidate
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   version_upgrade_github_release:
     runs-on: ubuntu-latest
