@@ -13,23 +13,6 @@ jobs:
   wow-actions_add-badges:
     runs-on: ubuntu-latest
     steps:
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
-        id: extract_branch
-      - name: Show extract_branch info
-        env:
-          BRANCH: ${{steps.tag_action.outputs.new_tag}}
-        run: echo $BRANCH
-      - name: Refs
-        env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-        run: echo $BRANCH_NAME
-      - name: Prints the current branch name
-        run: echo "${GITHUB_BRANCH##*/}"
-        env:
-          GITHUB_BRANCH: ${{ github.ref }}
-
       - uses: geertmeersman/add-badges@v2.1.12
         env:
           repo_url: ${{ github.event.repository.html_url }}
