@@ -13,7 +13,7 @@ jobs:
   wow-actions_add-badges:
     runs-on: ubuntu-latest
     steps:
-      - uses: geertmeersman/add-badges@v1
+      - uses: geertmeersman/add-badges@v1.0.0
         env:
           repo_url: ${{ github.event.repository.html_url }}
           repo_name: ${{ github.event.repository.name }}
