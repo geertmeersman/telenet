@@ -1,5 +1,5 @@
-name-template: 'Release v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: 'Release v$VERSION'
+tag-template: 'v$VERSION'
 categories:
   - title: '🚀 Features'
     labels:
@@ -27,4 +27,4 @@ template: |
   ## What’s Changed 👀
 
   $CHANGES
-  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$VERSION
