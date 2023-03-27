@@ -32,7 +32,7 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           GITHUB_REPO: ${{ github.event.repository.name }}
         run: |
-          BRANCH_VERSION=$(cat BRANCH_VERSION)
+          BRANCH_VERSION=$(cat VERSION)
           if [ "$BRANCH_VERSION" = "$VERSION" ]; then
               echo "Version is still OK"
           else
