@@ -35,7 +35,7 @@ jobs:
           repo_url: ${{ github.event.repository.html_url }}
           repo_name: ${{ github.event.repository.name }}
           repo_owner: ${{ github.event.repository.owner.login }}
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           badges: |
