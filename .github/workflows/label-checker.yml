@@ -16,7 +16,6 @@ concurrency:
 jobs:
   check_semver_labels:
     name: Check Semver labels
-    runs-on: [ self-hosted ]
 
     steps:
       - name: Check for Semver labels
@@ -27,7 +26,6 @@ jobs:
 
   check_cc_labels:
     name: Check conventional commits labels
-    runs-on: [ self-hosted ]
     steps:
       - uses: danielchabr/pr-labels-checker@v3.1
         with:
