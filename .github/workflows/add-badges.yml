@@ -2,7 +2,8 @@ name: Add Badges
 on:
   push:
     branches:
-      - release-candidate    
+      - dev
+      - dev-*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
