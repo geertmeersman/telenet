@@ -15,10 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set Version
-        run: echo "::set-env name=VERSION::$(cat VERSION)"
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - name: Get Version
+        id: get_version
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+
       - name: Delete drafts
         uses: hugo19941994/delete-draft-releases@v1.0.0
         env:
@@ -26,3 +26,6 @@ jobs:
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: ${{steps.get_version.outputs.version}}
+
