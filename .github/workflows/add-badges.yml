@@ -38,7 +38,7 @@ jobs:
                 "link": "${{ env.repo_url }}/pulls"
               },
               {
-                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main?logo=github",
+                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main&logo=github",
                 "alt": "build",
                 "link": "${{ env.repo_url }}/actions/workflows/hacs.yml"
               },
