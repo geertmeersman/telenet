@@ -18,9 +18,8 @@ jobs:
         run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
         id: extract_branch
       - name: Show extract_branch info
-        with:
-          env:
-            BRANCH: ${{steps.tag_action.outputs.new_tag}}
+        env:
+          BRANCH: ${{steps.tag_action.outputs.new_tag}}
         run: echo $BRANCH
       - name: Refs
         env:
