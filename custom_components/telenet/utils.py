@@ -48,7 +48,7 @@ class TelenetSession:
         if print_response:
             _LOGGER.debug(f"[{caller}] Response:\n{response.text}")
         if expected_status_code != None:
-            assert response.status_code == expected_status_code
+            assert response.status_code == expected_status_code, "expecting another http return code"
         
         return response
 
@@ -121,3 +121,8 @@ class TelenetSession:
     def device_details(self, product_type, product_identifier):
         response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/devicedetails","device_details", None, 200)
         return response.json()
+
+    def active_products(self):
+        response = self.call_telenet("https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products?status=ACTIVE","active_products", None, 200)
+        return response.json()
+

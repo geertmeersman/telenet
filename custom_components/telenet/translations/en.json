@@ -11,7 +11,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Unable to connect"
+      "cannot_connect": "Connection failure, please verify your username and password"
     },
     "abort": {
       "already_configured": "Already configured",
