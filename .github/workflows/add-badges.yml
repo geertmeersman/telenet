@@ -2,8 +2,9 @@ name: Add Badges
 on:
   push:
     branches:
-      - dev
-      - dev-*
+      - waituntilbranchfix
+            #- dev
+            #- dev-*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +20,7 @@ jobs:
           repo_name: ${{ github.event.repository.name }}
           repo_owner: ${{ github.event.repository.owner.login }}
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           badges: |
             [
@@ -38,7 +40,7 @@ jobs:
                 "link": "${{ env.repo_url }}/pulls"
               },
               {
-                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main?logo=github",
+                "badge": "https://img.shields.io/github/actions/workflow/status/${{ env.repo_owner }}/${{ env.repo_name }}/hacs.yml?branch=main&logo=github",
                 "alt": "build",
                 "link": "${{ env.repo_url }}/actions/workflows/hacs.yml"
               },

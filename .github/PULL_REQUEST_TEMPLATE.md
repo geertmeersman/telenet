@@ -1,21 +1,36 @@
-## Description
+<!--- Provide a general summary of your changes in the Title above -->
 
-Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.
+### Description
 
-Ensure the PR has at least one of the following labels to pass this check: feature, fix, changed, deprecated, removed, security, docs, dependencies
+<!--- Describe your changes in detail -->
 
-## Type of change
+### Motivation and Context
 
-- [] Bug fix (non-breaking change which fixes an issue)
-- [] New feature (non-breaking change which adds functionality)
-- [] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [] This change requires a documentation update
+<!--- Why is this change required? What problem does it solve? -->
+<!--- If it fixes an open issue, please link to the issue here. -->
 
-## Checklist:
 
-- [] My code follows the style guidelines of this project
-- [] I have performed a self-review of my own code
-- [] I have commented my code, particularly in hard-to-understand areas
-- [] I have made corresponding changes to the documentation
-- [] My changes generate no new warnings
-- [] I have checked my code and corrected any misspellings
+### Types of changes
+
+<!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
+
+- [ ] **Bug fix** (non-breaking change which fixes an issue)
+- [ ] **New feature** (non-breaking change which adds functionality)
+- [ ] **Breaking change** (fix or feature that would cause existing functionality to change)
+- [ ] **Enhancement** (changes that improvement of current feature or performance)
+- [ ] **Refactoring** (changes that neither fixes a bug nor adds a feature)
+- [ ] **Test Case** (changes that add missing tests or correct existing tests)
+- [ ] **Code style optimization** (changes that do not affect the meaning of the code)
+- [ ] **Docs** (changes that only update documentation)
+- [ ] **Chore** (changes that don't modify src or test files)
+
+### Self Check before Merge
+
+<!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
+<!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+
+- [ ] My code follows the code style of this project.
+- [ ] My change requires a change to the documentation.
+- [ ] I have updated the documentation accordingly.
+
+## Screenshots (if appropriate):
