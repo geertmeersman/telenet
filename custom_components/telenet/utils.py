@@ -111,9 +111,13 @@ class TelenetSession:
         return response.json()
 
     def network_topology(self, mac):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true","modems", None, 200)
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true","network_topology", None, 200)
         return response.json()
 
     def wireless_settings(self, mac, productIdentifier):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={productIdentifier}","modems", None, 200)
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={productIdentifier}","wireless_settings", None, 200)
+        return response.json()
+
+    def device_details(self, productType, productIdentifier):
+        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/devicedetails","device_details", None, 200)
         return response.json()
