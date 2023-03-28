@@ -11,7 +11,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Onmogelijk te verbinden"
+      "cannot_connect": "Verbindingsfout, controleer uw gebruiker en wachtwoord en probeer opnieuw"
     },
     "abort": {
       "already_configured": "Reeds geconfigureerd",

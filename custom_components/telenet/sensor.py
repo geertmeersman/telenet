@@ -36,10 +36,13 @@ from .const import (
     NETWORK_ICON,
     PEAK_ICON,
     PLAN_ICON,
+    PHONE_ICON,
     SMS_ICON,
     UPDATE_INTERVAL,
+    TV_ICON,
     VERSION,
     VOICE_ICON,
+    WEB_ICON,
     WEBSITE,
     WIFI_ICON,
 )
@@ -59,8 +62,8 @@ async def async_setup_entry(
         "plan_info": {},
         "internet": {},
         "mobile": {},
-        "dtv" : {},
-        "telephone" : {},
+        "dtv": {},
+        "telephone": {},
     }
 
     def data_update():
@@ -88,14 +91,16 @@ async def async_setup_entry(
                         else:
                             data[property] = clean_ipv6(data.get(property))
             return data
-
+        def get_plan_id(subscription):
+            if subscription.get("productType") == "bundle":
+                return subscription.get("bundleIdentifier")
+            return subscription.get("identifier")
         try:
         #_LOGGER.debug(f"[async_setup_entry|update start]")
             data["user_details"] = session.login()
             _LOGGER.debug(f"[async_setup_entry|data_update] {data['user_details']}")
-
-            data["plan_info"] = session.plan_info()
             data["last_sync"] = datetime.now()
+            data["plan_info"] = session.plan_info()
             subscriptions = session.product_subscriptions("INTERNET")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
@@ -110,6 +115,7 @@ async def async_setup_entry(
                     wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
                 data["internet"][identifier] = {
                     "identifier": identifier, 
+                    "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "usage": session.product_usage("internet",identifier,start_date,end_date), 
                     "start_date": start_date, 
@@ -132,6 +138,7 @@ async def async_setup_entry(
                     usage = session.mobile_usage(identifier)
                 data["mobile"][identifier] =  {
                     "identifier": identifier, 
+                    "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "usage": usage, 
                     "bundleusage":bundleusage
@@ -145,6 +152,7 @@ async def async_setup_entry(
                 devices = session.device_details("dtv", identifier)
                 data["dtv"][identifier] =  {
                     "identifier": identifier, 
+                    "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "devices": devices,
                     "usage": session.product_usage("dtv",identifier,start_date,end_date), 
@@ -154,6 +162,7 @@ async def async_setup_entry(
                 identifier = subscription.get("identifier")
                 data["telephone"][identifier] =  {
                     "identifier": identifier, 
+                    "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                  }
             for plan in data["plan_info"]:
@@ -161,6 +170,7 @@ async def async_setup_entry(
                     identifier = plan.get("identifier")
                     data["mobile"][identifier] =  {
                         "identifier": identifier, 
+                        "plan_id": identifier, 
                         "subscription_info": plan, 
                         "usage": None, 
                         "bundleusage":bundleusage
@@ -203,6 +213,7 @@ async def async_setup_entry(
             language,
             data,
             f"$.internet.{subscription}.identifier",
+            f"$.internet.{subscription}.plan_id",
             "internet", 
             None, 
             None, 
@@ -216,6 +227,7 @@ async def async_setup_entry(
         infosensor_data += [
             [
                 f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
                 "internet", 
                 "daily usages", 
                 PEAK_ICON, 
@@ -229,6 +241,7 @@ async def async_setup_entry(
             ],
             [
                 f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
                 "internet", 
                 "modem", 
                 MODEM_ICON, 
@@ -240,6 +253,7 @@ async def async_setup_entry(
             ],
             [
                 f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
                 "internet", 
                 "network",
                 NETWORK_ICON, 
@@ -251,6 +265,7 @@ async def async_setup_entry(
             ],
             [
                 f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
                 "internet", 
                 "wifi",
                 WIFI_ICON, 
@@ -262,6 +277,7 @@ async def async_setup_entry(
             ],
             [
                 f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
                 "internet", 
                 "wifi qr",
                 WIFI_ICON, 
@@ -273,6 +289,7 @@ async def async_setup_entry(
     for p_idx, plan in enumerate(data["plan_info"]):
         _LOGGER.debug(f"[Construct] Plan InfoSensor {plan['identifier']}")
         infosensor_data.append([
+            f"$.plan_info[{p_idx}].identifier",
             f"$.plan_info[{p_idx}].identifier",
             "plan", 
             None, 
@@ -290,6 +307,7 @@ async def async_setup_entry(
             _LOGGER.debug(f"[Construct] MobileSensor Bundleusage {data['mobile'][subscription]['identifier']}")
             infosensor_data.append([
                 f"$.mobile.{subscription}.identifier",
+                f"$.mobile.{subscription}.plan_id",
                 type, 
                 "Out of bundle", 
                 EUR_ICON, 
@@ -300,6 +318,7 @@ async def async_setup_entry(
             for idx, shared_data in enumerate(bundleusage.get("shared").get("data")):
                 infosensor_data.append([
                     f"$.mobile.{subscription}.identifier",
+                    f"$.mobile.{subscription}.plan_id",
                     type, 
                     shared_data.get("bucketType"), 
                     DATA_ICON, 
@@ -310,6 +329,7 @@ async def async_setup_entry(
             for idx, shared_data in enumerate(bundleusage.get("shared").get("text")):
                 infosensor_data.append([
                     f"$.mobile.{subscription}.identifier",
+                    f"$.mobile.{subscription}.plan_id",
                     type, 
                     "sms", 
                     SMS_ICON, 
@@ -320,6 +340,7 @@ async def async_setup_entry(
             for idx, shared_data in enumerate(bundleusage.get("shared").get("voice")):
                 infosensor_data.append([
                     f"$.mobile.{subscription}.identifier",
+                    f"$.mobile.{subscription}.plan_id",
                     type, 
                     "voice", 
                     VOICE_ICON, 
@@ -334,18 +355,20 @@ async def async_setup_entry(
                 type = "mobile"
 
             infosensor_data.append([
-                    f"$.mobile.{subscription}.identifier",
-                    type, 
-                    "Out of bundle", 
-                    EUR_ICON, 
-                    CURRENCY_EURO, 
-                    f"$.mobile.{subscription}.usage.outOfBundle.usedUnits",
-                    [f"$.mobile.{subscription}.usage.outOfBundle"]
-                ])
+                f"$.mobile.{subscription}.identifier",
+                f"$.mobile.{subscription}.plan_id",
+                type, 
+                "Out of bundle", 
+                EUR_ICON, 
+                CURRENCY_EURO, 
+                f"$.mobile.{subscription}.usage.outOfBundle.usedUnits",
+                [f"$.mobile.{subscription}.usage.outOfBundle"]
+            ])
             if bundleusage is None:
                 infosensor_data += [
                     [
                         f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
                         type, 
                         "Data", 
                         DATA_ICON, 
@@ -355,6 +378,7 @@ async def async_setup_entry(
                     ],
                     [
                         f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
                         type, 
                         "sms", 
                         SMS_ICON, 
@@ -364,6 +388,7 @@ async def async_setup_entry(
                     ],
                     [
                         f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
                         type, 
                         "voice", 
                         VOICE_ICON, 
@@ -375,78 +400,85 @@ async def async_setup_entry(
             else:
                 for idx,shared_data in enumerate(usage.get("shared").get("data")):
                     infosensor_data+= [
-                            [
-                                f"$.mobile.{subscription}.identifier",
-                                type,
-                                "Data National", 
-                                DATA_ICON, 
-                                f"$.mobile.{subscription}.usage.shared.data[{idx}].unitType",
-                                f"$.mobile.{subscription}.usage.shared.data[{idx}].usedUnits",
-                                [f"$.mobile.{subscription}.usage.shared.data[{idx}]"]
-                            ],
-                            [
-                                f"$.mobile.{subscription}.identifier",
-                                type,
-                                "Data EU", 
-                                DATA_ICON, 
-                                f"$.mobile.{subscription}.usage.shared.data[{idx}].unitType",
-                                f"$.mobile.{subscription}.usage.shared.data[{idx}].usedEuUnits",
-                                [f"$.mobile.{subscription}.usage.shared.data[{idx}]"]
-                            ],
-                        ]
+                        [
+                            f"$.mobile.{subscription}.identifier",
+                            f"$.mobile.{subscription}.plan_id",
+                            type,
+                            "Data National", 
+                            DATA_ICON, 
+                            f"$.mobile.{subscription}.usage.shared.data[{idx}].unitType",
+                            f"$.mobile.{subscription}.usage.shared.data[{idx}].usedUnits",
+                            [f"$.mobile.{subscription}.usage.shared.data[{idx}]"]
+                        ],
+                        [
+                            f"$.mobile.{subscription}.identifier",
+                            f"$.mobile.{subscription}.plan_id",
+                            type,
+                            "Data EU", 
+                            DATA_ICON, 
+                            f"$.mobile.{subscription}.usage.shared.data[{idx}].unitType",
+                            f"$.mobile.{subscription}.usage.shared.data[{idx}].usedEuUnits",
+                            [f"$.mobile.{subscription}.usage.shared.data[{idx}]"]
+                        ],
+                    ]
                 for idx,shared_data in enumerate(usage.get("shared").get("text")):
                     infosensor_data.append([
-                            f"$.mobile.{subscription}.identifier",
-                                type,
-                                "sms", 
-                                SMS_ICON, 
-                                "",
-                                f"$.mobile.{subscription}.usage.shared.text[{idx}].usedUnits",
-                                [f"$.mobile.{subscription}.usage.shared.text[{idx}]"]
-                        ])
+                        f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
+                        type,
+                        "sms", 
+                        SMS_ICON, 
+                        "",
+                        f"$.mobile.{subscription}.usage.shared.text[{idx}].usedUnits",
+                        [f"$.mobile.{subscription}.usage.shared.text[{idx}]"]
+                    ])
                 for idx,shared_data in enumerate(usage.get("shared").get("voice")):
                     infosensor_data.append([
-                            f"$.mobile.{subscription}.identifier",
-                                type,
-                                "voice", 
-                                VOICE_ICON, 
-                                TIME_MINUTES,
-                                f"$.mobile.{subscription}.usage.shared.voice[{idx}].usedUnits",
-                                [f"$.mobile.{subscription}.usage.shared.voice[{idx}]"]
-                        ])
+                        f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
+                        type,
+                        "voice", 
+                        VOICE_ICON, 
+                        TIME_MINUTES,
+                        f"$.mobile.{subscription}.usage.shared.voice[{idx}].usedUnits",
+                        [f"$.mobile.{subscription}.usage.shared.voice[{idx}]"]
+                    ])
     for s_idx, subscription in enumerate(data["dtv"]):
         infosensor_data.append([
-                f"$.dtv.{subscription}.identifier",
-                "dtv",
-                "usage", 
-                EUR_ICON,
-                CURRENCY_EURO,
-                f"$.dtv.{subscription}.usage.dtv.totalUsage.currentUsage",
-                [f"$.dtv.{subscription}.usage.dtv"]
-            ])
+            f"$.dtv.{subscription}.identifier",
+            f"$.dtv.{subscription}.plan_info",
+            "dtv",
+            "usage", 
+            EUR_ICON,
+            CURRENCY_EURO,
+            f"$.dtv.{subscription}.usage.dtv.totalUsage.currentUsage",
+            [f"$.dtv.{subscription}.usage.dtv"]
+        ])
         for idx,shared_data in enumerate(data['dtv'][subscription].get("devices").get("dtv")):
             infosensor_data.append([
                 f"$.dtv.{subscription}.identifier",
-                    "dtv",
-                    shared_data["serialNumber"], 
-                    "mdi:television-box", 
-                    "",
-                    f"dtv.{subscription}.devices.dtv[{idx}].boxName",
-                    [f"dtv.{subscription}.devices.dtv[{idx}]"]
+                f"$.dtv.{subscription}.plan_info",
+                "dtv",
+                None, 
+                TV_ICON, 
+                "",
+                f"dtv.{subscription}.devices.dtv[{idx}].boxName",
+                [f"dtv.{subscription}.devices.dtv[{idx}]"]
             ])
     for s_idx, subscription in enumerate(data["telephone"]):
         infosensor_data.append([
-                f"$.telephone.{subscription}.identifier",
-                "telephone",
-                "", 
-                "mdi:phone-classic",
-                "",
-                f"$.telephone.{subscription}.identifier",
-                [f"$.telephone.{subscription}"]
-            ])
+            f"$.telephone.{subscription}.identifier",
+            f"$.telephone.{subscription}.plan_info",
+            "telephone",
+            "", 
+            PHONE_ICON,
+            "",
+            f"$.telephone.{subscription}.identifier",
+            [f"$.telephone.{subscription}"]
+        ])
 
     for sd in infosensor_data:
-        sensor = InfoSensor(coordinator,language,data,sd[0],sd[1],sd[2],sd[3],sd[4],sd[5],sd[6])
+        sensor = InfoSensor(coordinator,language,data,sd[0],sd[1],sd[2],sd[3],sd[4],sd[5],sd[6],sd[7])
         await sensor.update()
         sensors.append(sensor)
 
@@ -461,6 +493,7 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
         language,
         data,
         id_path,
+        plan_id_path,
         type,
         suffix = None,
         icon = None,
@@ -474,8 +507,8 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
         self._language = language
         self._data = data
         self._type = type
-        self._customer_number = get_json_dict_path(data, "$.user_details.customer_number")
         self._id = get_json_dict_path(data, id_path)
+        self._plan_id = get_json_dict_path(data, plan_id_path)
         self._suffix = suffix
         self._icon = icon
         self._unit_of_measurement = unit_of_measurement
@@ -506,8 +539,8 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
     @property
     def device_info(self) -> dict:
         return {
-            "identifiers": {(DOMAIN, f"{NAME} {self._customer_number}")},
-            "name": f"{NAME} {self._customer_number}",
+            "identifiers": {(DOMAIN, f"{self._id}")},
+            "name": f"{self._id}",
             "sw_version": VERSION,
             "manufacturer": NAME,
             "configuration_url": WEBSITE
@@ -519,19 +552,19 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
         return str
 
     @property
-    def type_id_suffix(self) -> str:
+    def id_suffix(self) -> str:
         if self._suffix is None:
             suffix = ""
         else:
             suffix = f" {self._suffix}"
         return (
-            f"{self._type} {self._id}{suffix}"
+            f"{self._id}{suffix}"
         )
 
     @property
     def friendly_name(self) -> str:
         return (
-            f"{NAME} {self.type_id_suffix}"
+            f"{NAME} {self.id_suffix}"
         )
 
     @property
@@ -553,7 +586,7 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
     def unique_id(self) -> str:
         """Return the name of the sensor."""
         return (
-            f"{NAME} {self._customer_number} {self.type_id_suffix}"
+            f"{NAME} {self._type} {self.id_suffix}"
         )
 
     @property
@@ -567,7 +600,7 @@ class InternetSensor(GlobalSensor):
     @property
     def icon(self) -> str:
         """Shows the correct icon this sensor."""
-        return DATA_ICON
+        return WEB_ICON
     
     @property
     def subscription(self):

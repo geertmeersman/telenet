@@ -12,14 +12,19 @@ DATETIME_FORMAT = '%Y-%m-%d'
 UPDATE_INTERVAL = timedelta(minutes=15)
 CONNECTION_RETRY = 2
 REQUEST_TIMEOUT = 20
+DEFAULT_LANGUAGE = "nl"
+LANGUAGE_CHOICES = ["nl", "fr", "en"]
 WEBSITE = "https://mijn.telenet.be/mijntelenet/"
 
 EUR_ICON = "mdi:currency-eur"
-DATA_ICON = "mdi:web"
+DATA_ICON = "mdi:signal-4g"
+WEB_ICON = "mdi:web"
 SMS_ICON = "mdi:message-processing"
 VOICE_ICON = "mdi:phone"
 PEAK_ICON = "mdi:summit"
 PLAN_ICON = "mdi:file-eye"
+PHONE_ICON = "mdi:phone-classic"
+TV_ICON = "mdi:television-box"
 MODEM_ICON = "mdi:lan-connect"
 NETWORK_ICON = "mdi:lan"
 WIFI_ICON = "mdi:wifi"
