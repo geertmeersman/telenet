@@ -92,12 +92,14 @@ async def async_setup_entry(
         try:
         #_LOGGER.debug(f"[async_setup_entry|update start]")
             data["user_details"] = session.login()
-            data["plan_info"] = session.planInfo()
+            _LOGGER.debug(f"[async_setup_entry|data_update] {data['user_details']}")
+
+            data["plan_info"] = session.plan_info()
             data["last_sync"] = datetime.now()
-            subscriptions = session.productSubscriptions("INTERNET")
+            subscriptions = session.product_subscriptions("INTERNET")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
-                billcycle = session.billCycles("internet",identifier, 1)
+                billcycle = session.bill_cycles("internet",identifier, 1)
                 start_date = billcycle.get('billCycles')[0].get("startDate")
                 end_date = billcycle.get('billCycles')[0].get("endDate")
                 modem = session.modems(identifier)
@@ -109,35 +111,35 @@ async def async_setup_entry(
                 data["internet"][identifier] = {
                     "identifier": identifier, 
                     "subscription_info": subscription, 
-                    "usage": session.productUsage("internet",identifier,start_date,end_date), 
+                    "usage": session.product_usage("internet",identifier,start_date,end_date), 
                     "start_date": start_date, 
                     "end_date": end_date, 
                     "product_details":session.product_details(subscription.get("specurl")),
-                    "product_daily_usages":session.productDailyUsage("internet",identifier,start_date,end_date),
+                    "product_daily_usages":session.product_daily_usage("internet",identifier,start_date,end_date),
                     "modem": modem,
                     "network_topology": clean_ipv6(session.network_topology(modem.get("mac"))),
                     "wireless_settings": wireless_settings,
                     "wifi_qr": wifi_qr
                 }
-            subscriptions = session.productSubscriptions("MOBILE")
+            subscriptions = session.product_subscriptions("MOBILE")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
                 bundleusage = None
                 if subscription.get('productType') == 'bundle':
-                    usage = session.mobileBundleUsage(subscription.get('bundleIdentifier'),identifier)
-                    bundleusage = session.mobileBundleUsage(subscription.get('bundleIdentifier'))
+                    usage = session.mobile_bundle_usage(subscription.get('bundleIdentifier'),identifier)
+                    bundleusage = session.mobile_bundle_usage(subscription.get('bundleIdentifier'))
                 else:
-                    usage = session.mobileUsage(identifier)
+                    usage = session.mobile_usage(identifier)
                 data["mobile"][identifier] =  {
                     "identifier": identifier, 
                     "subscription_info": subscription, 
                     "usage": usage, 
                     "bundleusage":bundleusage
                  }
-            subscriptions = session.productSubscriptions("DTV")
+            subscriptions = session.product_subscriptions("DTV")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
-                billcycle = session.billCycles("dtv",identifier, 1)
+                billcycle = session.bill_cycles("dtv",identifier, 1)
                 start_date = billcycle.get('billCycles')[0].get("startDate")
                 end_date = billcycle.get('billCycles')[0].get("endDate")
                 devices = session.device_details("dtv", identifier)
@@ -145,9 +147,9 @@ async def async_setup_entry(
                     "identifier": identifier, 
                     "subscription_info": subscription, 
                     "devices": devices,
-                    "usage": session.productUsage("dtv",identifier,start_date,end_date), 
+                    "usage": session.product_usage("dtv",identifier,start_date,end_date), 
                  }
-            subscriptions = session.productSubscriptions("TELEPHONE")
+            subscriptions = session.product_subscriptions("TELEPHONE")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
                 data["telephone"][identifier] =  {

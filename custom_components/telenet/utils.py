@@ -37,23 +37,23 @@ class TelenetSession:
         self.s.headers["User-Agent"] = "TelemeterPython/3"
         self.s.headers["x-alt-referer"] = "https://www2.telenet.be/nl/klantenservice/#/pages=1/menu=selfservice"
 
-    def callTelenet(self, url, caller = "Not set", data = None, expectedStatusCode = "200", printResponse = False):
+    def call_telenet(self, url, caller = "Not set", data = None, expected_status_code = "200", print_response = False):
         if data == None:
             _LOGGER.debug(f"[{caller}] Calling GET {url}")
             response = self.s.get(url,timeout=REQUEST_TIMEOUT)
         else:
             _LOGGER.debug(f"[{caller}] Calling POST {url}")
             response = self.s.post(url,data,timeout=REQUEST_TIMEOUT)
-        _LOGGER.debug(f"[{caller}] http status code = {response.status_code} (expecting {expectedStatusCode})")
-        if printResponse:
+        _LOGGER.debug(f"[{caller}] http status code = {response.status_code} (expecting {expected_status_code})")
+        if print_response:
             _LOGGER.debug(f"[{caller}] Response:\n{response.text}")
-        if expectedStatusCode != None:
-            assert response.status_code == expectedStatusCode
+        if expected_status_code != None:
+            assert response.status_code == expected_status_code
         
         return response
 
     def login(self):
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","login", None, None)
+        response = self.call_telenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","login", None, None)
         if response.status_code == 200:
             # Return if already authenticated
             return response.json()
@@ -61,63 +61,63 @@ class TelenetSession:
         # Fetch state & nonce
         state, nonce = response.text.split(",", maxsplit=2)
         # Log in
-        self.callTelenet(f'https://login.prd.telenet.be/openid/oauth/authorize?client_id=ocapi&response_type=code&claims={{"id_token":{{"http://telenet.be/claims/roles":null,"http://telenet.be/claims/licenses":null}}}}&lang=nl&state={state}&nonce={nonce}&prompt=login',"login", None, None)
-        self.callTelenet("https://login.prd.telenet.be/openid/login.do","login",{"j_username": self.username,"j_password": self.password,"rememberme": True}, 200)
+        self.call_telenet(f'https://login.prd.telenet.be/openid/oauth/authorize?client_id=ocapi&response_type=code&claims={{"id_token":{{"http://telenet.be/claims/roles":null,"http://telenet.be/claims/licenses":null}}}}&lang=nl&state={state}&nonce={nonce}&prompt=login',"login", None, None)
+        self.call_telenet("https://login.prd.telenet.be/openid/login.do","login",{"j_username": self.username,"j_password": self.password,"rememberme": True}, 200)
         self.s.headers["X-TOKEN-XSRF"] = self.s.cookies.get("TOKEN-XSRF")
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","login", None, 200)
+        response = self.call_telenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","login", None, 200)
         return response.json()
 
     def userdetails(self):
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","userdetails", None, 200)
+        response = self.call_telenet("https://api.prd.telenet.be/ocapi/oauth/userdetails","userdetails", None, 200)
         return response.json()
 
     def product_details(self, url):
-        response = self.callTelenet(url,"product_details",None, 200)
+        response = self.call_telenet(url,"product_details",None, 200)
         return response.json()
         
-    def planInfo(self):
-        response = self.callTelenet("https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes=PLAN","planInfo", None, 200)
+    def plan_info(self):
+        response = self.call_telenet("https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes=PLAN","planInfo", None, 200)
         return response.json()
     
-    def billCycles(self, productType, productIdentifier, count = 3):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{productIdentifier}/billcycle-details?producttype={productType}&count={count}","billCycles", None, 200)
+    def bill_cycles(self, product_type, product_identifier, count = 3):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}","bill_cycles", None, 200)
         return response.json()
     
-    def productUsage(self, productType, productIdentifier,startDate, endDate):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/usage?fromDate={startDate}&toDate={endDate}","productUsage", None, 200)
+    def product_usage(self, product_type, product_identifier,startDate, endDate):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}","product_usage", None, 200)
         return response.json()
 
-    def productDailyUsage(self, productType, productIdentifier,fromDate, toDate):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/dailyusage?billcycle=CURRENT&fromDate={fromDate}&toDate={toDate}","productDailyUsage", None, 200)
+    def product_daily_usage(self, product_type, product_identifier,fromDate, toDate):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle=CURRENT&fromDate={fromDate}&toDate={toDate}","product_daily_usage", None, 200)
         return response.json()
 
-    def productSubscriptions(self, productType):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes={productType}","productSubscriptions", None, 200)
+    def product_subscriptions(self, product_type):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes={product_type}","product_subscriptions", None, 200)
         return response.json()
 
-    def mobileUsage(self, productIdentifier):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{productIdentifier}/usages","mobileUsage", None, 200)
+    def mobile_usage(self, product_identifier):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{product_identifier}/usages","mobile_usage", None, 200)
         return response.json()
 
-    def mobileBundleUsage(self, bundleIdentifier, lineIdentifier = None):
-        if lineIdentifier != None:
-            response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundleIdentifier}/usages?type=bundle&lineIdentifier={lineIdentifier}","mobileBundleUsage lineIdentifier", None, 200)
+    def mobile_bundle_usage(self, bundle_identifier, line_identifier = None):
+        if line_identifier != None:
+            response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle&lineIdentifier={line_identifier}","mobile_bundle_usage line_identifier", None, 200)
         else:
-            response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundleIdentifier}/usages?type=bundle","mobileBundleUsage bundle", None, 200)
+            response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle","mobile_bundle_usage bundle", None, 200)
         return response.json()
 
-    def modems(self, productIdentifier):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems?productIdentifier={productIdentifier}","modems", None, 200)
+    def modems(self, product_identifier):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems?productIdentifier={product_identifier}","modems", None, 200)
         return response.json()
 
     def network_topology(self, mac):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true","network_topology", None, 200)
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true","network_topology", None, 200)
         return response.json()
 
-    def wireless_settings(self, mac, productIdentifier):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={productIdentifier}","wireless_settings", None, 200)
+    def wireless_settings(self, mac, product_identifier):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}","wireless_settings", None, 200)
         return response.json()
 
-    def device_details(self, productType, productIdentifier):
-        response = self.callTelenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{productType}/{productIdentifier}/devicedetails","device_details", None, 200)
+    def device_details(self, product_type, product_identifier):
+        response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/devicedetails","device_details", None, 200)
         return response.json()
