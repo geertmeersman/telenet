@@ -38,6 +38,7 @@ from .const import (
     PLAN_ICON,
     PHONE_ICON,
     SMS_ICON,
+    SEARCH_OUTLINE,
     UPDATE_INTERVAL,
     TV_ICON,
     VERSION,
@@ -60,6 +61,7 @@ async def async_setup_entry(
     data = {
         "user_details": {},
         "plan_info": {},
+        "products": {},
         "internet": {},
         "mobile": {},
         "dtv": {},
@@ -98,9 +100,37 @@ async def async_setup_entry(
         try:
         #_LOGGER.debug(f"[async_setup_entry|update start]")
             data["user_details"] = session.login()
-            _LOGGER.debug(f"[async_setup_entry|data_update] {data['user_details']}")
+            #_LOGGER.debug(f"[async_setup_entry|data_update] {data['user_details']}")
             data["last_sync"] = datetime.now()
             data["plan_info"] = session.plan_info()
+            products = session.active_products()
+            active_products = {}
+            for a_product in products:
+                for product in a_product.get("children"):
+                    active_products[product.get("identifier")] = {
+                        "identifier": product.get("identifier"), 
+                        "label": product.get("label"), 
+                        "status": product.get("status"), 
+                        "specurl": product.get("specurl")
+                    }
+                    if "options" in product and len(product.get("options")):
+                        for option in product.get("options"):
+                            if "identifier" in option:
+                                 active_products[option.get("identifier")] = {
+                                    "identifier": option.get("identifier"), 
+                                    "label": option.get("label"), 
+                                    "status": option.get("status"), 
+                                    "specurl": option.get("specurl")
+                                 }
+                product = a_product
+                active_products[product.get("identifier")] = {
+                    "identifier": product.get("identifier"), 
+                    "label": product.get("label"), 
+                    "status": product.get("status"), 
+                    "specurl": product.get("specurl")
+                }
+            _LOGGER.debug(f"[async_setup_entry|active_products] {active_products}")
+            data["products"] = active_products
             subscriptions = session.product_subscriptions("INTERNET")
             for subscription in subscriptions:
                 identifier = subscription.get("identifier")
@@ -115,6 +145,7 @@ async def async_setup_entry(
                     wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
                 data["internet"][identifier] = {
                     "identifier": identifier, 
+                    "product_info": active_products.get(identifier),
                     "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "usage": session.product_usage("internet",identifier,start_date,end_date), 
@@ -138,6 +169,7 @@ async def async_setup_entry(
                     usage = session.mobile_usage(identifier)
                 data["mobile"][identifier] =  {
                     "identifier": identifier, 
+                    "product_info": active_products.get(identifier),
                     "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "usage": usage, 
@@ -152,6 +184,7 @@ async def async_setup_entry(
                 devices = session.device_details("dtv", identifier)
                 data["dtv"][identifier] =  {
                     "identifier": identifier, 
+                    "product_info": active_products.get(identifier),
                     "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                     "devices": devices,
@@ -162,6 +195,7 @@ async def async_setup_entry(
                 identifier = subscription.get("identifier")
                 data["telephone"][identifier] =  {
                     "identifier": identifier, 
+                    "product_info": active_products.get(identifier),
                     "plan_id": get_plan_id(subscription), 
                     "subscription_info": subscription, 
                  }
@@ -170,13 +204,14 @@ async def async_setup_entry(
                     identifier = plan.get("identifier")
                     data["mobile"][identifier] =  {
                         "identifier": identifier, 
+                        "product_info": active_products.get(identifier),
                         "plan_id": identifier, 
                         "subscription_info": plan, 
                         "usage": None, 
                         "bundleusage":bundleusage
                      }
-        except AssertionError:
-            _LOGGER.error("[async_setup_entry|data_update] AssertionError, expecting another http return code")
+        except AssertionError as ex:
+            _LOGGER.error(f"[async_setup_entry|data_update] AssertionError {ex}")
             return False
         except Exception as ex:
             _LOGGER.error(f"[async_setup_entry|data_update] Failure {ex}")
@@ -208,6 +243,8 @@ async def async_setup_entry(
     infosensor_data = []
 
     for s_idx, subscription in enumerate(data["internet"]):
+        identifier = data["internet"].get(subscription).get('subscription_info').get('identifier')
+        _LOGGER.debug(f"[async_setup_entry|internet] Adding {identifier}")
         sensor = InternetSensor(
             coordinator, 
             language,
@@ -225,6 +262,16 @@ async def async_setup_entry(
         await sensor.update()
         sensors.append(sensor)
         infosensor_data += [
+            [
+                f"$.internet.{subscription}.identifier",
+                f"$.internet.{subscription}.plan_id",
+                "internet", 
+                "product", 
+                SEARCH_OUTLINE, 
+                "", 
+                data["products"].get(identifier).get("label"),
+                [f"$.products.{subscription}"]
+            ],
             [
                 f"$.internet.{subscription}.identifier",
                 f"$.internet.{subscription}.plan_id",
@@ -287,34 +334,38 @@ async def async_setup_entry(
             ]
         ]
     for p_idx, plan in enumerate(data["plan_info"]):
-        _LOGGER.debug(f"[Construct] Plan InfoSensor {plan['identifier']}")
+        _LOGGER.debug(f"[async_setup_entry|plan] Adding {plan['identifier']}")
         infosensor_data.append([
             f"$.plan_info[{p_idx}].identifier",
             f"$.plan_info[{p_idx}].identifier",
             "plan", 
-            None, 
-            PLAN_ICON, 
+            "product", 
+            SEARCH_OUTLINE, 
             "", 
-            f"$.plan_info[{p_idx}].label",
-            [f"$.plan_info[{p_idx}]"],
+            data["products"].get(plan['identifier']).get("label"),
+            [f"$.plan_info[{p_idx}]",f"$.products.{subscription}"],
         ])
     for s_idx, subscription in enumerate(data["mobile"]):
         info = data['mobile'][subscription]['subscription_info']
+        identifier = info.get('identifier')
+        _LOGGER.debug(f"[async_setup_entry|mobile] Adding {identifier}")
         bundleusage = data['mobile'][subscription]['bundleusage']
         usage = data['mobile'][subscription]['usage']
         if usage is None:
             type = "bundle"
             _LOGGER.debug(f"[Construct] MobileSensor Bundleusage {data['mobile'][subscription]['identifier']}")
-            infosensor_data.append([
-                f"$.mobile.{subscription}.identifier",
-                f"$.mobile.{subscription}.plan_id",
-                type, 
-                "Out of bundle", 
-                EUR_ICON, 
-                CURRENCY_EURO, 
-                f"$.mobile.{subscription}.bundleusage.outOfBundle.usedUnits",
-                [f"$.mobile.{subscription}.bundleusage.outOfBundle"],
-            ])
+            infosensor_data += [
+                [
+                    f"$.mobile.{subscription}.identifier",
+                    f"$.mobile.{subscription}.plan_id",
+                    type, 
+                    "Out of bundle", 
+                    EUR_ICON, 
+                    CURRENCY_EURO, 
+                    f"$.mobile.{subscription}.bundleusage.outOfBundle.usedUnits",
+                    [f"$.mobile.{subscription}.bundleusage.outOfBundle"],
+                ]
+            ]
             for idx, shared_data in enumerate(bundleusage.get("shared").get("data")):
                 infosensor_data.append([
                     f"$.mobile.{subscription}.identifier",
@@ -398,6 +449,20 @@ async def async_setup_entry(
                     ],
                 ]
             else:
+                _LOGGER.debug(f"[Construct] MobileSensor {data['mobile'][subscription]['identifier']} Products: {data['products']}")
+                infosensor_data += [
+                    [
+                        f"$.mobile.{subscription}.identifier",
+                        f"$.mobile.{subscription}.plan_id",
+                        "mobile", 
+                        "product", 
+                        SEARCH_OUTLINE, 
+                        "", 
+                        data["products"].get(identifier).get("label"),
+                        [f"$.products.{subscription}"]
+                    ],
+                ]
+
                 for idx,shared_data in enumerate(usage.get("shared").get("data")):
                     infosensor_data+= [
                         [
@@ -444,16 +509,30 @@ async def async_setup_entry(
                         [f"$.mobile.{subscription}.usage.shared.voice[{idx}]"]
                     ])
     for s_idx, subscription in enumerate(data["dtv"]):
-        infosensor_data.append([
-            f"$.dtv.{subscription}.identifier",
-            f"$.dtv.{subscription}.plan_info",
-            "dtv",
-            "usage", 
-            EUR_ICON,
-            CURRENCY_EURO,
-            f"$.dtv.{subscription}.usage.dtv.totalUsage.currentUsage",
-            [f"$.dtv.{subscription}.usage.dtv"]
-        ])
+        identifier = data["dtv"].get(subscription).get('subscription_info').get('identifier')
+        _LOGGER.debug(f"[async_setup_entry|DTV] Adding {identifier}")
+        infosensor_data += [
+            [
+                f"$.dtv.{subscription}.identifier",
+                f"$.dtv.{subscription}.plan_id",
+                "dtv", 
+                "product", 
+                SEARCH_OUTLINE, 
+                "", 
+                data["products"].get(identifier).get("label"),
+                [f"$.products.{subscription}"]
+            ],
+            [
+                f"$.dtv.{subscription}.identifier",
+                f"$.dtv.{subscription}.plan_info",
+                "dtv",
+                "usage", 
+                EUR_ICON,
+                CURRENCY_EURO,
+                f"$.dtv.{subscription}.usage.dtv.totalUsage.currentUsage",
+                [f"$.dtv.{subscription}.usage.dtv"]
+            ]
+        ]
         for idx,shared_data in enumerate(data['dtv'][subscription].get("devices").get("dtv")):
             infosensor_data.append([
                 f"$.dtv.{subscription}.identifier",
@@ -462,22 +541,36 @@ async def async_setup_entry(
                 None, 
                 TV_ICON, 
                 "",
-                f"dtv.{subscription}.devices.dtv[{idx}].boxName",
-                [f"dtv.{subscription}.devices.dtv[{idx}]"]
+                f"$.dtv.{subscription}.devices.dtv[{idx}].boxName",
+                [f"$.dtv.{subscription}.devices.dtv[{idx}]"]
             ])
     for s_idx, subscription in enumerate(data["telephone"]):
-        infosensor_data.append([
-            f"$.telephone.{subscription}.identifier",
-            f"$.telephone.{subscription}.plan_info",
-            "telephone",
-            "", 
-            PHONE_ICON,
-            "",
-            f"$.telephone.{subscription}.identifier",
-            [f"$.telephone.{subscription}"]
-        ])
+        identifier = data["telephone"].get(subscription).get('subscription_info').get('identifier')
+        infosensor_data += [
+            [
+                f"$.telephone.{subscription}.identifier",
+                f"$.telephone.{subscription}.plan_id",
+                "telephone", 
+                "product", 
+                SEARCH_OUTLINE, 
+                "", 
+                data["products"].get(identifier).get("label"),
+                [f"$.products.{subscription}"]
+            ],
+            [
+                f"$.telephone.{subscription}.identifier",
+                f"$.telephone.{subscription}.plan_info",
+                "telephone",
+                "", 
+                PHONE_ICON,
+                "",
+                f"$.telephone.{subscription}.identifier",
+                [f"$.telephone.{subscription}"]
+            ]
+        ]
 
     for sd in infosensor_data:
+        _LOGGER.debug(f"[async_setup_entry|InfoSensor] Adding {sd}")
         sensor = InfoSensor(coordinator,language,data,sd[0],sd[1],sd[2],sd[3],sd[4],sd[5],sd[6],sd[7])
         await sensor.update()
         sensors.append(sensor)
@@ -564,7 +657,7 @@ class GlobalSensor(CoordinatorEntity, SensorEntity):
     @property
     def friendly_name(self) -> str:
         return (
-            f"{NAME} {self.id_suffix}"
+            f"{NAME} {self._type} {self.id_suffix}"
         )
 
     @property
@@ -704,9 +797,9 @@ class InfoSensor(GlobalSensor):
     @property
     def state(self):
         """Return the state of the sensor."""
-        if self._state_path is not None:
+        if self._state_path is not None and self._state_path[0:2] == "$.":
             return get_json_dict_path(self._data, self._state_path)
-        return "EMPTY"
+        return self._state_path
 
     @property
     def extra_state_attributes(self) -> dict:
