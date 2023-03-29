@@ -28,6 +28,7 @@ TV_ICON = "mdi:television-box"
 MODEM_ICON = "mdi:lan-connect"
 NETWORK_ICON = "mdi:lan"
 WIFI_ICON = "mdi:wifi"
+SEARCH_OUTLINE = "mdi:text-box-search-outline"
 
 manifestfile = Path(__file__).parent / 'manifest.json'
 with open(manifestfile) as json_file:

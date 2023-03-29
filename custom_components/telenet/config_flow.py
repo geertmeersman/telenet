@@ -53,8 +53,9 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
         session = TelenetSession(user_input[CONF_USERNAME],user_input[CONF_PASSWORD])
         try:
             user_details = await self.hass.async_add_executor_job(session.login)
-        except AssertionError:
+        except AssertionError as ex:
             errors["base"] = "cannot_connect"
+            _LOGGER.error(f"[async_step_user|login] AssertionError {ex}")
             return await self._show_setup_form(errors, user_input)
         except Exception as ex:
             errors["base"] = "cannot_connect"

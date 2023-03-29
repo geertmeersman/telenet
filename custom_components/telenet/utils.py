@@ -48,7 +48,7 @@ class TelenetSession:
         if print_response:
             _LOGGER.debug(f"[{caller}] Response:\n{response.text}")
         if expected_status_code != None:
-            assert response.status_code == expected_status_code, "expecting another http return code"
+            assert response.status_code == expected_status_code, f"Expecting HTTP {expected_status_code} | Response HTTP {response.status_code}, Response: {response.text}"
         
         return response
 
