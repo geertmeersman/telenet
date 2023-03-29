@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - waituntilbranchfix
-            #- dev
-            #- dev-*
+        #- dev
+        #- dev-*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

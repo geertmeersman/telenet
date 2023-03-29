@@ -1,4 +1,5 @@
 ## Sensors logic
+
 The integration creates for each subscription linked to your account the following sensors
 
 ```mermaid

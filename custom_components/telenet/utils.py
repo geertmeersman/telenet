@@ -1,12 +1,23 @@
+"""Telenet utils."""
+from __future__ import annotations
+
 from datetime import date, datetime, timedelta
 import json
 import re
+from types import TracebackType
 
+from aiohttp import ClientSession, ClientTimeout, ContentTypeError, FormData
 from jsonpath import jsonpath
 import requests
 
 from .const import _LOGGER, REQUEST_TIMEOUT
 
+
+def format_entity_name(string: str) -> str:
+    """Format entity name."""
+    string = re.sub(r"\s+", "_", string)
+    string = re.sub(r"\W+", "", string).lower()
+    return string
 
 def sizeof_fmt(num, suffix="b"):
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
@@ -30,12 +41,23 @@ def get_localized(language, localizedcontent):
     return localizedcontent[0]
 
 class TelenetSession:
-    def __init__(self, username, password):
+
+    session: ClientSession
+
+    def __init__(
+        self,
+        username,
+        password
+    ) -> None:
+
+        self.session = session if session else ClientSession()
+
         self.username = username
         self.password = password
         self.s = requests.Session()
-        self.s.headers["User-Agent"] = "TelemeterPython/3"
-        self.s.headers["x-alt-referer"] = "https://www2.telenet.be/nl/klantenservice/#/pages=1/menu=selfservice"
+        self.s.headers["User-Agent"] = USER_AGENT
+        self.s.headers["x-alt-referer"] = X_ALT_REFERER
+
 
     def call_telenet(self, url, caller = "Not set", data = None, expected_status_code = "200", print_response = False):
         if data == None:
@@ -49,7 +71,7 @@ class TelenetSession:
             _LOGGER.debug(f"[{caller}] Response:\n{response.text}")
         if expected_status_code != None:
             assert response.status_code == expected_status_code, f"Expecting HTTP {expected_status_code} | Response HTTP {response.status_code}, Response: {response.text}"
-        
+
         return response
 
     def login(self):
@@ -74,15 +96,15 @@ class TelenetSession:
     def product_details(self, url):
         response = self.call_telenet(url,"product_details",None, 200)
         return response.json()
-        
+
     def plan_info(self):
         response = self.call_telenet("https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes=PLAN","planInfo", None, 200)
         return response.json()
-    
+
     def bill_cycles(self, product_type, product_identifier, count = 3):
         response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}","bill_cycles", None, 200)
         return response.json()
-    
+
     def product_usage(self, product_type, product_identifier,startDate, endDate):
         response = self.call_telenet(f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}","product_usage", None, 200)
         return response.json()
@@ -125,4 +147,3 @@ class TelenetSession:
     def active_products(self):
         response = self.call_telenet("https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products?status=ACTIVE","active_products", None, 200)
         return response.json()
-

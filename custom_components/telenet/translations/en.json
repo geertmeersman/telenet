@@ -11,11 +11,13 @@
       }
     },
     "error": {
-      "cannot_connect": "Connection failure, please verify your username and password"
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error",
+      "service_error": "Service unavailable"
     },
     "abort": {
-      "already_configured": "Already configured",
-      "unknown": "Unknown"
+      "already_configured": "Account is already configured"
     }
   }
 }

@@ -25,7 +25,7 @@ jobs:
         uses: hugo19941994/delete-draft-releases@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: 📝　Draft release
         uses: release-drafter/release-drafter@v5
         id: release_drafter

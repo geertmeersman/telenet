@@ -1,0 +1,90 @@
+"""Base Telenet entity."""
+from __future__ import annotations
+
+from homeassistant.core import callback
+from homeassistant.helpers.device_registry import DeviceEntryType
+from homeassistant.helpers.entity import DeviceInfo, EntityDescription
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from . import TelenetDataUpdateCoordinator
+from .const import _LOGGER, ATTRIBUTION, DOMAIN, NAME, VERSION, WEBSITE
+from .models import TelenetProduct
+
+from datetime import datetime
+
+
+class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
+    """Base Telenet entity."""
+
+    _attr_attribution = ATTRIBUTION
+
+    def __init__(
+        self,
+        coordinator: TelenetDataUpdateCoordinator,
+        context: int,
+        description: EntityDescription,
+        product: TelenetProduct,
+    ) -> None:
+        """Initialize Telenet entities."""
+        super().__init__(coordinator, context=context)
+        self.entity_description = description
+        self._product = product
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, str(self.product.product_plan_identifier))},
+            name=self.product.product_identifier,
+            manufacturer=NAME,
+            configuration_url=WEBSITE,
+            entry_type=DeviceEntryType.SERVICE,
+            model=self.product.product_description,
+            sw_version=VERSION,
+        )
+        """
+        extra attributes!
+        """
+        self.context = context,
+        self._attr_unique_id = f"{DOMAIN}_{self.product.product_type}{self.id_suffix}"
+        self.client = coordinator.client
+        self.last_synced = datetime.now()
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        _LOGGER.debug(f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}")
+        self.last_synced = datetime.now()
+        #self._attr_is_on = self.coordinator.data[self.context]["state"]
+        self.async_write_ha_state()
+
+    @property
+    def id_suffix(self) -> str:
+        """Return id suffix."""
+        if self.product.product_suffix is None:
+            suffix = ""
+        else:
+            suffix = f"_{self.product.product_suffix}"
+        return (
+            f"{self.product.product_identifier}{suffix}"
+        )
+
+    @property
+    def _products(self) -> list[TelenetProduct]:
+        """Return all products."""
+        return self.coordinator.data or []
+
+    @property
+    def product(self) -> TelenetProduct:
+        """Return the product for this entity."""
+        return next(
+            (
+                product
+                for product in self._products
+                if str(product.product_identifier) == self.entity_description.key
+            ),
+            self._product,
+        )
+
+    @property
+    def product_available(self) -> bool:
+        """Return if the product is available."""
+        return bool(
+            self.product.product_state is not None
+        )
