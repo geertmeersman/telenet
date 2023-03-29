@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.3.3](https://github.com/geertmeersman/telenet/tree/v0.3.3) (2023-03-29)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v0.3.2...v0.3.3)
+
+**Implemented enhancements:**
+
+- fix: Product info sensor and AssertionError improvement [\#75](https://github.com/geertmeersman/telenet/pull/75) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v0.3.2](https://github.com/geertmeersman/telenet/tree/v0.3.2) (2023-03-28)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v0.3.1...v0.3.2)
@@ -183,15 +191,15 @@
 
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.2)
-
-## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.0)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.1)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.1)
+
+## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.0)
 
 **Merged pull requests:**
 
