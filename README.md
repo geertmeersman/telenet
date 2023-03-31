@@ -69,6 +69,8 @@ filter:
 
 ```
 
+</details>
+
 ### Network & Wifi info
 
 ![Network Markdown](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/network_markdown.png)
