@@ -1,12 +1,54 @@
 {
   "config": {
     "step": {
-      "user": {
+      "connection_init": {
+        "title": "New Telenet account",
         "description": "Set up your Telenet to allow usage monitoring",
         "data": {
           "username": "Username",
           "password": "Password",
           "language": "Language"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error",
+      "service_error": "Service unavailable"
+    },
+    "abort": {
+      "already_configured": "Account is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Reconfigure Telenet",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "language": "Language"
+        }
+      },
+      "language": {
+        "description": "Wijzig de taal voor de sensor data",
+        "data": {
+          "language": "Language",
+          "nl": "Nederlands"
+        }
+      },
+      "password": {
+        "description": "Update your password",
+        "data": {
+          "password": "Password"
+        }
+      },
+      "options_init": {
+        "description": "Change options",
+        "menu_options": {
+          "language": "Modify sensor language",
+          "password": "Update password"
         }
       }
     },

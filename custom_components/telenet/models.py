@@ -3,6 +3,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from dataclasses import field
+from typing import TypedDict
+
+
+class TelenetConfigEntryData(TypedDict):
+    """Config entry for the Telenet integration."""
+
+    username: str | None
+    password: str | None
+    language: str | None
 
 
 @dataclass
@@ -34,6 +43,7 @@ class TelenetProduct:
     product_extra_attributes: list = field(default_factory=list)
     product_extra_sensor: bool = False
     product_ignore_extra_sensor: bool = False
+    native_unit_of_measurement: str = None
 
 
 class TelenetBaseProductExtraAttributes:

@@ -18,6 +18,7 @@ from .const import PLATFORMS
 from .exceptions import TelenetException
 from .exceptions import TelenetServiceException
 from .models import TelenetProduct
+from .utils import log_debug
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -79,7 +80,6 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict | None:
         """Update data."""
         try:
-            #            user_details = await self.hass.async_add_executor_job(self.client.login)
             products = await self.hass.async_add_executor_job(
                 self.client.products_refreshed
             )
@@ -102,7 +102,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
         }
 
         fetched_products = {str(product.product_identifier) for product in products}
-        _LOGGER.debug(
+        log_debug(
             f"[init|TelenetDataUpdateCoordinator|_async_update_data|fetched_products] {fetched_products}"
         )
         if stale_products := current_products - fetched_products:
@@ -110,7 +110,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
                 if device := self._device_registry.async_get_device(
                     {(DOMAIN, product_identifier)}
                 ):
-                    _LOGGER.debug(
+                    log_debug(
                         f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_remove_device] {product_identifier}"
                     )
                     self._device_registry.async_remove_device(device.id)
@@ -120,7 +120,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
         if self.data and fetched_products - {
             str(product.product_identifier) for product in self.data
         }:
-            # _LOGGER.debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
+            # log_debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
             self.hass.async_create_task(
                 self.hass.config_entries.async_reload(self._config_entry_id)
             )

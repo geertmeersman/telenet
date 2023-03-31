@@ -1,34 +1,56 @@
 """Config flow to configure the Telenet integration."""
+from abc import ABC
+from abc import abstractmethod
 from typing import Any
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.config_entries import ConfigFlow
+from homeassistant.config_entries import OptionsFlow
 from homeassistant.const import CONF_LANGUAGE
 from homeassistant.const import CONF_PASSWORD
 from homeassistant.const import CONF_USERNAME
+from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowHandler
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.selector import TextSelector
+from homeassistant.helpers.selector import TextSelectorConfig
+from homeassistant.helpers.selector import TextSelectorType
+from homeassistant.helpers.typing import UNDEFINED
 
 from .client import TelenetClient
-from .const import _LOGGER
 from .const import DEFAULT_LANGUAGE
 from .const import DOMAIN
 from .const import LANGUAGE_CHOICES
 from .const import NAME
 from .exceptions import BadCredentialsException
 from .exceptions import TelenetServiceException
+from .models import TelenetConfigEntryData
+from .utils import log_debug
+
+DEFAULT_ENTRY_DATA = TelenetConfigEntryData(
+    username=None,
+    password=None,
+    language=DEFAULT_LANGUAGE,
+)
 
 
-class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Telenet."""
+class TelenetCommonFlow(ABC, FlowHandler):
+    """Base class for Telenet flows."""
 
-    VERSION = 1
+    def __init__(self, initial_data: TelenetConfigEntryData) -> None:
+        """Initialize TelenetCommonFlow."""
+        self.initial_data = initial_data
+        self.new_entry_data = TelenetConfigEntryData()
+        self.new_title: str | None = None
 
-    def __init__(self) -> None:
-        """Initialize Telenet Config Flow."""
-        super().__init__()
+    @abstractmethod
+    def finish_flow(self) -> FlowResult:
+        """Finish the flow."""
 
-        self._config_entry = None
+    def new_data(self):
+        return DEFAULT_ENTRY_DATA | self.initial_data | self.new_entry_data
 
     async def async_validate_input(self, user_input: dict[str, Any]) -> None:
         """Validate user credentials."""
@@ -41,65 +63,180 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
 
         user_details = await self.hass.async_add_executor_job(client.login)
 
-        await self.async_set_unique_id(
-            f"{DOMAIN}_" + user_details.get("customer_number")
-        )
-        self._abort_if_unique_id_configured()
-
         return user_details
 
-    async def _show_setup_form(self, errors=None, user_input=None):
-        """Show the setup form to the user."""
-
-        username = ""
-        language = DEFAULT_LANGUAGE
-
+    async def async_step_connection_init(
+        self, user_input: dict | None = None
+    ) -> FlowResult:
+        """Handle connection configuration."""
         if user_input is not None:
-            if CONF_USERNAME in user_input:
-                username = user_input[CONF_USERNAME]
-            if CONF_LANGUAGE in user_input:
-                language = user_input[CONF_LANGUAGE]
+            user_input = self.new_data() | user_input
+            test = await self.test_connection(user_input)
+            if not test["errors"]:
+                self.new_title = test["user_details"].get("username")
+                self.new_entry_data |= user_input
+                await self.async_set_unique_id(
+                    f"{DOMAIN}_" + test["user_details"].get("customer_number")
+                )
+                self._abort_if_unique_id_configured()
+                log_debug(f"New account {self.new_title} added")
+                return self.finish_flow()
 
-        data_schema = {
-            vol.Required(CONF_USERNAME, default=username): cv.string,
-            vol.Required(CONF_PASSWORD): cv.string,
-            vol.Required(CONF_LANGUAGE, default=language): vol.In(LANGUAGE_CHOICES),
+            return self.finish_flow()
+        fields = {
+            vol.Required(CONF_USERNAME): TextSelector(
+                TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
+            ),
+            vol.Required(CONF_PASSWORD): TextSelector(
+                TextSelectorConfig(
+                    type=TextSelectorType.PASSWORD, autocomplete="current-password"
+                )
+            ),
+            vol.Required(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): vol.In(
+                LANGUAGE_CHOICES
+            ),
         }
         return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(data_schema),
-            errors=errors or {},
+            step_id="connection_init", data_schema=vol.Schema(fields)
         )
 
-    async def async_step_user(
+    async def async_step_language(self, user_input: dict | None = None) -> FlowResult:
+        """Configure language."""
+        errors: dict = {}
+
+        if user_input is not None:
+            if user_input[CONF_LANGUAGE] not in LANGUAGE_CHOICES:
+                errors["base"] = "language_not_found"
+            if not errors:
+                self.new_entry_data |= TelenetConfigEntryData(
+                    language=user_input[CONF_LANGUAGE],
+                )
+                log_debug(f"Language set to : {user_input[CONF_LANGUAGE]}")
+                return self.finish_flow()
+
+        fields = {
+            vol.Required(CONF_LANGUAGE): vol.In(LANGUAGE_CHOICES),
+        }
+        return self.async_show_form(
+            step_id="language",
+            data_schema=self.add_suggested_values_to_schema(
+                vol.Schema(fields), {"language": self.initial_data.get(CONF_LANGUAGE)}
+            ),
+            errors=errors,
+        )
+
+    async def test_connection(self, user_input: dict | None = None) -> dict:
+        errors: dict = {}
+        user_details: dict = {}
+
+        if user_input is not None:
+            user_input = self.new_data() | user_input
+            try:
+                user_details = await self.async_validate_input(user_input)
+            except AssertionError as exception:
+                errors["base"] = "cannot_connect"
+                log_debug(f"[async_step_password|login] AssertionError {exception}")
+            except ConnectionError:
+                errors["base"] = "cannot_connect"
+            except TelenetServiceException:
+                errors["base"] = "service_error"
+            except BadCredentialsException:
+                errors["base"] = "invalid_auth"
+            except Exception as exception:
+                errors["base"] = "unknown"
+                log_debug(exception)
+        return {"user_details": user_details, "errors": errors}
+
+    async def async_step_password(self, user_input: dict | None = None) -> FlowResult:
+        """Configure password."""
+        errors: dict = {}
+
+        if user_input is not None:
+            user_input = self.new_data() | user_input
+            test = await self.test_connection(user_input)
+            if not test["errors"]:
+                self.new_entry_data |= TelenetConfigEntryData(
+                    password=user_input[CONF_PASSWORD],
+                )
+                log_debug(
+                    f"Password changed for {test['user_details'].get('customer_number')}"
+                )
+                return self.finish_flow()
+
+        fields = {
+            vol.Required(CONF_PASSWORD): cv.string,
+        }
+        return self.async_show_form(
+            step_id="password",
+            data_schema=self.add_suggested_values_to_schema(
+                vol.Schema(fields),
+                self.initial_data
+                | TelenetConfigEntryData(
+                    password=None,
+                ),
+            ),
+            errors=errors,
+        )
+
+
+class TelenetOptionsFlow(TelenetCommonFlow, OptionsFlow):
+    """Handle Telenet options."""
+
+    general_settings: dict
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize Telenet options flow."""
+        self.config_entry = config_entry
+        super().__init__(initial_data=config_entry.data)  # type: ignore[arg-type]
+
+    @callback
+    def finish_flow(self) -> FlowResult:
+        """Update the ConfigEntry and finish the flow."""
+        new_data = DEFAULT_ENTRY_DATA | self.initial_data | self.new_entry_data
+        self.hass.config_entries.async_update_entry(
+            self.config_entry,
+            data=new_data,
+            title=self.new_title or UNDEFINED,
+        )
+        return self.async_create_entry(title="", data={})
+
+    async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Invoke when a user initiates a flow via the user interface."""
+        """Manage Telenet options."""
+        return self.async_show_menu(
+            step_id="options_init",
+            menu_options=[
+                "language",
+                "password",
+            ],
+        )
 
-        if user_input is None:
-            return await self._show_setup_form()
 
-        errors: dict[str, str] = {}
+class TelenetConfigFlow(TelenetCommonFlow, ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Telenet."""
 
-        try:
-            await self.async_validate_input(user_input)
-        except AssertionError as exception:
-            errors["base"] = "cannot_connect"
-            _LOGGER.error(f"[async_step_user|login] AssertionError {exception}")
-            return await self._show_setup_form(errors, user_input)
-        except ConnectionError:
-            errors["base"] = "cannot_connect"
-            return await self._show_setup_form(errors, user_input)
-        except TelenetServiceException:
-            errors["base"] = "service_error"
-            return await self._show_setup_form(errors, user_input)
-        except BadCredentialsException:
-            errors["base"] = "invalid_auth"
-            return await self._show_setup_form(errors, user_input)
-        except Exception as exception:
-            errors["base"] = "unknown"
-            _LOGGER.critical(exception)
-        else:
-            return self.async_create_entry(title=NAME, data=user_input)
+    VERSION = 1
 
-        return await self._show_setup_form(errors, user_input)
+    def __init__(self) -> None:
+        """Initialize Telenet Config Flow."""
+        super().__init__(initial_data=DEFAULT_ENTRY_DATA)
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> TelenetOptionsFlow:
+        """Get the options flow for this handler."""
+        return TelenetOptionsFlow(config_entry)
+
+    @callback
+    def finish_flow(self) -> FlowResult:
+        """Create the ConfigEntry."""
+        title = self.new_title or NAME
+        return self.async_create_entry(
+            title=title,
+            data=DEFAULT_ENTRY_DATA | self.new_entry_data,
+        )
+
+    async def async_step_user(self, user_input: dict | None = None) -> FlowResult:
+        """Handle a flow initialized by the user."""
+        return await self.async_step_connection_init()

@@ -10,13 +10,13 @@ from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import TelenetDataUpdateCoordinator
-from .const import _LOGGER
 from .const import ATTRIBUTION
 from .const import DOMAIN
 from .const import NAME
 from .const import VERSION
 from .const import WEBSITE
 from .models import TelenetProduct
+from .utils import log_debug
 
 
 class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
@@ -55,9 +55,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug(
-            f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}"
-        )
+        log_debug(f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}")
         self.last_synced = datetime.now()
         # self._attr_is_on = self.coordinator.data[self.context]["state"]
         self.async_write_ha_state()

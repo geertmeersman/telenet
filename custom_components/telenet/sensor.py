@@ -18,11 +18,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
 from . import TelenetDataUpdateCoordinator
-from .const import _LOGGER
 from .const import DOMAIN
 from .entity import TelenetEntity
 from .models import TelenetProduct
 from .utils import format_entity_name
+from .utils import log_debug
 
 
 @dataclass
@@ -71,21 +71,6 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     TelenetSensorDescription(key="mobile_data", icon="mdi:signal-4g"),
     TelenetSensorDescription(key="mobile_sms", icon="mdi:message-processing"),
 ]
-"""
-EUR_ICON = "mdi:currency-eur"
-DATA_ICON = "mdi:signal-4g"
-WEB_ICON = "mdi:web"
-SMS_ICON = "mdi:message-processing"
-VOICE_ICON = "mdi:phone"
-PEAK_ICON = "mdi:summit"
-PLAN_ICON = "mdi:file-eye"
-PHONE_ICON = "mdi:phone-classic"
-TV_ICON = "mdi:television-box"
-MODEM_ICON = "mdi:lan-connect"
-NETWORK_ICON = "mdi:lan"
-WIFI_ICON = "mdi:wifi"
-SEARCH_OUTLINE = "mdi:text-box-search-outline"
-"""
 
 
 async def async_setup_entry(
@@ -94,7 +79,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Telenet sensors."""
-    _LOGGER.debug("[sensor|async_setup_entry|async_add_entities|start]")
+    log_debug("[sensor|async_setup_entry|async_add_entities|start]")
     coordinator: TelenetDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[TelenetSensor] = []
 
@@ -102,21 +87,23 @@ async def async_setup_entry(
         description.key: description for description in SENSOR_DESCRIPTIONS
     }
 
-    # _LOGGER.debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
+    # log_debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
 
     for idx, product in enumerate(coordinator.data):
         if description := SUPPORTED_KEYS.get(product.product_description_key):
+            if product.native_unit_of_measurement is not None:
+                native_unit_of_measurement = product.native_unit_of_measurement
+            else:
+                native_unit_of_measurement = description.native_unit_of_measurement
             sensor_description = TelenetSensorDescription(
                 key=str(product.product_key),
                 name=product.product_name,
                 value_fn=description.value_fn,
-                native_unit_of_measurement=description.native_unit_of_measurement,
+                native_unit_of_measurement=native_unit_of_measurement,
                 icon=description.icon,
             )
 
-            _LOGGER.debug(
-                f"[sensor|async_setup_entry|adding] {product.product_identifier}"
-            )
+            log_debug(f"[sensor|async_setup_entry|adding] {product.product_identifier}")
             entities.append(
                 TelenetSensor(
                     coordinator,
@@ -126,7 +113,7 @@ async def async_setup_entry(
                 )
             )
         else:
-            _LOGGER.debug(
+            log_debug(
                 f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}"
             )
 

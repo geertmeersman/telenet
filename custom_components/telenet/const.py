@@ -9,9 +9,11 @@ from homeassistant.const import Platform
 
 from .models import TelenetEnvironment
 
-PLATFORMS: Final = [Platform.SENSOR]
+SHOW_DEBUG_AS_WARNING = False
+
 _LOGGER = logging.getLogger(__name__)
 
+PLATFORMS: Final = [Platform.SENSOR]
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
 
 ATTRIBUTION: Final = "Data provided by Telenet"
@@ -32,7 +34,8 @@ BASE_HEADERS = {
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 COORDINATOR_UPDATE_INTERVAL = timedelta(minutes=15)
-CONNECTION_RETRY = 2
+CONNECTION_RETRY = 5
+CONNECTION_RETRY_WAIT = 10
 REQUEST_TIMEOUT = 20
 DEFAULT_LANGUAGE = "nl"
 LANGUAGE_CHOICES = ["nl", "fr", "en"]

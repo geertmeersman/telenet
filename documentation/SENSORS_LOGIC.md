@@ -7,16 +7,18 @@ flowchart LR
     planInfo(planInfo)
     productUsage(productUsage)
     productDailyUsage(productDailyUsage)
-    productSubscriptions{productSubscriptions}
+    productActiveSubscriptions{productSubscriptions}
     productDetails(productDetails)
     mobileBundleUsage(mobileBundleUsage)
     mobileUsage(mobileUsage)
     Mobile
     Internet
     login --> planInfo
-    login --> productSubscriptions
-    productSubscriptions --> |INTERNET| Internet
-    productSubscriptions --> |MOBILE| Mobile
+    login --> productActiveSubscriptions
+    productActiveSubscriptions --> |INTERNET| Internet
+    productActiveSubscriptions --> |MOBILE| Mobile
+    productActiveSubscriptions --> |DTV| DTV
+    productActiveSubscriptions --> |Telephone| Telephone
     billCycles(billCycles)
     billCycles -.-> Internet
     billCycles -.-> Mobile
@@ -31,11 +33,12 @@ flowchart LR
     Internet --> InternetSensorModem{{InternetSensor modem}}
     Internet --> InternetSensorNetwork{{InternetSensor network}}
     Internet --> InternetSensorWifi{{InternetSensor wifi}}
-    planInfo --> PlanInfoSensor{{Plan InfoSensor}}
     Mobile --> MobileInfoSensor_outOfBundle{{Mobile InfoSensor outOfBundle}}
     Mobile --> MobileInfoSensor_DataUsage{{Mobile InfoSensor data usage}}
     Mobile --> MobileInfoSensor_DataUsage{{Mobile InfoSensor data usage}}
     Mobile --> MobileInfoSensor_sms{{Mobile InfoSensor sms usage}}
     Mobile --> MobileInfoSensor_voice{{Mobile InfoSensor voice usage}}
     Mobile --> MobileInfoSensor_outOfBundle{{Mobile InfoSensor outOfBundle}}
+    DTV --> DTVInfoSensor_outOfBundle{{DTV InfoSensor outOfBundle}}
+    DTV --> DTVInfoSensor{{DTV InfoSensor usage}}
 ```

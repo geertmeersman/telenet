@@ -1,12 +1,54 @@
 {
   "config": {
     "step": {
-      "user": {
+      "connection_init": {
+        "title": "Nieuwe Telenet account",
         "description": "Configureer Telenet om je verbruik te volgen",
         "data": {
           "username": "Gebruiker",
           "password": "Wachtwoord",
           "language": "Taal"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Account is al geconfigureerd"
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken",
+      "invalid_auth": "Ongeldige authenticatie",
+      "unknown": "Onverwachte fout",
+      "service_error": "Service niet beschikbaar"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Herconfigureer Telenet",
+        "data": {
+          "username": "Gebruiker",
+          "password": "Wachtwoord",
+          "language": "Taal"
+        }
+      },
+      "language": {
+        "description": "Wijzig de taal voor de sensor data",
+        "data": {
+          "language": "Taal",
+          "nl": "Nederlands"
+        }
+      },
+      "password": {
+        "description": "Pas je wachtwoord aan",
+        "data": {
+          "password": "Wachtwoord"
+        }
+      },
+      "options_init": {
+        "description": "Opties wijzigen",
+        "menu_options": {
+          "language": "Sensor taal aanpassen",
+          "password": "Wachtwoord aanpassen"
         }
       }
     },
