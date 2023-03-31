@@ -1,19 +1,91 @@
 """Telenet sensor platform."""
 from __future__ import annotations
 
-from typing import TypedDict
+from collections.abc import Callable
+from dataclasses import dataclass
+from typing import Any
 
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+from homeassistant.components.sensor import SensorDeviceClass
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CURRENCY_EURO
+from homeassistant.const import DATA_GIGABYTES
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory, EntityDescription
+from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
 
 from . import TelenetDataUpdateCoordinator
-from .const import _LOGGER, DOMAIN, NETWORK_ICON, SENSOR_ICONS, VERSION
+from .const import _LOGGER
+from .const import DOMAIN
 from .entity import TelenetEntity
 from .models import TelenetProduct
 from .utils import format_entity_name
+
+
+@dataclass
+class TelenetSensorDescription(SensorEntityDescription):
+    """Class to describe a Telenet sensor."""
+
+    value_fn: Callable[[Any], StateType] | None = None
+
+
+SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
+    TelenetSensorDescription(key="internet", icon="mdi:web"),
+    TelenetSensorDescription(key="mobile", icon="mdi:cellphone"),
+    TelenetSensorDescription(key="dtv", icon="mdi:television-box"),
+    TelenetSensorDescription(key="telephone", icon="mdi:phone-classic"),
+    TelenetSensorDescription(key="bundle", icon="mdi:database-cog"),
+    TelenetSensorDescription(key="modem", icon="mdi:lan-connect"),
+    TelenetSensorDescription(key="network", icon="mdi:lan"),
+    TelenetSensorDescription(key="wifi", icon="mdi:wifi"),
+    TelenetSensorDescription(key="qr", icon="mdi:qrcode-scan"),
+    TelenetSensorDescription(
+        key="euro",
+        icon="mdi:currency-eur",
+        device_class=SensorDeviceClass.MONETARY,
+        native_unit_of_measurement=CURRENCY_EURO,
+    ),
+    TelenetSensorDescription(
+        key="data_usage",
+        value_fn=lambda state: round(state, 2),
+        device_class=SensorDeviceClass.DATA_SIZE,
+        native_unit_of_measurement=DATA_GIGABYTES,
+        icon="mdi:summit",
+    ),
+    TelenetSensorDescription(
+        key="usage_percentage",
+        value_fn=lambda state: round(state, 1),
+        native_unit_of_measurement=PERCENTAGE,
+        icon="mdi:finance",
+    ),
+    TelenetSensorDescription(
+        key="usage_percentage_mobile",
+        value_fn=lambda state: round(state, 1),
+        native_unit_of_measurement=PERCENTAGE,
+        icon="mdi:signal-4g",
+    ),
+    TelenetSensorDescription(key="mobile_voice", icon="mdi:phone"),
+    TelenetSensorDescription(key="mobile_data", icon="mdi:signal-4g"),
+    TelenetSensorDescription(key="mobile_sms", icon="mdi:message-processing"),
+]
+"""
+EUR_ICON = "mdi:currency-eur"
+DATA_ICON = "mdi:signal-4g"
+WEB_ICON = "mdi:web"
+SMS_ICON = "mdi:message-processing"
+VOICE_ICON = "mdi:phone"
+PEAK_ICON = "mdi:summit"
+PLAN_ICON = "mdi:file-eye"
+PHONE_ICON = "mdi:phone-classic"
+TV_ICON = "mdi:television-box"
+MODEM_ICON = "mdi:lan-connect"
+NETWORK_ICON = "mdi:lan"
+WIFI_ICON = "mdi:wifi"
+SEARCH_OUTLINE = "mdi:text-box-search-outline"
+"""
 
 
 async def async_setup_entry(
@@ -22,26 +94,49 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Telenet sensors."""
-    _LOGGER.debug(f"[sensor|async_setup_entry|async_add_entities|start]")
+    _LOGGER.debug("[sensor|async_setup_entry|async_add_entities|start]")
     coordinator: TelenetDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(
-        TelenetSensor(
-            coordinator,
-            idx,
-            SensorEntityDescription(
-                key=str(product.product_name),
+    entities: list[TelenetSensor] = []
+
+    SUPPORTED_KEYS = {
+        description.key: description for description in SENSOR_DESCRIPTIONS
+    }
+
+    # _LOGGER.debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
+
+    for idx, product in enumerate(coordinator.data):
+        if description := SUPPORTED_KEYS.get(product.product_description_key):
+            sensor_description = TelenetSensorDescription(
+                key=str(product.product_key),
                 name=product.product_name,
-                entity_category=EntityCategory.DIAGNOSTIC,
-                device_class=f"{DOMAIN}__product_status",
-            ),
-            product=product,
-        )
-        for idx, product in enumerate(coordinator.data)
-    )
+                value_fn=description.value_fn,
+                native_unit_of_measurement=description.native_unit_of_measurement,
+                icon=description.icon,
+            )
+
+            _LOGGER.debug(
+                f"[sensor|async_setup_entry|adding] {product.product_identifier}"
+            )
+            entities.append(
+                TelenetSensor(
+                    coordinator,
+                    idx,
+                    sensor_description,
+                    product=product,
+                )
+            )
+        else:
+            _LOGGER.debug(
+                f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}"
+            )
+
+    async_add_entities(entities)
 
 
 class TelenetSensor(TelenetEntity, SensorEntity):
     """Representation of a Telenet sensor."""
+
+    entity_description: TelenetSensorDescription
 
     def __init__(
         self,
@@ -53,18 +148,18 @@ class TelenetSensor(TelenetEntity, SensorEntity):
         """Set entity ID."""
         super().__init__(coordinator, context, description, product)
         self.entity_id = (
-            f"sensor.{DOMAIN}_{format_entity_name(self.product.product_name)}"
+            f"sensor.{DOMAIN}_{format_entity_name(self.product.product_key)}"
         )
 
     @property
     def native_value(self) -> str:
-        """Return the status of the monitor."""
-        return self.product.product_state
+        """Return the status of the sensor."""
+        state = self.product.product_state
 
-    @property
-    def icon(self) -> str:
-        """Return the status of the monitor."""
-        return SENSOR_ICONS.get(self.product.product_type)
+        if self.entity_description.value_fn:
+            return self.entity_description.value_fn(state)
+
+        return state
 
     @property
     def extra_state_attributes(self):
@@ -75,4 +170,7 @@ class TelenetSensor(TelenetEntity, SensorEntity):
         attributes = {
             "last_synced": self.last_synced,
         }
+        if len(self.product.product_extra_attributes) > 0:
+            for attr in self.product.product_extra_attributes:
+                attributes[attr] = self.product.product_extra_attributes[attr]
         return attributes

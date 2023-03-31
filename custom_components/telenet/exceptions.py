@@ -12,6 +12,7 @@ class TelenetServiceException(Exception):
 
     pass
 
+
 class BadCredentialsException(Exception):
     """Raised when credentials are incorrect."""
 

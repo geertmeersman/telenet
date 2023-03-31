@@ -1,0 +1,9 @@
+{
+  "entity": {
+    "sensor": {
+      "telenet": {
+        "name": "Telenet"
+      }
+    }
+  }
+}

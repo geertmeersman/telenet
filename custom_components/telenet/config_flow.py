@@ -1,16 +1,22 @@
 """Config flow to configure the Telenet integration."""
 from typing import Any
 
-from homeassistant.config_entries import ConfigFlow
-from homeassistant.const import CONF_LANGUAGE, CONF_PASSWORD, CONF_USERNAME
-from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from homeassistant.config_entries import ConfigFlow
+from homeassistant.const import CONF_LANGUAGE
+from homeassistant.const import CONF_PASSWORD
+from homeassistant.const import CONF_USERNAME
+from homeassistant.data_entry_flow import FlowResult
 
 from .client import TelenetClient
-from .const import _LOGGER, DEFAULT_LANGUAGE, DOMAIN, LANGUAGE_CHOICES, NAME
-from .exceptions import BadCredentialsException, TelenetServiceException
-from .utils import *
+from .const import _LOGGER
+from .const import DEFAULT_LANGUAGE
+from .const import DOMAIN
+from .const import LANGUAGE_CHOICES
+from .const import NAME
+from .exceptions import BadCredentialsException
+from .exceptions import TelenetServiceException
 
 
 class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -19,7 +25,7 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self) -> None:
-        """Initialize Nest Protect Config Flow."""
+        """Initialize Telenet Config Flow."""
         super().__init__()
 
         self._config_entry = None
@@ -29,12 +35,15 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
 
         client = TelenetClient(
             username=user_input[CONF_USERNAME],
-            password=user_input[CONF_PASSWORD]
+            password=user_input[CONF_PASSWORD],
+            language=user_input[CONF_LANGUAGE],
         )
 
         user_details = await self.hass.async_add_executor_job(client.login)
 
-        await self.async_set_unique_id(f"{DOMAIN}_"+user_details.get("customer_number"))
+        await self.async_set_unique_id(
+            f"{DOMAIN}_" + user_details.get("customer_number")
+        )
         self._abort_if_unique_id_configured()
 
         return user_details
@@ -43,7 +52,7 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
         """Show the setup form to the user."""
 
         username = ""
-        language=DEFAULT_LANGUAGE
+        language = DEFAULT_LANGUAGE
 
         if user_input is not None:
             if CONF_USERNAME in user_input:
@@ -54,7 +63,7 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
         data_schema = {
             vol.Required(CONF_USERNAME, default=username): cv.string,
             vol.Required(CONF_PASSWORD): cv.string,
-            vol.Required(CONF_LANGUAGE, default=language): vol.In( LANGUAGE_CHOICES )
+            vol.Required(CONF_LANGUAGE, default=language): vol.In(LANGUAGE_CHOICES),
         }
         return self.async_show_form(
             step_id="user",
@@ -73,12 +82,15 @@ class TelenetConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         try:
-            user_details = await self.async_validate_input(user_input)
+            await self.async_validate_input(user_input)
         except AssertionError as exception:
             errors["base"] = "cannot_connect"
             _LOGGER.error(f"[async_step_user|login] AssertionError {exception}")
             return await self._show_setup_form(errors, user_input)
-        except TelenetServiceException as exception:
+        except ConnectionError:
+            errors["base"] = "cannot_connect"
+            return await self._show_setup_form(errors, user_input)
+        except TelenetServiceException:
             errors["base"] = "service_error"
             return await self._show_setup_form(errors, user_input)
         except BadCredentialsException:

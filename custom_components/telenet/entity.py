@@ -1,16 +1,22 @@
 """Base Telenet entity."""
 from __future__ import annotations
 
+from datetime import datetime
+
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo, EntityDescription
+from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import TelenetDataUpdateCoordinator
-from .const import _LOGGER, ATTRIBUTION, DOMAIN, NAME, VERSION, WEBSITE
+from .const import _LOGGER
+from .const import ATTRIBUTION
+from .const import DOMAIN
+from .const import NAME
+from .const import VERSION
+from .const import WEBSITE
 from .models import TelenetProduct
-
-from datetime import datetime
 
 
 class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
@@ -31,7 +37,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         self._product = product
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, str(self.product.product_plan_identifier))},
-            name=self.product.product_identifier,
+            name=self.product.product_plan_identifier,
             manufacturer=NAME,
             configuration_url=WEBSITE,
             entry_type=DeviceEntryType.SERVICE,
@@ -41,7 +47,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         """
         extra attributes!
         """
-        self.context = context,
+        self.context = (context,)
         self._attr_unique_id = f"{DOMAIN}_{self.product.product_type}{self.id_suffix}"
         self.client = coordinator.client
         self.last_synced = datetime.now()
@@ -49,9 +55,11 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug(f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}")
+        _LOGGER.debug(
+            f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}"
+        )
         self.last_synced = datetime.now()
-        #self._attr_is_on = self.coordinator.data[self.context]["state"]
+        # self._attr_is_on = self.coordinator.data[self.context]["state"]
         self.async_write_ha_state()
 
     @property
@@ -61,9 +69,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
             suffix = ""
         else:
             suffix = f"_{self.product.product_suffix}"
-        return (
-            f"{self.product.product_identifier}{suffix}"
-        )
+        return f"{self.product.product_identifier}{suffix}"
 
     @property
     def _products(self) -> list[TelenetProduct]:
@@ -82,9 +88,10 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
             self._product,
         )
 
+    """
     @property
     def product_available(self) -> bool:
-        """Return if the product is available."""
         return bool(
             self.product.product_state is not None
         )
+    """

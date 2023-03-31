@@ -1,18 +1,22 @@
 """Telenet integration."""
 from __future__ import annotations
 
-from datetime import date, datetime, time, timedelta, timezone, tzinfo
-
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD
+from homeassistant.const import CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import UpdateFailed
+from requests.exceptions import ConnectionError
 
 from .client import TelenetClient
-from .const import _LOGGER, COORDINATOR_UPDATE_INTERVAL, DOMAIN, PLATFORMS
-from .exceptions import TelenetException, TelenetServiceException
+from .const import _LOGGER
+from .const import COORDINATOR_UPDATE_INTERVAL
+from .const import DOMAIN
+from .const import PLATFORMS
+from .exceptions import TelenetException
+from .exceptions import TelenetServiceException
 from .models import TelenetProduct
 
 
@@ -22,10 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username: str = entry.data[CONF_USERNAME]
     password: str = entry.data[CONF_PASSWORD]
 
-    client = TelenetClient(
-        username=username,
-        password=password
-    )
+    client = TelenetClient(username=username, password=password)
 
     dev_reg = dr.async_get(hass)
     hass.data[DOMAIN][entry.entry_id] = coordinator = TelenetDataUpdateCoordinator(
@@ -61,7 +62,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
         hass: HomeAssistant,
         config_entry_id: str,
         dev_reg: dr.DeviceRegistry,
-        client: client,
+        client: TelenetClient,
     ) -> None:
         """Initialize coordinator."""
         super().__init__(
@@ -78,14 +79,18 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict | None:
         """Update data."""
         try:
-            user_details = await self.hass.async_add_executor_job(self.client.login)
-            products = await self.hass.async_add_executor_job(self.client.products)
+            #            user_details = await self.hass.async_add_executor_job(self.client.login)
+            products = await self.hass.async_add_executor_job(
+                self.client.products_refreshed
+            )
+        except ConnectionError as exception:
+            raise UpdateFailed(f"ConnectionError {exception}") from exception
         except TelenetServiceException as exception:
-            raise UpdateFailed(exception) from exception
+            raise UpdateFailed(f"TelenetServiceException {exception}") from exception
         except TelenetException as exception:
-            raise UpdateFailed(exception) from exception
+            raise UpdateFailed(f"TelenetException {exception}") from exception
         except Exception as exception:
-            raise UpdateFailed(exception) from exception
+            raise UpdateFailed(f"Exception {exception}") from exception
 
         products: list[TelenetProduct] = products
 
@@ -97,13 +102,17 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
         }
 
         fetched_products = {str(product.product_identifier) for product in products}
-        _LOGGER.debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|fetched_products] {fetched_products}")
+        _LOGGER.debug(
+            f"[init|TelenetDataUpdateCoordinator|_async_update_data|fetched_products] {fetched_products}"
+        )
         if stale_products := current_products - fetched_products:
             for product_identifier in stale_products:
                 if device := self._device_registry.async_get_device(
                     {(DOMAIN, product_identifier)}
                 ):
-                    _LOGGER.debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_remove_device] {product_identifier}")
+                    _LOGGER.debug(
+                        f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_remove_device] {product_identifier}"
+                    )
                     self._device_registry.async_remove_device(device.id)
 
         # If there are new products, we should reload the config entry so we can
@@ -111,7 +120,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
         if self.data and fetched_products - {
             str(product.product_identifier) for product in self.data
         }:
-            #_LOGGER.debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
+            # _LOGGER.debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
             self.hass.async_create_task(
                 self.hass.config_entries.async_reload(self._config_entry_id)
             )
