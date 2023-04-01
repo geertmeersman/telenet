@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.12](https://github.com/geertmeersman/telenet/tree/v2.0.12) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.11...v2.0.12)
+
+**Documentation:**
+
+- fix: README.md [\#88](https://github.com/geertmeersman/telenet/pull/88) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.11](https://github.com/geertmeersman/telenet/tree/v2.0.11) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.10...v2.0.11)
