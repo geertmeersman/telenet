@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.7](https://github.com/geertmeersman/telenet/tree/v2.0.7) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.6...v2.0.7)
+
+**Implemented enhancements:**
+
+- fix: Entity id aligned with sensor name [\#85](https://github.com/geertmeersman/telenet/pull/85) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.6](https://github.com/geertmeersman/telenet/tree/v2.0.6) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.5...v2.0.6)
@@ -240,7 +248,7 @@
 
 ## [0.2.7](https://github.com/geertmeersman/telenet/tree/0.2.7) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.7)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.7)
 
 **Merged pull requests:**
 
@@ -257,13 +265,13 @@
 - Merge pull request \#3 from geertmeersman/main [\#4](https://github.com/geertmeersman/telenet/pull/4) ([geertmeersman](https://github.com/geertmeersman))
 - Merge [\#3](https://github.com/geertmeersman/telenet/pull/3) ([geertmeersman](https://github.com/geertmeersman))
 
-## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.3)
-
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.2)
+
+## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.3)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
