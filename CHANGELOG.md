@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.6](https://github.com/geertmeersman/telenet/tree/v2.0.6) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.5...v2.0.6)
+
+**Fixed bugs:**
+
+- fix: address id none [\#84](https://github.com/geertmeersman/telenet/pull/84) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.5](https://github.com/geertmeersman/telenet/tree/v2.0.5) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.4...v2.0.5)
