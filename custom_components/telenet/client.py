@@ -288,7 +288,7 @@ class TelenetClient:
         if use_plan_identifier:
             identifier = plan_identifier
         product_key = format_entity_name(
-            f"{self.user_details.get('identity_id')} {identifier} {type} {suffix}"
+            f"{identifier} {type} {suffix}"
         )
         return {
             product_key: TelenetProduct(
