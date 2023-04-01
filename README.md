@@ -78,6 +78,19 @@ logger:
     custom_components.telenet: debug
 ```
 
+## Configuration tip
+
+You can exclude some sensors as they contain quite some information, like e.g.
+```
+recorder:
+  exclude:
+    entity_globs:
+      - sensor.telenet_*_internet_daily_usage
+      - sensor.telenet_*_internet_internet_usage
+      - sensor.telenet_*_internet_network
+      - sensor.telenet_*_internet_wifi
+```
+
 ## Screenshots
 
 | Description                                | Screenshot                                                                                                                             |
