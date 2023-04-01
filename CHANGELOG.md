@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.11](https://github.com/geertmeersman/telenet/tree/v2.0.11) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.10...v2.0.11)
+
 ## [v2.0.10](https://github.com/geertmeersman/telenet/tree/v2.0.10) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.9...v2.0.10)
@@ -268,7 +272,7 @@
 
 ## [0.2.7](https://github.com/geertmeersman/telenet/tree/0.2.7) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.7)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.7)
 
 **Merged pull requests:**
 
@@ -285,13 +289,13 @@
 - Merge pull request \#3 from geertmeersman/main [\#4](https://github.com/geertmeersman/telenet/pull/4) ([geertmeersman](https://github.com/geertmeersman))
 - Merge [\#3](https://github.com/geertmeersman/telenet/pull/3) ([geertmeersman](https://github.com/geertmeersman))
 
-## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.2)
-
 ## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.3)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.3)
+
+## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
