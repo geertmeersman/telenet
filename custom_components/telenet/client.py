@@ -438,7 +438,7 @@ class TelenetClient:
                 new_products.update(
                     self.construct_extra_sensor(
                         product,
-                        "internet usage",
+                        "usage",
                         "usage_percentage",
                         usage_pct,
                         attributes,
