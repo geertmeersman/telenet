@@ -940,7 +940,7 @@ class TelenetClient:
     def address(self, address_id):
         """Fetch address."""
         log_debug(f"[TelenetClient|address] Fetching address {address_id}")
-        if len(address_id) == 0:
+        if address_id is None or len(address_id) == 0:
             return {}
         if self.addresses.get(address_id) is not None:
             return self.addresses.get(address_id)
