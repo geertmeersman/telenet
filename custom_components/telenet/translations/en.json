@@ -11,20 +11,20 @@
         }
       }
     },
+    "abort": {
+      "already_configured": "Account is already configured"
+    },
     "error": {
       "cannot_connect": "Failed to connect",
       "invalid_auth": "Invalid authentication",
       "unknown": "Unexpected error",
       "service_error": "Service unavailable"
-    },
-    "abort": {
-      "already_configured": "Account is already configured"
     }
   },
   "options": {
     "step": {
       "init": {
-        "description": "Reconfigure Telenet",
+        "title": "Reconfigure Telenet",
         "data": {
           "username": "Username",
           "password": "Password",
@@ -32,23 +32,24 @@
         }
       },
       "language": {
-        "description": "Wijzig de taal voor de sensor data",
+        "title": "Change the language",
+        "description": "This applies when the sensors are refreshed",
         "data": {
-          "language": "Language",
-          "nl": "Nederlands"
+          "language": "Language"
         }
       },
       "password": {
-        "description": "Update your password",
+        "title": "Update your password",
+        "description": "To do when you changed your password on 'Mijn Telenet'",
         "data": {
           "password": "Password"
         }
       },
       "options_init": {
-        "description": "Change options",
+        "title": "Change options",
         "menu_options": {
-          "language": "Modify sensor language",
-          "password": "Update password"
+          "language": "Sensor language",
+          "password": "Password"
         }
       }
     },

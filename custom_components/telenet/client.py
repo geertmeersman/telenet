@@ -59,6 +59,7 @@ class TelenetClient:
         self.all_products_by_type = {}
         self.user_details = {}
         self.plan_products = {}
+        self.addresses = {}
 
     def request(
         self,
@@ -181,18 +182,29 @@ class TelenetClient:
             return False
         type = product.get("productType")
         log_debug(f"[TelenetClient|add_product] {identifier}, productType: {type}")
+        if product.get("specurl") is not None:
+            product_info = self.product_details(product.get("specurl")).get("product")
+        else:
+            product_info = {}
+        try:
+            state = get_localized(
+                self.language, product_info.get("localizedcontent")
+            ).get("name")
+        except Exception:
+            state = product.get("label")
         self.all_products[identifier] = TelenetProduct(
             product_identifier=identifier,
             product_type=type,
             product_description_key=type,
             product_plan_identifier=plan_identifier,
             product_name=identifier,
-            product_key=format_entity_name(
-                f"{self.user_details.get('identity_id')} {identifier} {type}"
-            ),
-            product_state=product.get(state_prop),
+            product_key=format_entity_name(f"{identifier} {type}"),
+            product_state=state,
             product_description=product.get("label"),
             product_specurl=product.get("specurl"),
+            product_info=product_info,
+            product_address=self.address(product.get("addressId")),
+            customer_id=self.user_details.get("customer_number"),
         )
         self.add_product_type(type)
         return True
@@ -783,7 +795,7 @@ class TelenetClient:
                     if key[0:2] != "__":
                         if key in info:
                             extra_attributes[key] = info.get(key)
-                product.product_extra_attributes = extra_attributes
+                product.product_extra_attributes |= extra_attributes
         return True
 
     def product_details(self, url):
@@ -910,4 +922,19 @@ class TelenetClient:
             None,
             200,
         )
+        return response.json()
+
+    def address(self, address_id):
+        log_debug(f"[TelenetClient|address] Fetching address {address_id}")
+        if len(address_id) == 0:
+            return {}
+        if self.addresses.get(address_id) is not None:
+            return self.addresses.get(address_id)
+        response = self.request(
+            f"https://api.prd.telenet.be/ocapi/public/api/contact-service/v1/contact/addresses/{address_id}",
+            "[TelenetClient|address]",
+            None,
+            200,
+        )
+        self.addresses |= {address_id: response.json()}
         return response.json()

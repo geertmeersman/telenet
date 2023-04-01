@@ -24,7 +24,7 @@
   "options": {
     "step": {
       "init": {
-        "description": "Herconfigureer Telenet",
+        "title": "Herconfigureer Telenet",
         "data": {
           "username": "Gebruiker",
           "password": "Wachtwoord",
@@ -32,23 +32,24 @@
         }
       },
       "language": {
-        "description": "Wijzig de taal voor de sensor data",
+        "title": "Wijzig de taal",
+        "description": "Dit is van toepassing wanneer de sensors opnieuw verversen",
         "data": {
-          "language": "Taal",
-          "nl": "Nederlands"
+          "language": "Taal"
         }
       },
       "password": {
-        "description": "Pas je wachtwoord aan",
+        "title": "Pas je wachtwoord aan",
+        "description": "Te doen wanneer je je account wachtwoord gewijzigd hebt op 'Mijn Telenet'",
         "data": {
           "password": "Wachtwoord"
         }
       },
       "options_init": {
-        "description": "Opties wijzigen",
+        "title": "Opties wijzigen",
         "menu_options": {
-          "language": "Sensor taal aanpassen",
-          "password": "Wachtwoord aanpassen"
+          "language": "Sensor taal",
+          "password": "Wachtwoord"
         }
       }
     },

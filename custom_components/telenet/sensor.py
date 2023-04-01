@@ -153,10 +153,14 @@ class TelenetSensor(TelenetEntity, SensorEntity):
         """Return attributes for sensor."""
         if not self.coordinator.data:
             return {}
-
         attributes = {
             "last_synced": self.last_synced,
         }
+        address = self.product.product_address
+        if len(address) > 0:
+            attributes |= {
+                "address": f"{address.get('street')} {address.get('houseNumber')}, {address.get('postalCode')} {address.get('municipality')}, {address.get('country')}"
+            }
         if len(self.product.product_extra_attributes) > 0:
             for attr in self.product.product_extra_attributes:
                 attributes[attr] = self.product.product_extra_attributes[attr]

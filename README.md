@@ -77,7 +77,7 @@ filter:
 
 <details><summary>Show markdown code</summary>
 
-**Replace &lt;identifier&gt; by your Telenet identifier and &lt;customer_id&gt; by your Telenet account ID**
+**Replace &lt;identifier&gt; by the Telenet product identifier**
 
 ```
 type: markdown
@@ -90,24 +90,24 @@ content: >
   ## Modem info
   | | |
   |----:|----:|
-  |**Type**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","modemType")}}|
-  |**Model**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","model")}}|
-  |**Last seen**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeen")}}|
-  |**Last seen light**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeenLight")}}|
-  |**Public IP Adress**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+  |**Type**|{{state_attr("sensor.telenet_<identifier>_internet_network","modemType")}}|
+  |**Model**|{{state_attr("sensor.telenet_<identifier>_internet_network","model")}}|
+  |**Last seen**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeen")}}|
+  |**Last seen light**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeenLight")}}|
+  |**Public IP Adress**|{{state_attr("sensor.telenet_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
 
   ## Network clients
   |Name|IP|Interface|Vendor
-  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","clients") %}
+  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<identifier>_internet_network","clients") %}
   {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
   {%-endfor %}|{{item["connectedInterface"]}}|{{item["vendor"]}}{%-endfor %}
 
   ## Wifi Settings
   |||
   |----:|----:|
-  |**Wireless enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wirelessEnabled")}}|
-  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","homeSpotEnabled")}}|
-  |**Wps enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wifiWpsEnabled")}}|
+  |**Wireless enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wirelessEnabled")}}|
+  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","homeSpotEnabled")}}|
+  |**Wps enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wifiWpsEnabled")}}|
 ```
 
 </details>
