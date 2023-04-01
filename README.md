@@ -30,6 +30,7 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 [![github release date](https://img.shields.io/github/release-date/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/releases)
 [![github last-commit](https://img.shields.io/github/last-commit/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/commits)
 [![github contributors](https://img.shields.io/github/contributors/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/graphs/contributors)
+[![github commit activity](https://img.shields.io/github/commit-activity/y/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/commits/main)
 
 <!-- [END BADGES] -->
 
