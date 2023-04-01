@@ -1,5 +1,29 @@
 # Changelog
 
+## [v2.0.4](https://github.com/geertmeersman/telenet/tree/v2.0.4) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.3...v2.0.4)
+
+**Implemented enhancements:**
+
+- feat: Create dependency-review.yml [\#79](https://github.com/geertmeersman/telenet/pull/79) ([geertmeersman](https://github.com/geertmeersman))
+
+## [v2.0.3](https://github.com/geertmeersman/telenet/tree/v2.0.3) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.2...v2.0.3)
+
+**Merged pull requests:**
+
+- build\(deps\): bump ruff from 0.0.257 to 0.0.260 [\#82](https://github.com/geertmeersman/telenet/pull/82) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v2.0.2](https://github.com/geertmeersman/telenet/tree/v2.0.2) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.1...v2.0.2)
+
+**Merged pull requests:**
+
+- build\(deps\): bump pytest-cov from 2.9.0 to 4.0.0 [\#83](https://github.com/geertmeersman/telenet/pull/83) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.0.1](https://github.com/geertmeersman/telenet/tree/v2.0.1) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.0...v2.0.1)
@@ -227,15 +251,15 @@
 
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.2)
-
-## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.0)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.1)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.1)
+
+## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.0)
 
 **Merged pull requests:**
 
