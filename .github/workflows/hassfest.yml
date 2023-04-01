@@ -1,6 +1,9 @@
 name: Validate with hassfest
 
 on:
+  push:
+    branches:
+      - ignore
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
