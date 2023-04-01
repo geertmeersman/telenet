@@ -86,7 +86,7 @@ recorder:
   exclude:
     entity_globs:
       - sensor.telenet_*_internet_daily_usage
-      - sensor.telenet_*_internet_internet_usage
+      - sensor.telenet_*_internet_usage
       - sensor.telenet_*_internet_network
       - sensor.telenet_*_internet_wifi
 ```
