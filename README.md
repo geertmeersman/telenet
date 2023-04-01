@@ -1,20 +1,3 @@
-<!-- [START BADGES] -->
-<!-- Please keep comment here to allow auto update -->
-
-[![MIT License](https://img.shields.io/github/license/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/geertmeersman/telenet/pulls)
-[![build](https://img.shields.io/github/actions/workflow/status/geertmeersman/telenet/hacs.yml?branch=main&logo=github)](https://github.com/geertmeersman/telenet/actions/workflows/hacs.yml)
-[![manifest version](https://img.shields.io/github/manifest-json/v/geertmeersman/telenet/master?filename=custom_components%2Ftelenet%2Fmanifest.json)](https://github.com/geertmeersman/telenet)
-[![github release](https://img.shields.io/github/v/release/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/releases)
-[![github release date](https://img.shields.io/github/release-date/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/releases)
-[![github last-commit](https://img.shields.io/github/last-commit/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/commits)
-[![github contributors](https://img.shields.io/github/contributors/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/graphs/contributors)
-[![Python](https://img.shields.io/badge/Python-FFD43B?logo=python)](https://github.com/geertmeersman/telenet/search?l=python)
-[![hacs][hacsbadge]][hacs]
-
-<!-- [END BADGES] -->
-
 <img src="https://github.com/geertmeersman/telenet/raw/main/images/brand/logo.png"
      alt="Telenet"
      align="right"
@@ -30,6 +13,34 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 -   📱  Mobile sensors
 -   📺 DTV sensors
 -   📞 Telephone sensors
+___
+
+<!-- [START BADGES] -->
+<!-- Please keep comment here to allow auto update -->
+
+[![MIT License](https://img.shields.io/github/license/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![maintainer](https://img.shields.io/badge/maintainer-Geert%20Meersman-green?logo=github)](https://github.com/geertmeersman)
+[![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
+
+
+[![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/geertmeersman/telenet/pulls)
+
+[![Hacs and Hassfest validation](https://github.com/geertmeersman/telenet/actions/workflows/validate.yml/badge.svg)](https://github.com/geertmeersman/telenet/actions/workflows/validate.yml)
+[![Python](https://img.shields.io/badge/Python-FFD43B?logo=python)](https://github.com/geertmeersman/telenet/search?l=python)
+
+
+[![manifest version](https://img.shields.io/github/manifest-json/v/geertmeersman/telenet/master?filename=custom_components%2Ftelenet%2Fmanifest.json)](https://github.com/geertmeersman/telenet)
+[![github release](https://img.shields.io/github/v/release/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/releases)
+[![github release date](https://img.shields.io/github/release-date/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/releases)
+[![github last-commit](https://img.shields.io/github/last-commit/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/commits)
+[![github contributors](https://img.shields.io/github/contributors/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/graphs/contributors)
+[![github commit activity](https://img.shields.io/github/commit-activity/y/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/commits/main)
+
+<!-- [END BADGES] -->
 
 ## Installation
 
@@ -156,4 +167,3 @@ The integration creates for each subscription linked to your account the followi
 Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/blob/main/documentation/SENSORS_LOGIC.md)
 
 ![Sensors flow](https://github.com/geertmeersman/telenet/raw/main/images/documentation/sensor_logic.png)
-
