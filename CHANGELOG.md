@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.1](https://github.com/geertmeersman/telenet/tree/v2.0.1) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.0...v2.0.1)
+
+**Merged pull requests:**
+
+- feat: Create bandit.yml [\#80](https://github.com/geertmeersman/telenet/pull/80) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.0](https://github.com/geertmeersman/telenet/tree/v2.0.0) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v1.0.2...v2.0.0)
