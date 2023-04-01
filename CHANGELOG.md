@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.14](https://github.com/geertmeersman/telenet/tree/v2.0.14) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.13...v2.0.14)
+
+**Implemented enhancements:**
+
+- fix: Renamed sensor.telenet\_internet\_internet\_usage to sensor.telenet\_internet\_usage [\#90](https://github.com/geertmeersman/telenet/pull/90) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.13](https://github.com/geertmeersman/telenet/tree/v2.0.13) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.12...v2.0.13)
