@@ -16,6 +16,7 @@ from .const import NAME
 from .const import VERSION
 from .const import WEBSITE
 from .models import TelenetProduct
+from .utils import format_entity_name
 from .utils import log_debug
 
 
