@@ -48,7 +48,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         extra attributes!
         """
         self.context = (context,)
-        self._attr_unique_id = f"{DOMAIN}_{self.product.product_type}{self.id_suffix}"
+        self._attr_unique_id = f"{DOMAIN}_{format_entity_name(self.product.product_key)}"
         self.client = coordinator.client
         self.last_synced = datetime.now()
 
