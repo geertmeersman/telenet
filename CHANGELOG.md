@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.13](https://github.com/geertmeersman/telenet/tree/v2.0.13) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.12...v2.0.13)
+
+**Fixed bugs:**
+
+- feat: Peak and off-peak usage attributes as separate list in attributes and language fix [\#89](https://github.com/geertmeersman/telenet/pull/89) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.12](https://github.com/geertmeersman/telenet/tree/v2.0.12) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.11...v2.0.12)
