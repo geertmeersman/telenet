@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.8](https://github.com/geertmeersman/telenet/tree/v2.0.8) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.7...v2.0.8)
+
+**Fixed bugs:**
+
+- fix: import format\_entity\_name [\#86](https://github.com/geertmeersman/telenet/pull/86) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.7](https://github.com/geertmeersman/telenet/tree/v2.0.7) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.6...v2.0.7)
