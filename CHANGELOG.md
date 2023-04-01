@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.9](https://github.com/geertmeersman/telenet/tree/v2.0.9) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.8...v2.0.9)
+
+**Implemented enhancements:**
+
+- fix: sensor name without entity id  [\#87](https://github.com/geertmeersman/telenet/pull/87) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.8](https://github.com/geertmeersman/telenet/tree/v2.0.8) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.7...v2.0.8)
