@@ -50,6 +50,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
         """Finish the flow."""
 
     def new_data(self):
+        """Construct new data."""
         return DEFAULT_ENTRY_DATA | self.initial_data | self.new_entry_data
 
     async def async_validate_input(self, user_input: dict[str, Any]) -> None:
@@ -126,6 +127,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
         )
 
     async def test_connection(self, user_input: dict | None = None) -> dict:
+        """Test the connection to Telenet."""
         errors: dict = {}
         user_details: dict = {}
 

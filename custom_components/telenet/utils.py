@@ -12,6 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def log_debug(input, force=False) -> None:
+    """Log to logger as debug or force as warning."""
     if SHOW_DEBUG_AS_WARNING is True or force is True:
         _LOGGER.warning(input)
     else:
@@ -19,10 +20,12 @@ def log_debug(input, force=False) -> None:
 
 
 def float_to_str(input) -> float:
+    """Transform float to string."""
     return float(input.replace(",", "."))
 
 
 def float_to_timestring(float_time, unit_type) -> str:
+    """Transform float to timestring."""
     float_time = float_to_str(float_time)
     if unit_type.lower() == "seconds":
         float_time = float_time * 60 * 60
@@ -33,11 +36,11 @@ def float_to_timestring(float_time, unit_type) -> str:
     minutes, seconds = divmod(seconds, 60)  # split the seconds to minutes and seconds
     result = ""
     if hours:
-        result += " {:02.0f}".format(hours) + "u"
+        result += f" {hours:02.0f}" + "u"
     if minutes:
-        result += " {:02.0f}".format(minutes) + " min"
+        result += f" {minutes:02.0f}" + " min"
     if seconds:
-        result += " {:02.0f}".format(seconds) + " sec"
+        result += f" {seconds:02.0f}" + " sec"
     if len(result) == 0:
         result = "0 sec"
     return result.strip()
@@ -52,6 +55,7 @@ def format_entity_name(string: str) -> str:
 
 
 def sizeof_fmt(num, suffix="b"):
+    """Convert unit to human readable."""
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:
             return f"{num:3.1f}{unit}{suffix}"
@@ -60,6 +64,7 @@ def sizeof_fmt(num, suffix="b"):
 
 
 def get_json_dict_path(dictionary, path):
+    """Fetch info based on jsonpath from dict."""
     # log_debug(f"[get_json_dict_path] Path: {path}, Dict: {dictionary}")
     json_dict = jsonpath(dictionary, path)
     if isinstance(json_dict, list):
@@ -68,6 +73,7 @@ def get_json_dict_path(dictionary, path):
 
 
 def get_localized(language, localizedcontent):
+    """Fetch localized content."""
     # log_debug(f"[get_localized] {language} {localizedcontent}")
     for lang in localizedcontent:
         if language == lang.get("locale"):
@@ -76,6 +82,7 @@ def get_localized(language, localizedcontent):
 
 
 def clean_ipv6(data):
+    """Clean ipv6 addresses from  the list."""
     # log_debug("[clean_ipv6] " + str(data))
     if isinstance(data, list):
         for idx, item in enumerate(data):
@@ -86,8 +93,8 @@ def clean_ipv6(data):
             else:
                 data[idx] = clean_ipv6(data[idx])
     else:
-        for idx, property in enumerate(data):
-            if isinstance(data.get(property), (bool, str)):
+        for property in data:
+            if isinstance(data.get(property), bool | str):
                 data[property] = data.get(property)
             else:
                 if isinstance(data.get(property), list):

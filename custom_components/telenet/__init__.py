@@ -53,7 +53,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
-    """Data update coordinator for Telenet"""
+    """Data update coordinator for Telenet."""
 
     data: list[TelenetProduct]
     config_entry: ConfigEntry
