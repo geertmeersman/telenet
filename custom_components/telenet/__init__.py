@@ -4,6 +4,7 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD
 from homeassistant.const import CONF_USERNAME
+from homeassistant.const import CONF_LANGUAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -24,10 +25,12 @@ from .utils import log_debug
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Telenet from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-    username: str = entry.data[CONF_USERNAME]
-    password: str = entry.data[CONF_PASSWORD]
 
-    client = TelenetClient(username=username, password=password)
+    client = TelenetClient(
+        username=entry.data[CONF_USERNAME],
+        password=entry.data[CONF_PASSWORD],
+        language=entry.data[CONF_LANGUAGE]
+    )
 
     dev_reg = dr.async_get(hass)
     hass.data[DOMAIN][entry.entry_id] = coordinator = TelenetDataUpdateCoordinator(

@@ -98,6 +98,106 @@ logger:
 
 ## Lovelace examples
 
+### Internet info and peak/off-peak usage Apex graph
+
+![Internet peak off-peak](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/lovelace_peak_offpeak.png)
+
+<details><summary>Show markdown code</summary>
+
+**Replace &lt;identifier&gt; by your Telenet identifier and &lt;customer_id&gt; by your Telenet account ID**
+
+```
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >-
+      ## <img src="https://brands.home-assistant.io/telenet/icon.png"
+      width="20"/>&nbsp;&nbsp;Je Internet
+
+      ###
+      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','total_usage')}}**
+      verbruikt tijdens de huidige periode
+
+
+      ###
+      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','used_percentage')}}**%
+      :
+      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','total_usage')}}
+      van de
+      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','allocated_usage')}}
+
+
+      Nog
+      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','days_until')}}**
+      dag(en) tot nieuwe periode
+
+      Periode: 
+      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','start_date')}}
+      -
+      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','end_date')}}
+
+      Wi-Free verbruik:
+      *{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','wifree_usage')}}*
+
+      Laatste update:
+      *{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','last_update')
+      | as_timestamp | timestamp_custom("%d-%m-%Y %H:%M")}}*
+  - type: custom:apexcharts-card
+    graph_span: 20d
+    span:
+      start: hour
+      offset: '-20d'
+    stacked: true
+    header:
+      standard_format: false
+      show: true
+      show_states: false
+      title: Verbruik piek en daluren
+    now:
+      show: true
+    series:
+      - entity: sensor.telenet_<identifier>_internet_daily_usage
+        name: Piekuren
+        type: column
+        color: A6D9D9
+        float_precision: 2
+        data_generator: |
+          return entity.attributes.daily_date.map((day, index) => {
+            return [new Date(day), entity.attributes.daily_peak[index]];
+          });
+      - entity: sensor.telenet_<identifier>_internet_daily_usage
+        name: Daluren
+        type: column
+        color: 1A9AAA
+        float_precision: 2
+        data_generator: |
+          return entity.attributes.daily_date.map((day, index) => {
+            return [new Date(day), entity.attributes.daily_off_peak[index]];
+          });
+  - type: horizontal-stack
+    cards:
+      - type: entity
+        name: Totaal P+D
+        attribute: total_usage_with_offpeak
+        entity: sensor.telenet_<identifier>_internet_internet_usage
+        icon: mdi:sigma
+        unit: GB
+      - type: entity
+        name: Piekuren
+        attribute: peak_usage
+        entity: sensor.telenet_<identifier>_internet_internet_usage
+        unit: GB
+        icon: mdi:arrow-up-bold
+      - type: entity
+        name: Daluren
+        attribute: offpeak_usage
+        entity: sensor.telenet_<identifier>_internet_internet_usage
+        icon: mdi:arrow-down-bold
+
+```
+
+</details>
+
 ### Auto entities for costs
 
 ![Auto entities Costs](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/auto_entities_costs.png)

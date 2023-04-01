@@ -320,19 +320,35 @@ class TelenetClient:
                 """------------------------"""
                 """| EXTRA INTERNET SENSORS |"""
                 """ ------------------------ """
-                billcycle = self.bill_cycle(type, identifier, 1)
+                billcycle = self.bill_cycles(type, identifier, 2)
                 product_usage = self.product_usage(
                     type,
                     identifier,
                     billcycle.get("start_date"),
                     billcycle.get("end_date"),
                 )
-                product_daily_usage = self.product_daily_usage(
-                    type,
-                    identifier,
-                    billcycle.get("start_date"),
-                    billcycle.get("end_date"),
-                )
+                daily_peak = []
+                daily_off_peak = []
+                daily_total = []
+                daily_date = []
+                product_daily_usage = {}
+                for cycle in billcycle.get('cycles'):
+                    product_daily_usage |= {
+                        cycle.get("billCycle"): self.product_daily_usage(
+                            type,
+                            identifier,
+                            cycle.get("billCycle"),
+                            cycle.get("startDate"),
+                            cycle.get("endDate"),
+                        )
+                    }
+                    for day in product_daily_usage.get(cycle.get("billCycle")).get('internetUsage')[0].get('dailyUsages'):
+                        daily_peak.append(day.get('peak'))
+                        daily_off_peak.append(day.get('offPeak'))
+                        daily_total.append(day.get('total'))
+                        daily_date.append(day.get('date'))
+
+                product_daily_usage = product_daily_usage.get('CURRENT')
                 modem = self.modems(identifier)
                 wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
                 wifi_qr = None
@@ -438,9 +454,14 @@ class TelenetClient:
                         ),
                         self.create_extra_attributes_list(
                             get_json_dict_path(
-                                product_daily_usage, "$.internetUsage[0]"
+                                product_daily_usage, "$.internetUsage[0].totalUsage"
                             )
-                        ),
+                        )|{
+                            "daily_peak": daily_peak,
+                            "daily_off_peak": daily_off_peak,
+                            "daily_total": daily_total,
+                            "daily_date": daily_date,
+                        },
                     )
                 )
                 new_products.update(
@@ -486,7 +507,7 @@ class TelenetClient:
                 """| EXTRA DTV SENSORS |"""
                 """ ------------------- """
                 if not product.product_ignore_extra_sensor:
-                    billcycle = self.bill_cycle(type, identifier, 1)
+                    billcycle = self.bill_cycles(type, identifier, 1)
                     product_usage = self.product_usage(
                         type,
                         identifier,
@@ -818,19 +839,22 @@ class TelenetClient:
             self.plan_products[plan.get("identifier")] = plan
         return False
 
-    def bill_cycle(self, product_type, product_identifier, count=1):
-        """Fetch bill cycle."""
+    def bill_cycles(self, product_type, product_identifier, count=1):
+        """Fetch bill cycles."""
         log_debug(
-            f"[TelenetClient|bill_cycle] Fetching bill_cycle info from Telenet for {product_identifier} ({product_type})"
+            f"[TelenetClient|bill_cycle] Fetching bill_cycles info from Telenet for {product_identifier} ({product_type})"
         )
         response = self.request(
             f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
             "[TelenetClient|bill_cycles]",
             None,
-            200,
+            200
         )
         cycle = response.json().get("billCycles")[0]
-        return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate")}
+        if product_type == "internet":
+            return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate"), "cycles": response.json().get("billCycles")}
+        else:
+            return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate")}
 
     def product_usage(self, product_type, product_identifier, startDate, endDate):
         """Fetch product_usage."""
@@ -838,18 +862,20 @@ class TelenetClient:
             f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
             "[TelenetClient|product_usage]",
             None,
-            200,
+            200
         )
         return response.json()
 
-    def product_daily_usage(self, product_type, product_identifier, fromDate, toDate):
+    def product_daily_usage(self, product_type, product_identifier, bill_cycle, from_date, to_date):
         """Fetch daily usage."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle=CURRENT&fromDate={fromDate}&toDate={toDate}",
+            f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
             "[TelenetClient|product_daily_usage]",
             None,
-            200,
+            None
         )
+        if response.status_code != 200:
+            return {}
         return response.json()
 
     def product_subscriptions(self):
