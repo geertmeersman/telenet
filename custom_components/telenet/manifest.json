@@ -9,5 +9,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/geertmeersman/telenet/issues",
   "requirements": [],
-  "version": "v1.0.0"
+  "version": "v2.0.0"
 }
