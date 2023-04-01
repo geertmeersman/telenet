@@ -26,9 +26,11 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 
 ### Features
 
--   🛠 Automatically create dashboard with 3 lines of yaml
--   😍 Built-in Views for device specific controls
--   🎨 Many options to customize to your needs
+-   🌐 Internet sensors
+-   📱  Mobile sensors
+-   📺 DTV sensors
+-   📞 Telephone sensors
+
 ## Installation
 
 ### Using [HACS](https://hacs.xyz/) (recommended)
