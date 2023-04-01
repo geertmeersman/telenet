@@ -1,6 +1,9 @@
 <!-- [START BADGES] -->
 <!-- Please keep comment here to allow auto update -->
 
+[![hacs][hacsbadge]][hacs]
+![Project Maintenance][maintenance-shield]
+
 [![MIT License](https://img.shields.io/github/license/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/geertmeersman/telenet/pulls)
@@ -11,7 +14,6 @@
 [![github last-commit](https://img.shields.io/github/last-commit/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/commits)
 [![github contributors](https://img.shields.io/github/contributors/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/graphs/contributors)
 [![Python](https://img.shields.io/badge/Python-FFD43B?logo=python)](https://github.com/geertmeersman/telenet/search?l=python)
-[![hacs][hacsbadge]][hacs]
 
 <!-- [END BADGES] -->
 
@@ -22,33 +24,14 @@
 
 # Telenet for Home Assistant
 
-A Home Assistant integration allowing to monitor your mobile, internet, dtv and telephone usage
+Telenet custom component for Home Assistant, allowing to monitor your mobile, internet, dtv and telephone usage
 
 ## Installation
 
-### Using [HACS](https://hacs.xyz/) (recommended)
-
-1. Simply search for `Telenet` in HACS and install it easily.
-2. Restart Home Assistant
-3. Add the 'Telenet' integration via HA Settings > 'Devices and Services' > 'Integrations'
-4. Provide your Telenet BE username and password
-
-### Manual
-
-1. Copy the `custom_components/telenet` directory of this repository as `config/custom_components/telenet` in your Home Assistant instalation.
-2. Restart Home Assistant
-3. Add the 'Telenet' integration via HA Settings > 'Devices and Services' > 'Integrations'
-4. Provide your Telenet BE username and password
-
-This integration will set up the following platforms.
-
-Platform | Description
--- | --
-`telenet` | Home Assistant component for Telenet BE services
-
-## Contributions are welcome! ##
-
-If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
+- [HACS](https://hacs.xyz/): search for Telenet in HACS integrations and download it
+- Restart Home Assistant
+- Add the 'Telenet' integration via HA Settings > 'Devices and Services' > 'Integrations'
+- Provide your Telenet BE username and password
 
 ## Screenshots
 
@@ -97,7 +80,7 @@ filter:
 
 <details><summary>Show markdown code</summary>
 
-**Replace &lt;identifier&gt; by your Telenet identifier and &lt;customer_id&gt; by your Telenet account ID**
+**Replace &lt;identifier&gt; by the Telenet product identifier**
 
 ```
 type: markdown
@@ -110,24 +93,24 @@ content: >
   ## Modem info
   | | |
   |----:|----:|
-  |**Type**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","modemType")}}|
-  |**Model**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","model")}}|
-  |**Last seen**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeen")}}|
-  |**Last seen light**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeenLight")}}|
-  |**Public IP Adress**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+  |**Type**|{{state_attr("sensor.telenet_<identifier>_internet_network","modemType")}}|
+  |**Model**|{{state_attr("sensor.telenet_<identifier>_internet_network","model")}}|
+  |**Last seen**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeen")}}|
+  |**Last seen light**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeenLight")}}|
+  |**Public IP Adress**|{{state_attr("sensor.telenet_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
 
   ## Network clients
   |Name|IP|Interface|Vendor
-  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","clients") %}
+  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<identifier>_internet_network","clients") %}
   {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
   {%-endfor %}|{{item["connectedInterface"]}}|{{item["vendor"]}}{%-endfor %}
 
   ## Wifi Settings
   |||
   |----:|----:|
-  |**Wireless enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wirelessEnabled")}}|
-  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","homeSpotEnabled")}}|
-  |**Wps enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wifiWpsEnabled")}}|
+  |**Wireless enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wirelessEnabled")}}|
+  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","homeSpotEnabled")}}|
+  |**Wps enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wifiWpsEnabled")}}|
 ```
 
 </details>
@@ -139,4 +122,3 @@ The integration creates for each subscription linked to your account the followi
 Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/blob/main/documentation/SENSORS_LOGIC.md)
 
 ![Sensors flow](https://github.com/geertmeersman/telenet/raw/main/images/documentation/sensor_logic.png)
-
