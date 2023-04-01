@@ -6,6 +6,13 @@
 # Telenet for Home Assistant
 
 A Home Assistant integration allowing to monitor your mobile, internet, dtv and telephone usage
+
+### Features
+
+-   🌐 Internet sensors
+-   📱  Mobile sensors
+-   📺 DTV sensors
+-   📞 Telephone sensors
 ___
 
 <!-- [START BADGES] -->
