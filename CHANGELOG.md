@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.10](https://github.com/geertmeersman/telenet/tree/v2.0.10) (2023-04-01)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.9...v2.0.10)
+
 ## [v2.0.9](https://github.com/geertmeersman/telenet/tree/v2.0.9) (2023-04-01)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.8...v2.0.9)
