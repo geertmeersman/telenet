@@ -9,11 +9,12 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 
 ### Features
 
--   🌐 Internet sensors
--   📱  Mobile sensors
--   📺 DTV sensors
--   📞 Telephone sensors
-___
+- 🌐 Internet sensors
+- 📱 Mobile sensors
+- 📺 DTV sensors
+- 📞 Telephone sensors
+
+---
 
 <!-- [START BADGES] -->
 <!-- Please keep comment here to allow auto update -->
@@ -23,7 +24,6 @@ ___
 [![maintainer](https://img.shields.io/badge/maintainer-Geert%20Meersman-green?style=for-the-badge&logo=github)](https://github.com/geertmeersman)
 [![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
 
-
 [![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
@@ -31,7 +31,6 @@ ___
 
 [![Hacs and Hassfest validation](https://github.com/geertmeersman/telenet/actions/workflows/validate.yml/badge.svg)](https://github.com/geertmeersman/telenet/actions/workflows/validate.yml)
 [![Python](https://img.shields.io/badge/Python-FFD43B?logo=python)](https://github.com/geertmeersman/telenet/search?l=python)
-
 
 [![manifest version](https://img.shields.io/github/manifest-json/v/geertmeersman/telenet/master?filename=custom_components%2Ftelenet%2Fmanifest.json)](https://github.com/geertmeersman/telenet)
 [![github release](https://img.shields.io/github/v/release/geertmeersman/telenet?logo=github)](https://github.com/geertmeersman/telenet/releases)
@@ -60,17 +59,18 @@ ___
 
 This integration will set up the following platforms.
 
-Platform | Description
--- | --
-`telenet` | Home Assistant component for Telenet BE services
+| Platform  | Description                                      |
+| --------- | ------------------------------------------------ |
+| `telenet` | Home Assistant component for Telenet BE services |
 
-## Contributions are welcome! ##
+## Contributions are welcome!
 
 If you want to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
 
+## Troubleshooting
 
-## Troubleshooting ##
 1. You can enable logging for this integration specifically and share your logs, so I can have a deep dive investigation. To enable logging, update your `configuration.yaml` like this, we can get more information in Configuration -> Logs page
+
 ```
 logger:
   default: warning
@@ -81,6 +81,7 @@ logger:
 ## Configuration tip
 
 You can exclude some sensors as they contain quite some information, like e.g.
+
 ```
 recorder:
   exclude:
@@ -126,7 +127,7 @@ cards:
       **{{state_attr('sensor.telenet_<identifier>_internet_usage','days_until')}}**
       dag(en) tot nieuwe periode
 
-      Periode: 
+      Periode:
       {{state_attr('sensor.telenet_<identifier>_internet_usage','start_date')}}
       -
       {{state_attr('sensor.telenet_<identifier>_internet_usage','end_date')}}
@@ -281,4 +282,3 @@ Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/b
 | Plan sensor                                | ![Plan sensor](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/plan_sensor.png)                                   |
 | ONE for 2 bundle sensors                   | ![ONE for 2 bundle sensors](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/bundle_sensors.png)                   |
 | DTV sensors                                | ![DTV sensors](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/dtv_sensors.png)                                   |
-

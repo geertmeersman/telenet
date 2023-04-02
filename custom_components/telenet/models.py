@@ -43,6 +43,7 @@ class TelenetProduct:
     product_subscription_info: dict = field(default_factory=dict)
     product_extra_attributes: dict = field(default_factory=dict)
     product_extra_sensor: bool = False
+    product_price: dict = field(default_factory=dict)
     product_ignore_extra_sensor: bool = False
     customer_id: str = ""
     native_unit_of_measurement: str = None

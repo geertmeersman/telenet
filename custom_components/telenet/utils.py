@@ -19,14 +19,14 @@ def log_debug(input, force=False) -> None:
         _LOGGER.debug(input)
 
 
-def float_to_str(input) -> float:
+def str_to_float(input) -> float:
     """Transform float to string."""
     return float(input.replace(",", "."))
 
 
 def float_to_timestring(float_time, unit_type) -> str:
     """Transform float to timestring."""
-    float_time = float_to_str(float_time)
+    float_time = str_to_float(float_time)
     if unit_type.lower() == "seconds":
         float_time = float_time * 60 * 60
     elif unit_type.lower() == "minutes":
