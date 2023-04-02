@@ -62,6 +62,7 @@ class TelenetClient:
         self.user_details = {}
         self.plan_products = {}
         self.addresses = {}
+        self.request_error = {}
 
     def request(
         self,
@@ -97,6 +98,12 @@ class TelenetClient:
                 raise TelenetServiceException(
                     f"[{caller}] Expecting HTTP {expected} | Response HTTP {response.status_code}, Response: {response.text}, Url: {response.url}"
                 )
+            if (response.status_code == 403):
+                r = response.text
+                if r.find('code') != -1:
+                    log_debug(f"[{caller}] Telenet Service Error: {response.status_code} => {response.json().get('code')}")
+                    self.request_error = response.json()
+                    return False
             log_debug(
                 f"[TelenetClient|request] Received a HTTP {response.status_code}, nothing to worry about! We give it another try :-)"
             )
@@ -327,6 +334,9 @@ class TelenetClient:
                     billcycle.get("start_date"),
                     billcycle.get("end_date"),
                 )
+                if product_usage is False:
+                    log_debug("[create_extra_sensors|internet|product_usage] Failed to fetch, skipping")
+                    continue
                 daily_peak = []
                 daily_off_peak = []
                 daily_total = []
@@ -349,8 +359,17 @@ class TelenetClient:
                         daily_date.append(day.get('date'))
 
                 product_daily_usage = product_daily_usage.get('CURRENT')
+                if product_daily_usage is False:
+                    log_debug("[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping")
+                    continue
                 modem = self.modems(identifier)
+                if modem is False:
+                    log_debug("[create_extra_sensors|internet|modem] Failed to fetch, skipping")
+                    continue
                 wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
+                if wireless_settings is False:
+                    log_debug("[create_extra_sensors|internet|wireless_settings] Failed to fetch, skipping")
+                    continue
                 wifi_qr = None
                 usage = product_usage.get(type)
                 usage_pct = (
@@ -514,7 +533,13 @@ class TelenetClient:
                         billcycle.get("start_date"),
                         billcycle.get("end_date"),
                     )
+                    if product_usage is False:
+                        log_debug("[create_extra_sensors|dtv|product_usage] Failed to fetch, skipping")
+                        continue
                     devices = self.device_details(type, identifier)
+                    if devices is False:
+                        log_debug("[create_extra_sensors|dtv|devices] Failed to fetch, skipping")
+                        continue
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
@@ -549,7 +574,13 @@ class TelenetClient:
                         f"{self.user_details.get('identity_id')} {plan_identifier} {type} bundle"
                     )
                     usage = self.mobile_bundle_usage(plan_identifier, identifier)
+                    if usage is False:
+                        log_debug("[create_extra_sensors|mobile|usage] Failed to fetch, skipping")
+                        continue
                     next_billing_date = usage.get("nextBillingDate")
+                    if next_billing_date is False:
+                        log_debug("[create_extra_sensors|mobile|next_billing_date] Failed to fetch, skipping")
+                        continue
                     next_billing_date_time = datetime.strptime(
                         usage.get("nextBillingDate"), DATETIME_FORMAT
                     ).replace(tzinfo=None)
@@ -559,6 +590,9 @@ class TelenetClient:
                         "next_billing_date": next_billing_date,
                     }
                     bundleusage = self.mobile_bundle_usage(plan_identifier)
+                    if bundleusage is False:
+                        log_debug("[create_extra_sensors|mobile|bundleusage] Failed to fetch, skipping")
+                        continue
                     if self.all_products.get(bundle_key) is None:
                         """Bundle mobile sensors"""
                         log_debug(
@@ -692,6 +726,9 @@ class TelenetClient:
                         f"[TelenetClient|MOBILE] {type} BundleId: {plan_identifier}, id: {identifier}, {product.product_description_key}"
                     )
                     usage = self.mobile_usage(identifier)
+                    if usage is False:
+                        log_debug("[create_extra_sensors|mobile|usage] Failed to fetch, skipping")
+                        continue
                     next_billing_date = usage.get("nextBillingDate")
                     next_billing_date_time = datetime.strptime(
                         usage.get("nextBillingDate"), DATETIME_FORMAT
@@ -823,6 +860,8 @@ class TelenetClient:
     def product_details(self, url):
         """Fetch product_details."""
         response = self.request(url, "product_details", None, 200)
+        if response is False:
+            return False
         return response.json()
 
     def plan_info(self):
@@ -835,6 +874,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         for plan in response.json():
             self.plan_products[plan.get("identifier")] = plan
         return False
@@ -850,6 +891,8 @@ class TelenetClient:
             None,
             200
         )
+        if response is False:
+            return False
         cycle = response.json().get("billCycles")[0]
         if product_type == "internet":
             return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate"), "cycles": response.json().get("billCycles")}
@@ -864,6 +907,8 @@ class TelenetClient:
             None,
             200
         )
+        if response is False:
+            return False
         return response.json()
 
     def product_daily_usage(self, product_type, product_identifier, bill_cycle, from_date, to_date):
@@ -874,6 +919,8 @@ class TelenetClient:
             None,
             None
         )
+        if response is False:
+            return False
         if response.status_code != 200:
             return {}
         return response.json()
@@ -890,6 +937,8 @@ class TelenetClient:
                 None,
                 200,
             )
+            if response is False:
+                continue
             for product in response.json():
                 self.all_products[
                     product.get("identifier")
@@ -903,6 +952,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         return response.json()
 
     def mobile_bundle_usage(self, bundle_identifier, line_identifier=None):
@@ -921,6 +972,8 @@ class TelenetClient:
                 None,
                 200,
             )
+        if response is False:
+            return False
         return response.json()
 
     def modems(self, product_identifier):
@@ -931,6 +984,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         return response.json()
 
     def network_topology(self, mac):
@@ -941,6 +996,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         return response.json()
 
     def wireless_settings(self, mac, product_identifier):
@@ -951,6 +1008,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         return response.json()
 
     def device_details(self, product_type, product_identifier):
@@ -961,6 +1020,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         return response.json()
 
     def address(self, address_id):
@@ -976,5 +1037,7 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         self.addresses |= {address_id: response.json()}
         return response.json()
