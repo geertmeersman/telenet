@@ -110,32 +110,32 @@ cards:
       width="20"/>&nbsp;&nbsp;Je Internet
 
       ###
-      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','total_usage')}}**
+      **{{state_attr('sensor.telenet_<identifier>_internet_usage','total_usage')}}**
       verbruikt tijdens de huidige periode
 
 
       ###
-      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','used_percentage')}}**%
+      **{{state_attr('sensor.telenet_<identifier>_internet_usage','used_percentage')}}**%
       :
-      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','total_usage')}}
+      {{state_attr('sensor.telenet_<identifier>_internet_usage','total_usage')}}
       van de
-      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','allocated_usage')}}
+      {{state_attr('sensor.telenet_<identifier>_internet_usage','allocated_usage')}}
 
 
       Nog
-      **{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','days_until')}}**
+      **{{state_attr('sensor.telenet_<identifier>_internet_usage','days_until')}}**
       dag(en) tot nieuwe periode
 
       Periode: 
-      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','start_date')}}
+      {{state_attr('sensor.telenet_<identifier>_internet_usage','start_date')}}
       -
-      {{state_attr('sensor.telenet_<identifier>_internet_internet_usage','end_date')}}
+      {{state_attr('sensor.telenet_<identifier>_internet_usage','end_date')}}
 
       Wi-Free verbruik:
-      *{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','wifree_usage')}}*
+      *{{state_attr('sensor.telenet_<identifier>_internet_usage','wifree_usage')}}*
 
       Laatste update:
-      *{{state_attr('sensor.telenet_<identifier>_internet_internet_usage','last_update')
+      *{{state_attr('sensor.telenet_<identifier>_internet_usage','last_update')
       | as_timestamp | timestamp_custom("%d-%m-%Y %H:%M")}}*
   - type: custom:apexcharts-card
     graph_span: 20d
@@ -174,20 +174,21 @@ cards:
       - type: entity
         name: Totaal P+D
         attribute: total_usage_with_offpeak
-        entity: sensor.telenet_<identifier>_internet_internet_usage
+        entity: sensor.telenet_<identifier>_internet_usage
         icon: mdi:sigma
         unit: GB
       - type: entity
         name: Piekuren
         attribute: peak_usage
-        entity: sensor.telenet_<identifier>_internet_internet_usage
-        unit: GB
+        entity: sensor.telenet_<identifier>_internet_usage
         icon: mdi:arrow-up-bold
+        unit: GB
       - type: entity
         name: Daluren
         attribute: offpeak_usage
-        entity: sensor.telenet_<identifier>_internet_internet_usage
+        entity: sensor.telenet_<identifier>_internet_usage
         icon: mdi:arrow-down-bold
+        unit: GB
 
 ```
 
