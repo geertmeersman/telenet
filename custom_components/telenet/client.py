@@ -26,12 +26,12 @@ from .models import TelenetMobileProductExtraAttributes
 from .models import TelenetProduct
 from .models import TelenetTelephoneProductExtraAttributes
 from .utils import clean_ipv6
-from .utils import float_to_str
 from .utils import float_to_timestring
 from .utils import format_entity_name
 from .utils import get_json_dict_path
 from .utils import get_localized
 from .utils import log_debug
+from .utils import str_to_float
 
 
 class TelenetClient:
@@ -98,12 +98,16 @@ class TelenetClient:
                 raise TelenetServiceException(
                     f"[{caller}] Expecting HTTP {expected} | Response HTTP {response.status_code}, Response: {response.text}, Url: {response.url}"
                 )
-            if (response.status_code == 403):
+            if response.status_code == 403:
                 r = response.text
-                if r.find('code') != -1:
-                    log_debug(f"[{caller}] Telenet Service Error: {response.status_code} => {response.json().get('code')}")
-                    self.request_error = response.json()
-                    return False
+                if r.find("code") != -1:
+                    if response.json().get("code") not in ["OCAPI-ERR-667"]:
+                        log_debug(
+                            f"[{caller}] Telenet Service Access Forbidden for {self.username}: {response.status_code} => {response.json()}",
+                            True,
+                        )
+                        self.request_error = response.json()
+                        return False
             log_debug(
                 f"[TelenetClient|request] Received a HTTP {response.status_code}, nothing to worry about! We give it another try :-)"
             )
@@ -192,8 +196,22 @@ class TelenetClient:
             return False
         type = product.get("productType")
         log_debug(f"[TelenetClient|add_product] {identifier}, productType: {type}")
+        product_price = None
         if product.get("specurl") is not None:
             product_info = self.product_details(product.get("specurl")).get("product")
+            try:
+                salespricevatincl = product_info.get("characteristics").get(
+                    "salespricevatincl"
+                )
+                price = str_to_float(salespricevatincl.get("value"))
+                if price > 0:
+                    log_debug(
+                        f"[TelenetClient|add_product] Sales Price found for {identifier} {type}: {salespricevatincl}"
+                    )
+                    product_price = salespricevatincl
+            except Exception:
+                pass
+
         else:
             product_info = {}
         try:
@@ -215,6 +233,7 @@ class TelenetClient:
             product_info=product_info,
             product_address=self.address(product.get("addressId")),
             customer_id=self.user_details.get("customer_number"),
+            product_price=product_price,
         )
         self.add_product_type(type)
         return True
@@ -240,6 +259,8 @@ class TelenetClient:
             None,
             200,
         )
+        if response is False:
+            return False
         for a_product in response.json():
             plan_identifier = a_product.get("identifier")
             self.add_product(
@@ -247,11 +268,11 @@ class TelenetClient:
             )
             dtv_found = False
             log_debug(
-                f"[TelenetClient|DEBUG] Parent {a_product.get('identifier')} {a_product.get('productType')}"
+                f"[TelenetClient|products] Parent product {a_product.get('identifier')} {a_product.get('productType')}"
             )
             for product in a_product.get("children"):
                 log_debug(
-                    f"[TelenetClient|DEBUG] Child {product.get('identifier')} {product.get('productType')}"
+                    f"[TelenetClient|products] Child product {product.get('identifier')} {product.get('productType')}"
                 )
                 if product.get("productType") == "dtv":
                     dtv_found = True
@@ -294,9 +315,7 @@ class TelenetClient:
         plan_identifier = product.product_plan_identifier
         if use_plan_identifier:
             identifier = plan_identifier
-        product_key = format_entity_name(
-            f"{identifier} {type} {suffix}"
-        )
+        product_key = format_entity_name(f"{identifier} {type} {suffix}")
         return {
             product_key: TelenetProduct(
                 product_identifier=f"{identifier} {suffix}",
@@ -322,7 +341,20 @@ class TelenetClient:
             identifier = product.product_identifier
             plan_identifier = product.product_plan_identifier
             product_specs = self.product_details(product.product_specurl).get("product")
-            log_debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}")
+            log_debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}", True)
+            if product.product_price is not None:
+                product_without_specurl = product
+                product_without_specurl.specurl = None
+                new_products.update(
+                    self.construct_extra_sensor(
+                        product_without_specurl,
+                        "price",
+                        "euro",
+                        str_to_float(product.product_price.get("value")),
+                        product.product_price,
+                    )
+                )
+
             if type == "internet":
                 """------------------------"""
                 """| EXTRA INTERNET SENSORS |"""
@@ -335,14 +367,16 @@ class TelenetClient:
                     billcycle.get("end_date"),
                 )
                 if product_usage is False:
-                    log_debug("[create_extra_sensors|internet|product_usage] Failed to fetch, skipping")
+                    log_debug(
+                        "[create_extra_sensors|internet|product_usage] Failed to fetch, skipping"
+                    )
                     continue
                 daily_peak = []
                 daily_off_peak = []
                 daily_total = []
                 daily_date = []
                 product_daily_usage = {}
-                for cycle in billcycle.get('cycles'):
+                for cycle in billcycle.get("cycles"):
                     product_daily_usage |= {
                         cycle.get("billCycle"): self.product_daily_usage(
                             type,
@@ -352,23 +386,33 @@ class TelenetClient:
                             cycle.get("endDate"),
                         )
                     }
-                    for day in product_daily_usage.get(cycle.get("billCycle")).get('internetUsage')[0].get('dailyUsages'):
-                        daily_peak.append(day.get('peak'))
-                        daily_off_peak.append(day.get('offPeak'))
-                        daily_total.append(day.get('total'))
-                        daily_date.append(day.get('date'))
+                    for day in (
+                        product_daily_usage.get(cycle.get("billCycle"))
+                        .get("internetUsage")[0]
+                        .get("dailyUsages")
+                    ):
+                        daily_peak.append(day.get("peak"))
+                        daily_off_peak.append(day.get("offPeak"))
+                        daily_total.append(day.get("total"))
+                        daily_date.append(day.get("date"))
 
-                product_daily_usage = product_daily_usage.get('CURRENT')
+                product_daily_usage = product_daily_usage.get("CURRENT")
                 if product_daily_usage is False:
-                    log_debug("[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping")
+                    log_debug(
+                        "[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping"
+                    )
                     continue
                 modem = self.modems(identifier)
                 if modem is False:
-                    log_debug("[create_extra_sensors|internet|modem] Failed to fetch, skipping")
+                    log_debug(
+                        "[create_extra_sensors|internet|modem] Failed to fetch, skipping"
+                    )
                     continue
                 wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
                 if wireless_settings is False:
-                    log_debug("[create_extra_sensors|internet|wireless_settings] Failed to fetch, skipping")
+                    log_debug(
+                        "[create_extra_sensors|internet|wireless_settings] Failed to fetch, skipping"
+                    )
                     continue
                 wifi_qr = None
                 usage = product_usage.get(type)
@@ -475,7 +519,8 @@ class TelenetClient:
                             get_json_dict_path(
                                 product_daily_usage, "$.internetUsage[0].totalUsage"
                             )
-                        )|{
+                        )
+                        | {
                             "daily_peak": daily_peak,
                             "daily_off_peak": daily_off_peak,
                             "daily_total": daily_total,
@@ -534,11 +579,15 @@ class TelenetClient:
                         billcycle.get("end_date"),
                     )
                     if product_usage is False:
-                        log_debug("[create_extra_sensors|dtv|product_usage] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|dtv|product_usage] Failed to fetch, skipping"
+                        )
                         continue
                     devices = self.device_details(type, identifier)
                     if devices is False:
-                        log_debug("[create_extra_sensors|dtv|devices] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|dtv|devices] Failed to fetch, skipping"
+                        )
                         continue
                     new_products.update(
                         self.construct_extra_sensor(
@@ -575,11 +624,15 @@ class TelenetClient:
                     )
                     usage = self.mobile_bundle_usage(plan_identifier, identifier)
                     if usage is False:
-                        log_debug("[create_extra_sensors|mobile|usage] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|mobile|usage] Failed to fetch, skipping"
+                        )
                         continue
                     next_billing_date = usage.get("nextBillingDate")
                     if next_billing_date is False:
-                        log_debug("[create_extra_sensors|mobile|next_billing_date] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|mobile|next_billing_date] Failed to fetch, skipping"
+                        )
                         continue
                     next_billing_date_time = datetime.strptime(
                         usage.get("nextBillingDate"), DATETIME_FORMAT
@@ -591,7 +644,9 @@ class TelenetClient:
                     }
                     bundleusage = self.mobile_bundle_usage(plan_identifier)
                     if bundleusage is False:
-                        log_debug("[create_extra_sensors|mobile|bundleusage] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|mobile|bundleusage] Failed to fetch, skipping"
+                        )
                         continue
                     if self.all_products.get(bundle_key) is None:
                         """Bundle mobile sensors"""
@@ -603,7 +658,7 @@ class TelenetClient:
                                 product,
                                 "out of bundle",
                                 "euro",
-                                float_to_str(
+                                str_to_float(
                                     get_json_dict_path(
                                         bundleusage, "$.outOfBundle.usedUnits"
                                     )
@@ -666,7 +721,7 @@ class TelenetClient:
                             product,
                             "out of bundle",
                             "euro",
-                            float_to_str(
+                            str_to_float(
                                 get_json_dict_path(usage, "$.outOfBundle.usedUnits")
                             ),
                             self.create_extra_attributes_list(
@@ -681,7 +736,7 @@ class TelenetClient:
                                 product,
                                 data.get("name").lower(),
                                 "mobile_data",
-                                float_to_str(data.get("usedUnits")),
+                                str_to_float(data.get("usedUnits")),
                                 {
                                     "usage": f"{data.get('usedUnits')} {data.get('unitType')}"
                                 }
@@ -727,7 +782,9 @@ class TelenetClient:
                     )
                     usage = self.mobile_usage(identifier)
                     if usage is False:
-                        log_debug("[create_extra_sensors|mobile|usage] Failed to fetch, skipping")
+                        log_debug(
+                            "[create_extra_sensors|mobile|usage] Failed to fetch, skipping"
+                        )
                         continue
                     next_billing_date = usage.get("nextBillingDate")
                     next_billing_date_time = datetime.strptime(
@@ -744,7 +801,7 @@ class TelenetClient:
                             product,
                             "out of bundle",
                             "euro",
-                            float_to_str(
+                            str_to_float(
                                 get_json_dict_path(usage, "$.outOfBundle.usedUnits")
                             ),
                             self.create_extra_attributes_list(
@@ -765,7 +822,7 @@ class TelenetClient:
                                 product,
                                 "data",
                                 "mobile_data",
-                                float_to_str(data.get("usedUnits")),
+                                str_to_float(data.get("usedUnits")),
                                 {
                                     "usage": f"{data.get('usedUnits')} {data.get('unitType')}"
                                 }
@@ -889,15 +946,22 @@ class TelenetClient:
             f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
             "[TelenetClient|bill_cycles]",
             None,
-            200
+            200,
         )
         if response is False:
             return False
         cycle = response.json().get("billCycles")[0]
         if product_type == "internet":
-            return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate"), "cycles": response.json().get("billCycles")}
+            return {
+                "start_date": cycle.get("startDate"),
+                "end_date": cycle.get("endDate"),
+                "cycles": response.json().get("billCycles"),
+            }
         else:
-            return {"start_date": cycle.get("startDate"), "end_date": cycle.get("endDate")}
+            return {
+                "start_date": cycle.get("startDate"),
+                "end_date": cycle.get("endDate"),
+            }
 
     def product_usage(self, product_type, product_identifier, startDate, endDate):
         """Fetch product_usage."""
@@ -905,19 +969,21 @@ class TelenetClient:
             f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
             "[TelenetClient|product_usage]",
             None,
-            200
+            200,
         )
         if response is False:
             return False
         return response.json()
 
-    def product_daily_usage(self, product_type, product_identifier, bill_cycle, from_date, to_date):
+    def product_daily_usage(
+        self, product_type, product_identifier, bill_cycle, from_date, to_date
+    ):
         """Fetch daily usage."""
         response = self.request(
             f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
             "[TelenetClient|product_daily_usage]",
             None,
-            None
+            None,
         )
         if response is False:
             return False
