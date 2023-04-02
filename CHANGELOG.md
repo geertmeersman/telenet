@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.1.0](https://github.com/geertmeersman/telenet/tree/v2.1.0) (2023-04-02)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.18...v2.1.0)
+
+**Implemented enhancements:**
+
+- Catch Telenet ocapi errors [\#95](https://github.com/geertmeersman/telenet/pull/95) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v2.0.18](https://github.com/geertmeersman/telenet/tree/v2.0.18) (2023-04-02)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.17...v2.0.18)
