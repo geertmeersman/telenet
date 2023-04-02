@@ -12,14 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  title-checker:
-    name: Title conventional?
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Conventional PR Title
-        uses: aslafy-z/conventional-pr-title-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check_semver_labels:
     name: Check Semver labels
     runs-on: "ubuntu-latest"
