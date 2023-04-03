@@ -216,6 +216,32 @@ cards:
               attribute: offpeak_usage
               entity: ${'sensor.telenet_'+internet.identifier+'_internet_usage'}
               icon: mdi:arrow-down-bold
+        - type: custom:dual-gauge-card
+          title: false
+          min: 0
+          max: 100
+          shadeInner: true
+          cardwidth: 350
+          outer:
+            entity: ${'sensor.telenet_'+internet.identifier+'_internet_usage'}
+            label: used
+            min: 0
+            max: 100
+            unit: '%'
+            colors:
+              - color: var(--label-badge-green)
+                value: 0
+              - color: var(--label-badge-yellow)
+                value: 60
+              - color: var(--label-badge-red)
+                value: 80
+          inner:
+            entity: ${'sensor.telenet_'+internet.identifier+'_internet_usage'}
+            label: period
+            attribute: period_used_percentage
+            min: 0
+            max: 100
+            unit: '%'
 
 
 ```
