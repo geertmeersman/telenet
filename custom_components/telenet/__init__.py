@@ -104,28 +104,33 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
             )
         }
 
-        fetched_products = {str(product.product_identifier) for product in products}
-        log_debug(
-            f"[init|TelenetDataUpdateCoordinator|_async_update_data|fetched_products] {fetched_products}"
-        )
-        if stale_products := current_products - fetched_products:
-            for product_identifier in stale_products:
-                if device := self._device_registry.async_get_device(
-                    {(DOMAIN, product_identifier)}
-                ):
-                    log_debug(
-                        f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_remove_device] {product_identifier}"
-                    )
-                    self._device_registry.async_remove_device(device.id)
-
-        # If there are new products, we should reload the config entry so we can
-        # create new devices and entities.
-        if self.data and fetched_products - {
-            str(product.product_identifier) for product in self.data
-        }:
-            # log_debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
-            self.hass.async_create_task(
-                self.hass.config_entries.async_reload(self._config_entry_id)
+        if len(products) > 0:
+            fetched_products = {
+                str(product.product_plan_identifier) for product in products
+            }
+            log_debug(
+                f"[init|TelenetDataUpdateCoordinator|_async_update_data|fetched_products] {fetched_products}"
             )
-            return None
-        return products
+            if stale_products := current_products - fetched_products:
+                for product_identifier in stale_products:
+                    if device := self._device_registry.async_get_device(
+                        {(DOMAIN, product_identifier)}
+                    ):
+                        log_debug(
+                            f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_remove_device] {product_identifier}",
+                            True,
+                        )
+                        self._device_registry.async_remove_device(device.id)
+
+            # If there are new products, we should reload the config entry so we can
+            # create new devices and entities.
+            if self.data and fetched_products - {
+                str(product.product_plan_identifier) for product in self.data
+            }:
+                # log_debug(f"[init|TelenetDataUpdateCoordinator|_async_update_data|async_reload] {product.product_name}")
+                self.hass.async_create_task(
+                    self.hass.config_entries.async_reload(self._config_entry_id)
+                )
+                return None
+            return products
+        return []

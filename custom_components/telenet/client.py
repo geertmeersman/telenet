@@ -1,7 +1,6 @@
 """Telenet API Client."""
 from __future__ import annotations
 
-import time
 from datetime import datetime
 
 from requests import (
@@ -10,7 +9,6 @@ from requests import (
 
 from .const import BASE_HEADERS
 from .const import CONNECTION_RETRY
-from .const import CONNECTION_RETRY_WAIT
 from .const import DATE_FORMAT
 from .const import DATETIME_FORMAT
 from .const import DEFAULT_LANGUAGE
@@ -63,6 +61,7 @@ class TelenetClient:
         self.plan_products = {}
         self.addresses = {}
         self.request_error = {}
+        self.total_cost = 0
 
     def request(
         self,
@@ -75,7 +74,6 @@ class TelenetClient:
         connection_retry_left=CONNECTION_RETRY,
     ) -> dict:
         """Send a request to Telenet."""
-        CONNECTION_RETRY
         if data is None:
             log_debug(f"{caller} Calling GET {url}")
             response = self.session.get(url, timeout=REQUEST_TIMEOUT)
@@ -88,6 +86,9 @@ class TelenetClient:
         if log:
             log_debug(f"{caller} Response:\n{response.text}")
         if expected is not None and response.status_code != expected:
+            if response.status_code == 404:
+                self.request_error = response.json()
+                return False
             if (
                 response.status_code != 403
                 and response.status_code != 401
@@ -104,15 +105,17 @@ class TelenetClient:
                     if response.json().get("code") not in ["OCAPI-ERR-667"]:
                         log_debug(
                             f"[{caller}] Telenet Service Access Forbidden for {self.username}: {response.status_code} => {response.json()}",
-                            True,
                         )
                         self.request_error = response.json()
                         return False
+                    raise TelenetServiceException(
+                        f"{response.json().get('cause')} for {self.username}"
+                    )
+
             log_debug(
                 f"[TelenetClient|request] Received a HTTP {response.status_code}, nothing to worry about! We give it another try :-)"
             )
             self.login()
-            time.sleep(CONNECTION_RETRY_WAIT)
             response = self.request(
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
@@ -189,13 +192,17 @@ class TelenetClient:
             log_debug(f"[TelenetClient|add_product_type] {product_type}")
             self.product_types.append(product_type)
 
-    def add_product(self, product: dict, plan_identifier: str, state_prop: str) -> bool:
+    def add_product(
+        self, product: dict, plan_identifier: str, state_prop: str, plan_label: str
+    ) -> bool:
         """Add a discovered product."""
         identifier = product.get("identifier")
         if identifier in self.all_products:
             return False
         type = product.get("productType")
-        log_debug(f"[TelenetClient|add_product] {identifier}, productType: {type}")
+        log_debug(
+            f"[TelenetClient|add_product] {identifier}, productType: {type}, plan_label: {plan_label}"
+        )
         product_price = None
         if product.get("specurl") is not None:
             product_info = self.product_details(product.get("specurl")).get("product")
@@ -225,14 +232,13 @@ class TelenetClient:
             product_type=type,
             product_description_key=type,
             product_plan_identifier=plan_identifier,
+            product_plan_label=plan_label,
             product_name=identifier,
-            product_key=format_entity_name(f"{identifier} {type}"),
+            product_key=format_entity_name(f"{identifier} {type} product"),
             product_state=state,
-            product_description=product.get("label"),
             product_specurl=product.get("specurl"),
             product_info=product_info,
             product_address=self.address(product.get("addressId")),
-            customer_id=self.user_details.get("customer_number"),
             product_price=product_price,
         )
         self.add_product_type(type)
@@ -248,7 +254,8 @@ class TelenetClient:
             """Return the Telenet products present in the Client session"""
             log_debug("[TelenetClient|products] Returning cached products")
             return [self.all_products.get(product) for product in self.all_products]
-
+        self.login()
+        self.total_cost = 0
         log_debug("[TelenetClient|products] Fetching active products from Telenet")
         """ Refresh products """
         self.all_products = {}
@@ -263,8 +270,12 @@ class TelenetClient:
             return False
         for a_product in response.json():
             plan_identifier = a_product.get("identifier")
+            plan_label = a_product.get("label")
             self.add_product(
-                plan_identifier=plan_identifier, product=a_product, state_prop="label"
+                plan_identifier=plan_identifier,
+                product=a_product,
+                state_prop="label",
+                plan_label=plan_label,
             )
             dtv_found = False
             log_debug(
@@ -283,10 +294,14 @@ class TelenetClient:
                                 product=option,
                                 plan_identifier=plan_identifier,
                                 state_prop="label",
+                                plan_label=plan_label,
                             )
 
                 self.add_product(
-                    product=product, plan_identifier=plan_identifier, state_prop="label"
+                    product=product,
+                    plan_identifier=plan_identifier,
+                    state_prop="label",
+                    plan_label=plan_label,
                 )
             if dtv_found and a_product.get("productType") == "dtv":
                 log_debug("[TelenetClient|products] DTV child found & ignoring")
@@ -321,8 +336,8 @@ class TelenetClient:
                 product_identifier=f"{identifier} {suffix}",
                 product_type=type,
                 product_description_key=product_description_key,
-                product_suffix=suffix,
                 product_plan_identifier=plan_identifier,
+                product_plan_label=product.product_plan_label,
                 product_name=f"{identifier} {suffix}",
                 product_key=product_key,
                 product_state=product_state,
@@ -341,17 +356,23 @@ class TelenetClient:
             identifier = product.product_identifier
             plan_identifier = product.product_plan_identifier
             product_specs = self.product_details(product.product_specurl).get("product")
-            log_debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}", True)
+            product_type_attr = {
+                "product type": get_localized(
+                    self.language, product_specs.get("localizedcontent")
+                ).get("name")
+            }
+            log_debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}")
             if product.product_price is not None:
                 product_without_specurl = product
                 product_without_specurl.specurl = None
+                self.total_cost += str_to_float(product.product_price.get("value"))
                 new_products.update(
                     self.construct_extra_sensor(
                         product_without_specurl,
                         "price",
                         "euro",
                         str_to_float(product.product_price.get("value")),
-                        product.product_price,
+                        product.product_price | product_type_attr,
                     )
                 )
 
@@ -466,7 +487,9 @@ class TelenetClient:
                     "period_remaining_percentage": (100 - period_used_percentage),
                     "squeezed": usage_pct >= 100,
                     "period_length": period_length_days,
-                    "product_label": f"{get_localized(self.language, product_specs.get('localizedcontent')).get('name')}",
+                    "product_label": get_localized(
+                        self.language, product_specs.get("localizedcontent")
+                    ).get("name"),
                     "sales_price": f"{product_specs.get('characteristics').get('salespricevatincl').get('value')} {product_specs.get('characteristics').get('salespricevatincl').get('unit')}",
                 }
                 service = ""
@@ -550,10 +573,10 @@ class TelenetClient:
                 new_products.update(
                     self.construct_extra_sensor(
                         product,
-                        "wifi",
+                        "wi-fi",
                         "wifi",
                         wireless_settings.get("wirelessEnabled"),
-                        self.create_extra_attributes_list(network_topology),
+                        self.create_extra_attributes_list(wireless_settings),
                     )
                 )
                 if "networkKey" in wireless_settings.get("singleSSIDRoamingSettings"):
@@ -564,7 +587,7 @@ class TelenetClient:
                     )
                     wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
                     new_products.update(
-                        self.construct_extra_sensor(product, "qr", "qr", wifi_qr)
+                        self.construct_extra_sensor(product, "wi-fi qr", "qr", wifi_qr)
                     )
             elif type == "dtv":
                 """-------------------"""
@@ -589,24 +612,34 @@ class TelenetClient:
                             "[create_extra_sensors|dtv|devices] Failed to fetch, skipping"
                         )
                         continue
+
+                    self.total_cost += str_to_float(
+                        get_json_dict_path(
+                            product_usage, "$.dtv.totalUsage.currentUsage"
+                        )
+                    )
+
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
                             "usage",
                             "euro",
-                            get_json_dict_path(
-                                product_usage, "$.dtv.totalUsage.currentUsage"
+                            str_to_float(
+                                get_json_dict_path(
+                                    product_usage, "$.dtv.totalUsage.currentUsage"
+                                )
                             ),
                             self.create_extra_attributes_list(
                                 get_json_dict_path(product_usage, "$.dtv")
-                            ),
+                            )
+                            | product_type_attr,
                         )
                     )
                     for idx, _data in enumerate(devices.get("dtv")):
                         new_products.update(
                             self.construct_extra_sensor(
                                 product,
-                                "dtv",
+                                "dtv device",
                                 "dtv",
                                 get_json_dict_path(devices, f"$.dtv[{idx}].boxName"),
                                 self.create_extra_attributes_list(
@@ -653,6 +686,9 @@ class TelenetClient:
                         log_debug(
                             f"[TelenetClient|create_extra_sensors] Create Bundle Sensor BundleId: {plan_identifier}"
                         )
+                        self.total_cost += str_to_float(
+                            get_json_dict_path(bundleusage, "$.outOfBundle.usedUnits")
+                        )
                         new_products.update(
                             self.construct_extra_sensor(
                                 product,
@@ -666,7 +702,8 @@ class TelenetClient:
                                 self.create_extra_attributes_list(
                                     get_json_dict_path(bundleusage, "$.outOfBundle")
                                 )
-                                | attr_to_merge,
+                                | attr_to_merge
+                                | product_type_attr,
                                 use_plan_identifier=True,
                             )
                         )
@@ -716,6 +753,9 @@ class TelenetClient:
                                 )
                             )
                     """ Child mobile sensors """
+                    self.total_cost += str_to_float(
+                        get_json_dict_path(usage, "$.outOfBundle.usedUnits")
+                    )
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
@@ -727,7 +767,8 @@ class TelenetClient:
                             self.create_extra_attributes_list(
                                 get_json_dict_path(usage, "$.outOfBundle")
                             )
-                            | attr_to_merge,
+                            | attr_to_merge
+                            | product_type_attr,
                         )
                     )
                     for data in usage.get("shared").get("data"):
@@ -796,6 +837,9 @@ class TelenetClient:
                         "next_billing_date": next_billing_date,
                     }
                     """ Non bundle mobile sensors """
+                    self.total_cost += str_to_float(
+                        get_json_dict_path(usage, "$.outOfBundle.usedUnits")
+                    )
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
@@ -807,7 +851,8 @@ class TelenetClient:
                             self.create_extra_attributes_list(
                                 get_json_dict_path(usage, "$.outOfBundle")
                             )
-                            | attr_to_merge,
+                            | attr_to_merge
+                            | product_type_attr,
                             use_plan_identifier=True,
                         )
                     )
@@ -873,6 +918,45 @@ class TelenetClient:
                             )
                         )
 
+        product_name = "current invoice"
+        product_key = format_entity_name(
+            f"{self.user_details.get('customer_number')} {product_name}"
+        )
+        new_products.update(
+            {
+                product_key: TelenetProduct(
+                    product_identifier=f"{self.user_details.get('customer_number')} {product_name}",
+                    product_type="invoice",
+                    product_description_key="euro",
+                    product_name=f"{product_name}",
+                    product_key=product_key,
+                    product_plan_identifier=self.user_details.get("customer_number"),
+                    product_plan_label="Customer",
+                    product_state=self.total_cost,
+                    product_extra_sensor=True,
+                )
+            }
+        )
+        product_name = "user details"
+        product_key = format_entity_name(
+            f"{self.user_details.get('customer_number')} {product_name}"
+        )
+        new_products.update(
+            {
+                product_key: TelenetProduct(
+                    product_identifier=f"{product_name}",
+                    product_type="user",
+                    product_description_key="user",
+                    product_name=f"{product_name}",
+                    product_key=product_key,
+                    product_plan_identifier=self.user_details.get("customer_number"),
+                    product_plan_label="Customer",
+                    product_state=self.user_details.get("first_name"),
+                    product_extra_attributes=self.user_details,
+                    product_extra_sensor=True,
+                )
+            }
+        )
         self.all_products.update(new_products)
         return True
 

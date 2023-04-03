@@ -32,20 +32,18 @@ class TelenetProduct:
     product_key: str = ""
     product_address: dict = field(default_factory=dict)
     product_description_key: str = ""
-    product_suffix: str = ""
     product_state: str = "Inactive"
-    product_identifier: str = ("",)
+    product_identifier: str = ""
     product_type: str = ""
-    product_description: str = ""
     product_specurl: str = ""
     product_info: dict = field(default_factory=dict)
     product_plan_identifier: str = ""
+    product_plan_label: str = ""
     product_subscription_info: dict = field(default_factory=dict)
     product_extra_attributes: dict = field(default_factory=dict)
     product_extra_sensor: bool = False
     product_price: dict = field(default_factory=dict)
     product_ignore_extra_sensor: bool = False
-    customer_id: str = ""
     native_unit_of_measurement: str = None
 
 

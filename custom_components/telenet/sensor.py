@@ -42,6 +42,7 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     TelenetSensorDescription(key="network", icon="mdi:lan"),
     TelenetSensorDescription(key="wifi", icon="mdi:wifi"),
     TelenetSensorDescription(key="qr", icon="mdi:qrcode-scan"),
+    TelenetSensorDescription(key="user", icon="mdi:face-man"),
     TelenetSensorDescription(
         key="euro",
         icon="mdi:currency-eur",
@@ -89,35 +90,38 @@ async def async_setup_entry(
 
     # log_debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
 
-    for idx, product in enumerate(coordinator.data):
-        if description := SUPPORTED_KEYS.get(product.product_description_key):
-            if product.native_unit_of_measurement is not None:
-                native_unit_of_measurement = product.native_unit_of_measurement
-            else:
-                native_unit_of_measurement = description.native_unit_of_measurement
-            sensor_description = TelenetSensorDescription(
-                key=str(product.product_key),
-                name=product.product_name,
-                value_fn=description.value_fn,
-                native_unit_of_measurement=native_unit_of_measurement,
-                icon=description.icon,
-            )
-
-            log_debug(f"[sensor|async_setup_entry|adding] {product.product_identifier}")
-            entities.append(
-                TelenetSensor(
-                    coordinator,
-                    idx,
-                    sensor_description,
-                    product=product,
+    if coordinator.data is not None:
+        for product in coordinator.data:
+            if description := SUPPORTED_KEYS.get(product.product_description_key):
+                if product.native_unit_of_measurement is not None:
+                    native_unit_of_measurement = product.native_unit_of_measurement
+                else:
+                    native_unit_of_measurement = description.native_unit_of_measurement
+                sensor_description = TelenetSensorDescription(
+                    key=str(product.product_key),
+                    name=product.product_name,
+                    value_fn=description.value_fn,
+                    native_unit_of_measurement=native_unit_of_measurement,
+                    icon=description.icon,
                 )
-            )
-        else:
-            log_debug(
-                f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}"
-            )
 
-    async_add_entities(entities)
+                log_debug(
+                    f"[sensor|async_setup_entry|adding] {product.product_identifier}"
+                )
+                entities.append(
+                    TelenetSensor(
+                        coordinator=coordinator,
+                        description=sensor_description,
+                        product=product,
+                    )
+                )
+            else:
+                log_debug(
+                    f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}",
+                    True,
+                )
+
+        async_add_entities(entities)
 
 
 class TelenetSensor(TelenetEntity, SensorEntity):
@@ -128,12 +132,11 @@ class TelenetSensor(TelenetEntity, SensorEntity):
     def __init__(
         self,
         coordinator: TelenetDataUpdateCoordinator,
-        context: int,
         description: EntityDescription,
         product: TelenetProduct,
     ) -> None:
         """Set entity ID."""
-        super().__init__(coordinator, context, description, product)
+        super().__init__(coordinator, description, product)
         self.entity_id = (
             f"sensor.{DOMAIN}_{format_entity_name(self.product.product_key)}"
         )
