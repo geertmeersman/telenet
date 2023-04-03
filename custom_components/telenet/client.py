@@ -229,7 +229,7 @@ class TelenetClient:
             product_plan_identifier=plan_identifier,
             product_plan_label=plan_label,
             product_name=identifier,
-            product_key=format_entity_name(f"{identifier} product"),
+            product_key=format_entity_name(f"{identifier} {type} product"),
             product_state=state,
             product_specurl=product.get("specurl"),
             product_info=product_info,
@@ -324,7 +324,7 @@ class TelenetClient:
         plan_identifier = product.product_plan_identifier
         if use_plan_identifier:
             identifier = plan_identifier
-        product_key = format_entity_name(f"{identifier} {suffix}")
+        product_key = format_entity_name(f"{identifier} {type} {suffix}")
         return {
             product_key: TelenetProduct(
                 product_identifier=f"{identifier} {suffix}",
