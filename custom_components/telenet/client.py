@@ -86,6 +86,9 @@ class TelenetClient:
         if log:
             log_debug(f"{caller} Response:\n{response.text}")
         if expected is not None and response.status_code != expected:
+            if response.status_code == 404:
+                self.request_error = response.json()
+                return False
             if (
                 response.status_code != 403
                 and response.status_code != 401
