@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.1.2](https://github.com/geertmeersman/telenet/tree/v2.1.2) (2023-04-03)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.1.1...v2.1.2)
+
+**Merged pull requests:**
+
+- build\(deps\): bump actions/dependency-review-action from 2 to 3 [\#98](https://github.com/geertmeersman/telenet/pull/98) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump actions/checkout from 2 to 3 [\#97](https://github.com/geertmeersman/telenet/pull/97) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.1.1](https://github.com/geertmeersman/telenet/tree/v2.1.1) (2023-04-02)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.1.0...v2.1.1)
