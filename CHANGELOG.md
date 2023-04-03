@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.2](https://github.com/geertmeersman/telenet/tree/v3.0.2) (2023-04-03)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.1...v3.0.2)
+
+**Documentation:**
+
+- Readme addition for dual gauge [\#101](https://github.com/geertmeersman/telenet/pull/101) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.1](https://github.com/geertmeersman/telenet/tree/v3.0.1) (2023-04-03)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.0...v3.0.1)
