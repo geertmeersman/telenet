@@ -105,7 +105,9 @@ class TelenetClient:
                         )
                         self.request_error = response.json()
                         return False
-                    raise TelenetServiceException(f"{response.json().get('cause')}")
+                    raise TelenetServiceException(
+                        f"{response.json().get('cause')} for {self.username}"
+                    )
 
             log_debug(
                 f"[TelenetClient|request] Received a HTTP {response.status_code}, nothing to worry about! We give it another try :-)"
@@ -249,7 +251,8 @@ class TelenetClient:
             """Return the Telenet products present in the Client session"""
             log_debug("[TelenetClient|products] Returning cached products")
             return [self.all_products.get(product) for product in self.all_products]
-
+        self.login()
+        self.total_cost = 0
         log_debug("[TelenetClient|products] Fetching active products from Telenet")
         """ Refresh products """
         self.all_products = {}

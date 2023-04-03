@@ -28,12 +28,11 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
     def __init__(
         self,
         coordinator: TelenetDataUpdateCoordinator,
-        context: int,
         description: EntityDescription,
         product: TelenetProduct,
     ) -> None:
         """Initialize Telenet entities."""
-        super().__init__(coordinator, context=context)
+        super().__init__(coordinator)
         self.entity_description = description
         self._product = product
         self._attr_device_info = DeviceInfo(
@@ -48,43 +47,37 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         """
         extra attributes!
         """
-        self.context = (context,)
         self._attr_unique_id = (
             f"{DOMAIN}_{format_entity_name(self.product.product_key)}"
         )
+        self._product_key = self.product.product_key
         self.client = coordinator.client
         self.last_synced = datetime.now()
         self._attr_name = f"{self.product.product_identifier}".capitalize()
+        self._product = product
+        log_debug(f"[TelenetEntity|init] {self._product_key}")
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        log_debug(f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}")
-        self.last_synced = datetime.now()
-        # self._attr_is_on = self.coordinator.data[self.context]["state"]
-        self.async_write_ha_state()
-
-    @property
-    def _products(self) -> list[TelenetProduct]:
-        """Return all products."""
-        return self.coordinator.data or []
+        if len(self.coordinator.data):
+            for product in self.coordinator.data:
+                if self._product_key == product.product_key:
+                    self.last_synced = datetime.now()
+                    self._product = product
+                    self.async_write_ha_state()
+                    return
+        log_debug(
+            f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}: async_write_ha_state ignored since API fetch failed or not found",
+            True,
+        )
 
     @property
     def product(self) -> TelenetProduct:
         """Return the product for this entity."""
-        return next(
-            (
-                product
-                for product in self._products
-                if str(product.product_identifier) == self.entity_description.key
-            ),
-            self._product,
-        )
+        return self._product
 
-    """
     @property
-    def product_available(self) -> bool:
-        return bool(
-            self.product.product_state is not None
-        )
-    """
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self._product is not None
