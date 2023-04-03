@@ -573,7 +573,7 @@ class TelenetClient:
                         "wi-fi",
                         "wifi",
                         wireless_settings.get("wirelessEnabled"),
-                        self.create_extra_attributes_list(network_topology),
+                        self.create_extra_attributes_list(wireless_settings),
                     )
                 )
                 if "networkKey" in wireless_settings.get("singleSSIDRoamingSettings"):
