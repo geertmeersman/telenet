@@ -42,6 +42,7 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     TelenetSensorDescription(key="network", icon="mdi:lan"),
     TelenetSensorDescription(key="wifi", icon="mdi:wifi"),
     TelenetSensorDescription(key="qr", icon="mdi:qrcode-scan"),
+    TelenetSensorDescription(key="user", icon="mdi:face-man"),
     TelenetSensorDescription(
         key="euro",
         icon="mdi:currency-eur",
@@ -114,7 +115,8 @@ async def async_setup_entry(
             )
         else:
             log_debug(
-                f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}"
+                f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}",
+                True,
             )
 
     async_add_entities(entities)

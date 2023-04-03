@@ -38,11 +38,11 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         self._product = product
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, str(self.product.product_plan_identifier))},
-            name=self.product.product_plan_identifier,
+            name=f"{self.product.product_plan_label} {self.product.product_plan_identifier}",
             manufacturer=NAME,
             configuration_url=WEBSITE,
             entry_type=DeviceEntryType.SERVICE,
-            model=self.product.product_description,
+            model=self.product.product_plan_label,
             sw_version=VERSION,
         )
         """
@@ -54,6 +54,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         )
         self.client = coordinator.client
         self.last_synced = datetime.now()
+        self._attr_name = f"{self.product.product_identifier}".capitalize()
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -62,15 +63,6 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         self.last_synced = datetime.now()
         # self._attr_is_on = self.coordinator.data[self.context]["state"]
         self.async_write_ha_state()
-
-    @property
-    def id_suffix(self) -> str:
-        """Return id suffix."""
-        if self.product.product_suffix is None:
-            suffix = ""
-        else:
-            suffix = f"_{self.product.product_suffix}"
-        return f"{self.product.product_identifier}{suffix}"
 
     @property
     def _products(self) -> list[TelenetProduct]:
