@@ -81,3 +81,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
     def available(self) -> bool:
         """Return if entity is available."""
         return self._product is not None
+
+    async def async_update(self) -> None:
+        """Update the entity.  Only used by the generic entity update service."""
+        return
