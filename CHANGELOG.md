@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.1](https://github.com/geertmeersman/telenet/tree/v3.0.1) (2023-04-03)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.0...v3.0.1)
+
+**Implemented enhancements:**
+
+- Fix update with override [\#100](https://github.com/geertmeersman/telenet/pull/100) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.0](https://github.com/geertmeersman/telenet/tree/v3.0.0) (2023-04-03)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.1.2...v3.0.0)
