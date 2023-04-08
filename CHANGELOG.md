@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.4](https://github.com/geertmeersman/telenet/tree/v3.0.4) (2023-04-08)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.3...v3.0.4)
+
+**Merged pull requests:**
+
+- Discord link set to never expire [\#103](https://github.com/geertmeersman/telenet/pull/103) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.3](https://github.com/geertmeersman/telenet/tree/v3.0.3) (2023-04-08)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.2...v3.0.3)
