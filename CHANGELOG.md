@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.3](https://github.com/geertmeersman/telenet/tree/v3.0.3) (2023-04-08)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.2...v3.0.3)
+
+**Documentation:**
+
+- Update README.md - Discord server added [\#102](https://github.com/geertmeersman/telenet/pull/102) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.2](https://github.com/geertmeersman/telenet/tree/v3.0.2) (2023-04-03)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.1...v3.0.2)
@@ -400,15 +408,15 @@
 
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
-
-## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.1)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.2)
 
 ## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.0)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.0)
+
+## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.1)
 
 **Merged pull requests:**
 
