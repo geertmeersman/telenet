@@ -84,7 +84,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 self._abort_if_unique_id_configured()
                 log_debug(f"New account {self.new_title} added")
                 return self.finish_flow()
-           errors = test["errors"]
+            errors = test["errors"]
         fields = {
             vol.Required(CONF_USERNAME): TextSelector(
                 TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
