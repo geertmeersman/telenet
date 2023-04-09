@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.5](https://github.com/geertmeersman/telenet/tree/v3.0.5) (2023-04-09)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.4...v3.0.5)
+
+**Fixed bugs:**
+
+- Fix error message in config flow [\#104](https://github.com/geertmeersman/telenet/pull/104) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.4](https://github.com/geertmeersman/telenet/tree/v3.0.4) (2023-04-08)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.3...v3.0.4)
