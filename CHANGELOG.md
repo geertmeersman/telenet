@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.6](https://github.com/geertmeersman/telenet/tree/v3.0.6) (2023-04-09)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.5...v3.0.6)
+
+**Fixed bugs:**
+
+- Indentation correction [\#105](https://github.com/geertmeersman/telenet/pull/105) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.5](https://github.com/geertmeersman/telenet/tree/v3.0.5) (2023-04-09)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.4...v3.0.5)
