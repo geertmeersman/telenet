@@ -70,6 +70,8 @@ class TelenetCommonFlow(ABC, FlowHandler):
         self, user_input: dict | None = None
     ) -> FlowResult:
         """Handle connection configuration."""
+        errors: dict = {}
+
         if user_input is not None:
             user_input = self.new_data() | user_input
             test = await self.test_connection(user_input)
@@ -82,8 +84,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 self._abort_if_unique_id_configured()
                 log_debug(f"New account {self.new_title} added")
                 return self.finish_flow()
-
-            return self.finish_flow()
+           errors = test["errors"]
         fields = {
             vol.Required(CONF_USERNAME): TextSelector(
                 TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
@@ -98,7 +99,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
             ),
         }
         return self.async_show_form(
-            step_id="connection_init", data_schema=vol.Schema(fields)
+            step_id="connection_init", data_schema=vol.Schema(fields),errors=errors,
         )
 
     async def async_step_language(self, user_input: dict | None = None) -> FlowResult:
