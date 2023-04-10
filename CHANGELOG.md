@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.7](https://github.com/geertmeersman/telenet/tree/v3.0.7) (2023-04-10)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.6...v3.0.7)
+
+**Implemented enhancements:**
+
+- CODEOWNERS file added [\#106](https://github.com/geertmeersman/telenet/pull/106) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.6](https://github.com/geertmeersman/telenet/tree/v3.0.6) (2023-04-09)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.5...v3.0.6)
