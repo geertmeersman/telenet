@@ -341,6 +341,6 @@ Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/b
 
 ## Code origin
 
-The code of this Home Assistant integration has been written by analysing the calls done by Telenet website and by contributing to the integration made by [@myTselection](https://github.com/myTselection). It made me curious on how to build an integration from scratch, using the recommendations here https://developers.home-assistant.io/docs/creating_component_index/. I tried to pull out of the website as much information as possible.
+The code of this Home Assistant integration has been written by analysing the calls made by the Telenet website and by contributing to the integration made by [@myTselection](https://github.com/myTselection). It made me curious on how to build an integration from scratch, using the recommendations here https://developers.home-assistant.io/docs/creating_component_index/. I tried to pull out of the website as much information as possible.
 
 I have no link with Telenet Group N.V.
