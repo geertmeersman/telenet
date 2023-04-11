@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.10](https://github.com/geertmeersman/telenet/tree/v3.0.10) (2023-04-11)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.9...v3.0.10)
+
+**Merged pull requests:**
+
+- build\(deps\): bump ruff from 0.0.260 to 0.0.261 [\#109](https://github.com/geertmeersman/telenet/pull/109) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.0.9](https://github.com/geertmeersman/telenet/tree/v3.0.9) (2023-04-10)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.8...v3.0.9)
