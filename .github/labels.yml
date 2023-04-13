@@ -1,12 +1,6 @@
 - name: fix
   description: A bug correction
   color: d3fc03
-- name: bug
-  description: Something isn't working
-  color: d73a4a
-- name: feature
-  description: A new feature or request
-  color: a2eeef
 - name: enhancement
   description: A new feature or request
   color: a2eeef
