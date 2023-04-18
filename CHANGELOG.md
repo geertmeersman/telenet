@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.11](https://github.com/geertmeersman/telenet/tree/v3.0.11) (2023-04-18)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.10...v3.0.11)
+
+**Merged pull requests:**
+
+- build\(deps\): update pip requirement from \<23.1,\>=8.0.3 to \>=8.0.3,\<23.2 [\#110](https://github.com/geertmeersman/telenet/pull/110) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.0.10](https://github.com/geertmeersman/telenet/tree/v3.0.10) (2023-04-11)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.9...v3.0.10)
@@ -36,7 +44,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.5...v3.0.6)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - Indentation correction [\#105](https://github.com/geertmeersman/telenet/pull/105) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -44,7 +52,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.4...v3.0.5)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - Fix error message in config flow [\#104](https://github.com/geertmeersman/telenet/pull/104) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -157,7 +165,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.12...v2.0.13)
 
-**Fixed bugs:**
+**Documentation:**
 
 - feat: Peak and off-peak usage attributes as separate list in attributes and language fix [\#89](https://github.com/geertmeersman/telenet/pull/89) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -189,7 +197,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.7...v2.0.8)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - fix: import format\_entity\_name [\#86](https://github.com/geertmeersman/telenet/pull/86) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -205,7 +213,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.5...v2.0.6)
 
-**Fixed bugs:**
+**Merged pull requests:**
 
 - fix: address id none [\#84](https://github.com/geertmeersman/telenet/pull/84) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -464,15 +472,15 @@
 
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.2)
-
-## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.0)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.1)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.0...0.2.1)
+
+## [0.2.0](https://github.com/geertmeersman/telenet/tree/0.2.0) (2023-03-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.1.5...0.2.0)
 
 **Merged pull requests:**
 
