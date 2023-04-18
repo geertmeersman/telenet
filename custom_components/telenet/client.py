@@ -89,9 +89,6 @@ class TelenetClient:
             if response.status_code == 404:
                 self.request_error = response.json()
                 return False
-            if response.status_code == 500:
-                self.request_error = response.json()
-                return False
             if (
                 response.status_code != 403
                 and response.status_code != 401
@@ -408,7 +405,7 @@ class TelenetClient:
                         cycle.get("startDate"),
                         cycle.get("endDate"),
                     )
-                    if daily_usage is False:
+                    if len(daily_usage) == 0:
                         continue
                     product_daily_usage |= {cycle.get("billCycle"): daily_usage}
                     for day in (
