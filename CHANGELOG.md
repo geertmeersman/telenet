@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.0.14](https://github.com/geertmeersman/telenet/tree/v3.0.14) (2023-04-18)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.13...v3.0.14)
+
+**Merged pull requests:**
+
+- Workaround 500 bug daily usage, fixes \#112 [\#114](https://github.com/geertmeersman/telenet/pull/114) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.13](https://github.com/geertmeersman/telenet/tree/v3.0.13) (2023-04-18)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.12...v3.0.13)
