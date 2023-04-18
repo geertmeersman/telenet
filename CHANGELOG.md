@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.0.13](https://github.com/geertmeersman/telenet/tree/v3.0.13) (2023-04-18)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.12...v3.0.13)
+
+**Closed issues:**
+
+- Exception 'NoneType' [\#112](https://github.com/geertmeersman/telenet/issues/112)
+
+**Merged pull requests:**
+
+- Workaround 500 bug daily usage, fixes \#112 [\#113](https://github.com/geertmeersman/telenet/pull/113) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.0.12](https://github.com/geertmeersman/telenet/tree/v3.0.12) (2023-04-18)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.11...v3.0.12)
