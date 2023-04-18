@@ -89,6 +89,9 @@ class TelenetClient:
             if response.status_code == 404:
                 self.request_error = response.json()
                 return False
+            if response.status_code == 500:
+                self.request_error = response.json()
+                return False
             if (
                 response.status_code != 403
                 and response.status_code != 401
@@ -398,15 +401,16 @@ class TelenetClient:
                 daily_date = []
                 product_daily_usage = {}
                 for cycle in billcycle.get("cycles"):
-                    product_daily_usage |= {
-                        cycle.get("billCycle"): self.product_daily_usage(
-                            type,
-                            identifier,
-                            cycle.get("billCycle"),
-                            cycle.get("startDate"),
-                            cycle.get("endDate"),
-                        )
-                    }
+                    daily_usage = self.product_daily_usage(
+                        type,
+                        identifier,
+                        cycle.get("billCycle"),
+                        cycle.get("startDate"),
+                        cycle.get("endDate"),
+                    )
+                    if daily_usage is False:
+                        continue
+                    product_daily_usage |= {cycle.get("billCycle"): daily_usage}
                     for day in (
                         product_daily_usage.get(cycle.get("billCycle"))
                         .get("internetUsage")[0]
