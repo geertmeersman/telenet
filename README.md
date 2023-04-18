@@ -25,7 +25,6 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 [![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
 [![discord](https://img.shields.io/discord/1094193683332612116?style=for-the-badge&logo=discord)](https://discord.gg/jPHKexJ3ad)
 
-
 [![GitHub issues](https://img.shields.io/github/issues/geertmeersman/telenet)](https://github.com/geertmeersman/telenet/issues)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/geertmeersman/telenet.svg)](http://isitmaintained.com/project/geertmeersman/telenet)
@@ -155,14 +154,12 @@ cards:
           apex_config:
             tooltip:
               enabled: true
-            x:
-              show: false
-              format: dd MMMM
-            fixed:
-              enabled: true
-              position: topLeft
-              offsetX: 70
-              offsetY: 10
+              followCursor: true
+              x:
+                show: false
+                format: dd MMMM yyyy
+              'y':
+                show: true
           span:
             end: day
             offset: >-
@@ -176,6 +173,7 @@ cards:
             title: ${'Verbruik piek en daluren huidige periode '+internet.identifier}
           now:
             show: true
+            label: Vandaag
           series:
             - entity: ${'sensor.telenet_'+internet.identifier+'_internet_daily_usage'}
               name: Daluren
@@ -337,7 +335,6 @@ Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/b
 | Plan sensor                                | ![Plan sensor](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/plan_sensor.png)                                   |
 | ONE for 2 bundle sensors                   | ![ONE for 2 bundle sensors](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/bundle_sensors.png)                   |
 | DTV sensors                                | ![DTV sensors](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/dtv_sensors.png)                                   |
-
 
 ## Code origin
 

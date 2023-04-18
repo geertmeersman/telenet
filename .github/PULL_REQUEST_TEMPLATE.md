@@ -18,7 +18,6 @@
 - [ ] **Breaking change** (fix or feature that would cause existing functionality to change)
 - [ ] **Enhancement** (changes that improvement of current feature or performance)
 - [ ] **Refactoring** (changes that neither fixes a bug nor adds a feature)
-- [ ] **Test Case** (changes that add missing tests or correct existing tests)
 - [ ] **Code style optimization** (changes that do not affect the meaning of the code)
 - [ ] **Docs** (changes that only update documentation)
 - [ ] **Chore** (changes that don't modify src or test files)
