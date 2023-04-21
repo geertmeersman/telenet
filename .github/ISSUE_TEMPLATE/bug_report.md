@@ -23,5 +23,16 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Log information**
+If possible activate debug logging on the component as mentioned below.
+
+https://www.home-assistant.io/integrations/logger/
+```
+logger:
+  default: warning
+  logs:
+    custom_components.telenet: debug
+```
+
 **Additional context**
 Add any other context about the problem here.
