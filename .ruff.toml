@@ -45,4 +45,4 @@ fixture-parentheses = false
 keep-runtime-typing = true
 
 [mccabe]
-max-complexity = 40
+max-complexity = 50
