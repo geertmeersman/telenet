@@ -47,6 +47,7 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 The Pull request is still pending merge for the hacs-default repository. So until that time, add my repository as a custom repository in hacs and the integration will show up.
 
 Explanation: https://hacs.xyz/docs/faq/custom_repositories/
+
 ```
 Repository: geertmeersman/telenet
 Category: Integration
@@ -86,6 +87,16 @@ logger:
   logs:
     custom_components.telenet: debug
 ```
+
+2. If you receive this exception in the logs:
+
+```
+No products found. Either the API is currenlty down or you are not migrated to the new Telenet IT system yet.
+```
+
+This might mean that your account is not migrated yet to the new Telenet IT platform. I only support the newest API, which is rolling out since beginning of 2023. So you'll need to be patient and hope Telenet migrates your account soon.
+
+3. If none of the above helped, you can always create an issue on Github or reach out on [Discord](https://discord.gg/jPHKexJ3ad)
 
 ## Configuration tip
 
