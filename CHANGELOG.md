@@ -1,5 +1,23 @@
 # Changelog
 
+## [v3.1.0](https://github.com/geertmeersman/telenet/tree/v3.1.0) (2023-04-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.16...v3.1.0)
+
+**Implemented enhancements:**
+
+- Manually launch version & release workflow [\#117](https://github.com/geertmeersman/telenet/pull/117) ([geertmeersman](https://github.com/geertmeersman))
+
+**Closed issues:**
+
+- error on setup : object of type 'bool' has no len\(\) [\#120](https://github.com/geertmeersman/telenet/issues/120)
+
+**Merged pull requests:**
+
+- Catch product error, fixes \#120 [\#121](https://github.com/geertmeersman/telenet/pull/121) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump actions/setup-python from 4.5.0 to 4.6.0 [\#119](https://github.com/geertmeersman/telenet/pull/119) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump ruff from 0.0.261 to 0.0.262 [\#118](https://github.com/geertmeersman/telenet/pull/118) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.0.16](https://github.com/geertmeersman/telenet/tree/v3.0.16) (2023-04-21)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.15...v3.0.16)
