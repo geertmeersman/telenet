@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.1](https://github.com/geertmeersman/telenet/tree/v3.1.1) (2023-04-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.0...v3.1.1)
+
+**Implemented enhancements:**
+
+- Raise TelenetServiceException when no products are found [\#122](https://github.com/geertmeersman/telenet/pull/122) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.0](https://github.com/geertmeersman/telenet/tree/v3.1.0) (2023-04-25)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.16...v3.1.0)
