@@ -267,7 +267,9 @@ class TelenetClient:
             200,
         )
         if response is False:
-            return False
+            raise TelenetServiceException(
+                "No products found. Either the API is currenlty down or you are not migrated to the new Telenet IT system yet."
+            )
         for a_product in response.json():
             plan_identifier = a_product.get("identifier")
             plan_label = a_product.get("label")
