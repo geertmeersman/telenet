@@ -104,7 +104,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
             )
         }
 
-        if len(products) > 0:
+        if type(products) is list and len(products) > 0:
             fetched_products = {
                 str(product.product_plan_identifier) for product in products
             }
