@@ -20,6 +20,7 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 <!-- Please keep comment here to allow auto update -->
 
 [![MIT License](https://img.shields.io/github/license/geertmeersman/telenet?style=for-the-badge)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
+[![Open your Home Assistant instance and open the repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=geertmeersman&repository=telenet&category=integration)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![maintainer](https://img.shields.io/badge/maintainer-Geert%20Meersman-green?style=for-the-badge&logo=github)](https://github.com/geertmeersman)
 [![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
@@ -43,15 +44,6 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 <!-- [END BADGES] -->
 
 ## Installation
-
-The Pull request is still pending merge for the hacs-default repository. So until that time, add my repository as a custom repository in hacs and the integration will show up.
-
-Explanation: https://hacs.xyz/docs/faq/custom_repositories/
-
-```
-Repository: geertmeersman/telenet
-Category: Integration
-```
 
 ### Using [HACS](https://hacs.xyz/) (recommended)
 
