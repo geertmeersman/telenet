@@ -21,7 +21,7 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 
 [![MIT License](https://img.shields.io/github/license/geertmeersman/telenet?style=for-the-badge)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
 [![Open your Home Assistant instance and open the repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg?style=for-the-badge)](https://my.home-assistant.io/redirect/hacs_repository/?owner=geertmeersman&repository=telenet&category=integration)
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge))](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 [![maintainer](https://img.shields.io/badge/maintainer-Geert%20Meersman-green?style=for-the-badge&logo=github)](https://github.com/geertmeersman)
 [![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
 [![discord](https://img.shields.io/discord/1094193683332612116?style=for-the-badge&logo=discord)](https://discord.gg/jPHKexJ3ad)
