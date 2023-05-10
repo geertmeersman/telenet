@@ -128,7 +128,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 return self.finish_flow()
 
         fields = {
-            vol.Required(CONF_LANGUAGE): vol.In(LANGUAGE_CHOICES),
+            vol.Required(CONF_LANGUAGE): LANGUAGE_SELECTOR,
         }
         return self.async_show_form(
             step_id="language",
