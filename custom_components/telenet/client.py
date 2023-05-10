@@ -432,13 +432,6 @@ class TelenetClient:
                         "[create_extra_sensors|internet|modem] Failed to fetch, skipping"
                     )
                     continue
-                wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
-                if wireless_settings is False:
-                    log_debug(
-                        "[create_extra_sensors|internet|wireless_settings] Failed to fetch, skipping"
-                    )
-                    continue
-                wifi_qr = None
                 usage = product_usage.get(type)
                 usage_pct = (
                     100
@@ -573,25 +566,32 @@ class TelenetClient:
                         self.create_extra_attributes_list(network_topology),
                     )
                 )
-                new_products.update(
-                    self.construct_extra_sensor(
-                        product,
-                        "wi-fi",
-                        "wifi",
-                        wireless_settings.get("wirelessEnabled"),
-                        self.create_extra_attributes_list(wireless_settings),
-                    )
-                )
-                if "networkKey" in wireless_settings.get("singleSSIDRoamingSettings"):
-                    network_key = (
-                        wireless_settings.get("singleSSIDRoamingSettings")
-                        .get("networkKey")
-                        .replace(":", r"\:")
-                    )
-                    wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
+                wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
+                if wireless_settings is not False:
+                    wifi_qr = None
                     new_products.update(
-                        self.construct_extra_sensor(product, "wi-fi qr", "qr", wifi_qr)
+                        self.construct_extra_sensor(
+                            product,
+                            "wi-fi",
+                            "wifi",
+                            wireless_settings.get("wirelessEnabled"),
+                            self.create_extra_attributes_list(wireless_settings),
+                        )
                     )
+                    if "networkKey" in wireless_settings.get(
+                        "singleSSIDRoamingSettings"
+                    ):
+                        network_key = (
+                            wireless_settings.get("singleSSIDRoamingSettings")
+                            .get("networkKey")
+                            .replace(":", r"\:")
+                        )
+                        wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
+                        new_products.update(
+                            self.construct_extra_sensor(
+                                product, "wi-fi qr", "qr", wifi_qr
+                            )
+                        )
             elif type == "dtv":
                 """-------------------"""
                 """| EXTRA DTV SENSORS |"""
@@ -1159,9 +1159,9 @@ class TelenetClient:
             f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}",
             "[TelenetClient|wireless_settings]",
             None,
-            200,
+            None,
         )
-        if response is False:
+        if response is False or response.status_code == 500:
             return False
         return response.json()
 

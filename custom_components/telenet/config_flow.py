@@ -99,7 +99,9 @@ class TelenetCommonFlow(ABC, FlowHandler):
             ),
         }
         return self.async_show_form(
-            step_id="connection_init", data_schema=vol.Schema(fields),errors=errors,
+            step_id="connection_init",
+            data_schema=vol.Schema(fields),
+            errors=errors,
         )
 
     async def async_step_language(self, user_input: dict | None = None) -> FlowResult:
@@ -200,6 +202,9 @@ class TelenetOptionsFlow(TelenetCommonFlow, OptionsFlow):
             self.config_entry,
             data=new_data,
             title=self.new_title or UNDEFINED,
+        )
+        self.hass.async_create_task(
+            self.hass.config_entries.async_reload(self.config_entry.entry_id)
         )
         return self.async_create_entry(title="", data={})
 
