@@ -87,6 +87,9 @@ No products found. Either the API is currently down or you are not migrated to t
 ```
 
 This might mean that your account is not migrated yet to the new Telenet IT platform. I only support the newest API, which is rolling out since beginning of 2023. So you'll need to be patient and hope Telenet migrates your account soon.
+If your interface still has this kind of layout, your account is not migrated yet to the new Telenet platform
+
+![API V1](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/api_v1.png)
 
 3. If none of the above helped, you can always create an issue on Github or reach out on [Discord](https://discord.gg/jPHKexJ3ad)
 
