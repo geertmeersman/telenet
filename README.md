@@ -226,6 +226,7 @@ cards:
               name: Daluren
               attribute: offpeak_usage
               entity: ${'sensor.telenet_'+internet.identifier+'_internet_usage'}
+			  unit: GB
               icon: mdi:arrow-down-bold
         - type: custom:dual-gauge-card
           title: false
@@ -309,7 +310,7 @@ content: >
   |Name|IP|Interface|Vendor
   |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","clients") %}
   {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
-  {%-endfor %}|{{item["connectedInterface"]}}|{{item["vendor"]}}{%-endfor %}
+  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|{%-endif %}{%-endfor %}
 
   ## Wifi Settings
   |||
