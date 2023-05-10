@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.1.3](https://github.com/geertmeersman/telenet/tree/v3.1.3) (2023-05-10)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.2...v3.1.3)
+
+**Implemented enhancements:**
+
+- Config flow:  Remove email validator & language choice improvement [\#133](https://github.com/geertmeersman/telenet/pull/133) ([geertmeersman](https://github.com/geertmeersman))
+
+**Documentation:**
+
+- chore: fix spelling [\#131](https://github.com/geertmeersman/telenet/pull/131) ([CumpsD](https://github.com/CumpsD))
+
 ## [v3.1.2](https://github.com/geertmeersman/telenet/tree/v3.1.2) (2023-05-10)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.1...v3.1.2)
