@@ -226,7 +226,7 @@ cards:
               name: Daluren
               attribute: offpeak_usage
               entity: ${'sensor.telenet_'+internet.identifier+'_internet_usage'}
-			  unit: GB
+              unit: GB
               icon: mdi:arrow-down-bold
         - type: custom:dual-gauge-card
           title: false
