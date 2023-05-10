@@ -62,5 +62,14 @@
     "abort": {
       "already_configured": "Account is already configured"
     }
+  },
+  "selector": {
+    "language": {
+      "options": {
+        "nl": "Nederlands",
+        "fr": "Français",
+        "en": "English"
+      }
+    }
   }
 }

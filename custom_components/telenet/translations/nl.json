@@ -62,5 +62,14 @@
       "unknown": "Onverwachte fout",
       "service_error": "Service niet beschikbaar"
     }
+  },
+  "selector": {
+    "language": {
+      "options": {
+        "nl": "Nederlands",
+        "fr": "Français",
+        "en": "English"
+      }
+    }
   }
 }
