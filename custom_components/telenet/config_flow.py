@@ -14,6 +14,9 @@ from homeassistant.const import CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowHandler
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.selector import SelectSelector
+from homeassistant.helpers.selector import SelectSelectorConfig
+from homeassistant.helpers.selector import SelectSelectorMode
 from homeassistant.helpers.selector import TextSelector
 from homeassistant.helpers.selector import TextSelectorConfig
 from homeassistant.helpers.selector import TextSelectorType
@@ -33,6 +36,14 @@ DEFAULT_ENTRY_DATA = TelenetConfigEntryData(
     username=None,
     password=None,
     language=DEFAULT_LANGUAGE,
+)
+
+LANGUAGE_SELECTOR = SelectSelector(
+    SelectSelectorConfig(
+        options=LANGUAGE_CHOICES,
+        mode=SelectSelectorMode.DROPDOWN,
+        translation_key=CONF_LANGUAGE,
+    )
 )
 
 
@@ -87,16 +98,14 @@ class TelenetCommonFlow(ABC, FlowHandler):
             errors = test["errors"]
         fields = {
             vol.Required(CONF_USERNAME): TextSelector(
-                TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")
+                TextSelectorConfig(type=TextSelectorType.TEXT, autocomplete="username")
             ),
             vol.Required(CONF_PASSWORD): TextSelector(
                 TextSelectorConfig(
                     type=TextSelectorType.PASSWORD, autocomplete="current-password"
                 )
             ),
-            vol.Required(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): vol.In(
-                LANGUAGE_CHOICES
-            ),
+            vol.Required(CONF_LANGUAGE, default=DEFAULT_LANGUAGE): LANGUAGE_SELECTOR,
         }
         return self.async_show_form(
             step_id="connection_init",
