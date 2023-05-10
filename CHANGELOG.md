@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.1.4](https://github.com/geertmeersman/telenet/tree/v3.1.4) (2023-05-10)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.3...v3.1.4)
+
+**Implemented enhancements:**
+
+- Config flow improvement for language option [\#134](https://github.com/geertmeersman/telenet/pull/134) ([geertmeersman](https://github.com/geertmeersman))
+
+**Closed issues:**
+
+- Username is not always an email [\#132](https://github.com/geertmeersman/telenet/issues/132)
+
 ## [v3.1.3](https://github.com/geertmeersman/telenet/tree/v3.1.3) (2023-05-10)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.2...v3.1.3)
