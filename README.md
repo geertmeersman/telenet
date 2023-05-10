@@ -83,7 +83,7 @@ logger:
 2. If you receive this exception in the logs:
 
 ```
-No products found. Either the API is currenlty down or you are not migrated to the new Telenet IT system yet.
+No products found. Either the API is currently down or you are not migrated to the new Telenet IT system yet.
 ```
 
 This might mean that your account is not migrated yet to the new Telenet IT platform. I only support the newest API, which is rolling out since beginning of 2023. So you'll need to be patient and hope Telenet migrates your account soon.

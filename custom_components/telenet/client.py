@@ -123,7 +123,7 @@ class TelenetClient:
         return response
 
     def login(self) -> dict:
-        """Start a new Telenet session with an user & password."""
+        """Start a new Telenet session with a user & password."""
 
         log_debug("[TelenetClient|login|start]")
         tokens = []
@@ -268,7 +268,7 @@ class TelenetClient:
         )
         if response is False:
             raise TelenetServiceException(
-                "No products found. Either the API is currenlty down or you are not migrated to the new Telenet IT system yet."
+                "No products found. Either the API is currently down or you are not migrated to the new Telenet IT system yet."
             )
         for a_product in response.json():
             plan_identifier = a_product.get("identifier")
