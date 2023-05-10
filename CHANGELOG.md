@@ -1,5 +1,21 @@
 # Changelog
 
+## [v3.1.2](https://github.com/geertmeersman/telenet/tree/v3.1.2) (2023-05-10)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.1...v3.1.2)
+
+**Documentation:**
+
+- Merged into HACS Default :-\) [\#126](https://github.com/geertmeersman/telenet/pull/126) ([geertmeersman](https://github.com/geertmeersman))
+- Merged into HACS Default :-\) [\#125](https://github.com/geertmeersman/telenet/pull/125) ([geertmeersman](https://github.com/geertmeersman))
+- Merged into HACS :-\) [\#124](https://github.com/geertmeersman/telenet/pull/124) ([geertmeersman](https://github.com/geertmeersman))
+
+**Merged pull requests:**
+
+- Bypass wireless setting when 500 error is returned \(meaning no wirele… [\#130](https://github.com/geertmeersman/telenet/pull/130) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump ruff from 0.0.263 to 0.0.265 [\#127](https://github.com/geertmeersman/telenet/pull/127) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump ruff from 0.0.262 to 0.0.263 [\#123](https://github.com/geertmeersman/telenet/pull/123) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.1.1](https://github.com/geertmeersman/telenet/tree/v3.1.1) (2023-04-25)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.0...v3.1.1)
@@ -519,7 +535,7 @@
 
 ## [0.2.7](https://github.com/geertmeersman/telenet/tree/0.2.7) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.7)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.7)
 
 **Merged pull requests:**
 
@@ -536,13 +552,13 @@
 - Merge pull request \#3 from geertmeersman/main [\#4](https://github.com/geertmeersman/telenet/pull/4) ([geertmeersman](https://github.com/geertmeersman))
 - Merge [\#3](https://github.com/geertmeersman/telenet/pull/3) ([geertmeersman](https://github.com/geertmeersman))
 
-## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.3)
-
 ## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.2)
+
+## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.3)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
