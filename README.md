@@ -336,6 +336,7 @@ content: >
   |**HomeSpot enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","homeSpotEnabled")}}|
 
   |**Wps enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wifiWpsEnabled")}}|```
+```
 
 </details>
 
