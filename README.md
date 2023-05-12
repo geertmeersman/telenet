@@ -290,7 +290,7 @@ filter:
 
 <details><summary>Show markdown code</summary>
 
-**Replace &lt;identifier&gt; by your Telenet identifier and &lt;customer_id&gt; by your Telenet account ID**
+**Replace &lt;identifier&gt; by your Telenet identifier**
 
 ```
 type: markdown
