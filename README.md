@@ -292,36 +292,50 @@ filter:
 
 **Replace &lt;identifier&gt; by your Telenet identifier and &lt;customer_id&gt; by your Telenet account ID**
 
-```
+````
 type: markdown
 content: >
   ## <img
   src="https://github.com/geertmeersman/telenet/blob/main/images/brand/icon.png?raw=true"
   width="25"/>&nbsp;&nbsp;Telenet <identifier>
 
-  ## <img src="https://github.com/geertmeersman/telenet/blob/main/images/brand/icon.png?raw=true" width="25"/>&nbsp;&nbsp;Telenet <identifier>
   ## Modem info
-  | | |
+
+  |||
+
   |----:|----:|
-  |**Type**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","modemType")}}|
-  |**Model**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","model")}}|
-  |**Last seen**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeen")}}|
-  |**Last seen light**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","lastSeenLight")}}|
-  |**Public IP Adress**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+
+  |**Type**|{{state_attr("sensor.telenet_<identifier>_internet_network","modemType")}}|
+
+  |**Model**|{{state_attr("sensor.telenet_<identifier>_internet_network","model")}}|
+
+  |**Last seen**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeen")}}|
+
+  |**Last seen light**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeenLight")}}|
+
+  |**Public IP Adress**|{{state_attr("sensor.telenet_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+
 
   ## Network clients
+
   |Name|IP|Interface|Vendor
-  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<customer_id>_<identifier>_internet_network","clients") %}
+
+  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<identifier>_internet_network","clients") %}
+
   {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
   {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|{%-endif %}{%-endfor %}
 
   ## Wifi Settings
+
   |||
+
   |----:|----:|
-  |**Wireless enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wirelessEnabled")}}|
-  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","homeSpotEnabled")}}|
-  |**Wps enabled**|{{state_attr("sensor.telenet_<customer_id>_<identifier>_internet_wifi","wifiWpsEnabled")}}|
-```
+
+  |**Wireless enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wirelessEnabled")}}|
+
+  |**HomeSpot enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","homeSpotEnabled")}}|
+
+  |**Wps enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wifiWpsEnabled")}}|```
 
 </details>
 
@@ -356,3 +370,4 @@ Interact with the sensors flow [here](https://github.com/geertmeersman/telenet/b
 The code of this Home Assistant integration has been written by analysing the calls made by the Telenet website and by contributing to the integration made by [@myTselection](https://github.com/myTselection). It made me curious on how to build an integration from scratch, using the recommendations here https://developers.home-assistant.io/docs/creating_component_index/. I tried to pull out of the website as much information as possible.
 
 I have no link with Telenet Group N.V.
+````
