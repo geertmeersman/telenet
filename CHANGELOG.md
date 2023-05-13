@@ -1,5 +1,24 @@
 # Changelog
 
+## [v3.1.5](https://github.com/geertmeersman/telenet/tree/v3.1.5) (2023-05-13)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.4...v3.1.5)
+
+**Documentation:**
+
+- Readme improvement [\#138](https://github.com/geertmeersman/telenet/pull/138) ([geertmeersman](https://github.com/geertmeersman))
+- Lovelace markdown example fix [\#137](https://github.com/geertmeersman/telenet/pull/137) ([geertmeersman](https://github.com/geertmeersman))
+- Lovelace markdown example fix [\#136](https://github.com/geertmeersman/telenet/pull/136) ([geertmeersman](https://github.com/geertmeersman))
+- docs: optional vendor attribute and added unit for daluren in lovelace examples [\#135](https://github.com/geertmeersman/telenet/pull/135) ([JSpeleers](https://github.com/JSpeleers))
+
+**Closed issues:**
+
+- Recursive error on getting wifi details [\#129](https://github.com/geertmeersman/telenet/issues/129)
+
+**Merged pull requests:**
+
+- Include usage sensors when no modem is available,references \#139 [\#141](https://github.com/geertmeersman/telenet/pull/141) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.4](https://github.com/geertmeersman/telenet/tree/v3.1.4) (2023-05-10)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.3...v3.1.4)
