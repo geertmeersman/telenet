@@ -394,11 +394,14 @@ class TelenetClient:
                         "[create_extra_sensors|internet|product_usage] Failed to fetch, skipping"
                     )
                     continue
+                usage = product_usage.get(type)
+                category = usage.get("category")
                 daily_peak = []
                 daily_off_peak = []
                 daily_total = []
                 daily_date = []
                 product_daily_usage = {}
+
                 for cycle in billcycle.get("cycles"):
                     daily_usage = self.product_daily_usage(
                         type,
@@ -415,12 +418,14 @@ class TelenetClient:
                         .get("internetUsage")[0]
                         .get("dailyUsages")
                     ):
-                        daily_peak.append(day.get("peak"))
-                        daily_off_peak.append(day.get("offPeak"))
-                        daily_total.append(day.get("total"))
+                        if category == "CAP":
+                            daily_total.append(day.get("bucketUsage"))
+                        else:
+                            daily_peak.append(day.get("peak"))
+                            daily_off_peak.append(day.get("offPeak"))
+                            daily_total.append(day.get("total"))
                         daily_date.append(day.get("date"))
 
-                usage = product_usage.get(type)
                 usage_pct = (
                     100
                     * usage.get("totalUsage").get("units")
@@ -535,28 +540,58 @@ class TelenetClient:
                     )
                 )
                 if product_daily_usage is not False:
-                    new_products.update(
-                        self.construct_extra_sensor(
-                            product,
-                            "daily usage",
-                            "data_usage",
-                            get_json_dict_path(
-                                product_daily_usage,
-                                "$.internetUsage[0].totalUsage.peak",
-                            ),
-                            self.create_extra_attributes_list(
-                                get_json_dict_path(
-                                    product_daily_usage, "$.internetUsage[0].totalUsage"
+                    if category == "CAP":
+                        new_products.update(
+                            self.construct_extra_sensor(
+                                product,
+                                "daily usage",
+                                "data_usage",
+                                round(
+                                    get_json_dict_path(
+                                        product_daily_usage,
+                                        "$.internetUsage[0].totalUsage.totalNonThrottle",
+                                    ),
+                                    1,
+                                ),
+                                self.create_extra_attributes_list(
+                                    get_json_dict_path(
+                                        product_daily_usage,
+                                        "$.internetUsage[0].totalUsage",
+                                    )
                                 )
+                                | {
+                                    "daily_total": daily_total,
+                                    "daily_date": daily_date,
+                                },
                             )
-                            | {
-                                "daily_peak": daily_peak,
-                                "daily_off_peak": daily_off_peak,
-                                "daily_total": daily_total,
-                                "daily_date": daily_date,
-                            },
                         )
-                    )
+                    else:
+                        new_products.update(
+                            self.construct_extra_sensor(
+                                product,
+                                "daily usage",
+                                "data_usage",
+                                round(
+                                    get_json_dict_path(
+                                        product_daily_usage,
+                                        "$.internetUsage[0].totalUsage.total",
+                                    ),
+                                    1,
+                                ),
+                                self.create_extra_attributes_list(
+                                    get_json_dict_path(
+                                        product_daily_usage,
+                                        "$.internetUsage[0].totalUsage",
+                                    )
+                                )
+                                | {
+                                    "daily_peak": daily_peak,
+                                    "daily_off_peak": daily_off_peak,
+                                    "daily_total": daily_total,
+                                    "daily_date": daily_date,
+                                },
+                            )
+                        )
                 if modem is not False:
                     new_products.update(
                         self.construct_extra_sensor(
