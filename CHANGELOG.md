@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.6](https://github.com/geertmeersman/telenet/tree/v3.1.6) (2023-05-13)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.5...v3.1.6)
+
+**Merged pull requests:**
+
+- Adapt daily usage for CAP Internet category [\#142](https://github.com/geertmeersman/telenet/pull/142) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.5](https://github.com/geertmeersman/telenet/tree/v3.1.5) (2023-05-13)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.4...v3.1.5)
