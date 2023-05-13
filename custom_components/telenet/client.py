@@ -420,18 +420,6 @@ class TelenetClient:
                         daily_total.append(day.get("total"))
                         daily_date.append(day.get("date"))
 
-                product_daily_usage = product_daily_usage.get("CURRENT")
-                if product_daily_usage is False:
-                    log_debug(
-                        "[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping"
-                    )
-                    continue
-                modem = self.modems(identifier)
-                if modem is False:
-                    log_debug(
-                        "[create_extra_sensors|internet|modem] Failed to fetch, skipping"
-                    )
-                    continue
                 usage = product_usage.get(type)
                 usage_pct = (
                     100
@@ -465,19 +453,6 @@ class TelenetClient:
                     "extended_usage": f"{usage.get('extendedUsage').get('volume')} {usage.get('extendedUsage').get('unit')}",
                     "extended_usage_price": f"{usage.get('extendedUsage').get('price')} {usage.get('extendedUsage').get('currency')}",
                     "peak_usage": usage.get("peakUsage").get("usedUnits"),
-                    "offpeak_usage": round(
-                        get_json_dict_path(
-                            product_daily_usage, "$.internetUsage[0].totalUsage.offPeak"
-                        ),
-                        1,
-                    ),
-                    "total_usage_with_offpeak": usage.get("peakUsage").get("usedUnits")
-                    + round(
-                        get_json_dict_path(
-                            product_daily_usage, "$.internetUsage[0].totalUsage.offPeak"
-                        ),
-                        1,
-                    ),
                     "used_percentage": round(usage_pct, 2),
                     "period_used_percentage": period_used_percentage,
                     "period_remaining_percentage": (100 - period_used_percentage),
@@ -488,6 +463,39 @@ class TelenetClient:
                     ).get("name"),
                     "sales_price": f"{product_specs.get('characteristics').get('salespricevatincl').get('value')} {product_specs.get('characteristics').get('salespricevatincl').get('unit')}",
                 }
+
+                product_daily_usage = product_daily_usage.get("CURRENT")
+                if product_daily_usage is False:
+                    log_debug(
+                        "[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping"
+                    )
+                else:
+                    attributes |= {
+                        "offpeak_usage": round(
+                            get_json_dict_path(
+                                product_daily_usage,
+                                "$.internetUsage[0].totalUsage.offPeak",
+                            ),
+                            1,
+                        ),
+                        "total_usage_with_offpeak": usage.get("peakUsage").get(
+                            "usedUnits"
+                        )
+                        + round(
+                            get_json_dict_path(
+                                product_daily_usage,
+                                "$.internetUsage[0].totalUsage.offPeak",
+                            ),
+                            1,
+                        ),
+                    }
+
+                modem = self.modems(identifier)
+                if modem is False:
+                    log_debug(
+                        "[create_extra_sensors|internet|modem] Failed to fetch, skipping"
+                    )
+
                 service = ""
                 for services in product_specs.get("services"):
                     for specification in services.get("specifications"):
@@ -526,72 +534,79 @@ class TelenetClient:
                         attributes,
                     )
                 )
-                new_products.update(
-                    self.construct_extra_sensor(
-                        product,
-                        "daily usage",
-                        "data_usage",
-                        get_json_dict_path(
-                            product_daily_usage, "$.internetUsage[0].totalUsage.peak"
-                        ),
-                        self.create_extra_attributes_list(
-                            get_json_dict_path(
-                                product_daily_usage, "$.internetUsage[0].totalUsage"
-                            )
-                        )
-                        | {
-                            "daily_peak": daily_peak,
-                            "daily_off_peak": daily_off_peak,
-                            "daily_total": daily_total,
-                            "daily_date": daily_date,
-                        },
-                    )
-                )
-                new_products.update(
-                    self.construct_extra_sensor(
-                        product,
-                        "modem",
-                        "modem",
-                        modem.get("name"),
-                        self.create_extra_attributes_list(modem),
-                    )
-                )
-                network_topology = clean_ipv6(self.network_topology(modem.get("mac")))
-                new_products.update(
-                    self.construct_extra_sensor(
-                        product,
-                        "network",
-                        "network",
-                        network_topology.get("model"),
-                        self.create_extra_attributes_list(network_topology),
-                    )
-                )
-                wireless_settings = self.wireless_settings(modem.get("mac"), identifier)
-                if wireless_settings is not False:
-                    wifi_qr = None
+                if product_daily_usage is not False:
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
-                            "wi-fi",
-                            "wifi",
-                            wireless_settings.get("wirelessEnabled"),
-                            self.create_extra_attributes_list(wireless_settings),
+                            "daily usage",
+                            "data_usage",
+                            get_json_dict_path(
+                                product_daily_usage,
+                                "$.internetUsage[0].totalUsage.peak",
+                            ),
+                            self.create_extra_attributes_list(
+                                get_json_dict_path(
+                                    product_daily_usage, "$.internetUsage[0].totalUsage"
+                                )
+                            )
+                            | {
+                                "daily_peak": daily_peak,
+                                "daily_off_peak": daily_off_peak,
+                                "daily_total": daily_total,
+                                "daily_date": daily_date,
+                            },
                         )
                     )
-                    if "networkKey" in wireless_settings.get(
-                        "singleSSIDRoamingSettings"
-                    ):
-                        network_key = (
-                            wireless_settings.get("singleSSIDRoamingSettings")
-                            .get("networkKey")
-                            .replace(":", r"\:")
+                if modem is not False:
+                    new_products.update(
+                        self.construct_extra_sensor(
+                            product,
+                            "modem",
+                            "modem",
+                            modem.get("name"),
+                            self.create_extra_attributes_list(modem),
                         )
-                        wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
+                    )
+                    network_topology = clean_ipv6(
+                        self.network_topology(modem.get("mac"))
+                    )
+                    new_products.update(
+                        self.construct_extra_sensor(
+                            product,
+                            "network",
+                            "network",
+                            network_topology.get("model"),
+                            self.create_extra_attributes_list(network_topology),
+                        )
+                    )
+                    wireless_settings = self.wireless_settings(
+                        modem.get("mac"), identifier
+                    )
+                    if wireless_settings is not False:
+                        wifi_qr = None
                         new_products.update(
                             self.construct_extra_sensor(
-                                product, "wi-fi qr", "qr", wifi_qr
+                                product,
+                                "wi-fi",
+                                "wifi",
+                                wireless_settings.get("wirelessEnabled"),
+                                self.create_extra_attributes_list(wireless_settings),
                             )
                         )
+                        if "networkKey" in wireless_settings.get(
+                            "singleSSIDRoamingSettings"
+                        ):
+                            network_key = (
+                                wireless_settings.get("singleSSIDRoamingSettings")
+                                .get("networkKey")
+                                .replace(":", r"\:")
+                            )
+                            wifi_qr = f"WIFI:S:{wireless_settings.get('singleSSIDRoamingSettings').get('name')};T:WPA;P:{network_key};;"
+                            new_products.update(
+                                self.construct_extra_sensor(
+                                    product, "wi-fi qr", "qr", wifi_qr
+                                )
+                            )
             elif type == "dtv":
                 """-------------------"""
                 """| EXTRA DTV SENSORS |"""
