@@ -549,7 +549,7 @@ class TelenetClient:
                                 round(
                                     get_json_dict_path(
                                         product_daily_usage,
-                                        "$.internetUsage[0].totalUsage.totalBucketUsage",
+                                        "$.internetUsage[0].totalUsage.totalNonThrottle",
                                     ),
                                     1,
                                 ),
