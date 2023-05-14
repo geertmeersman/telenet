@@ -116,8 +116,14 @@ recorder:
 <details><summary>Show markdown code</summary>
 
 **Replace &lt;identifier&gt; by your Telenet identifier**
-
+     
 (Only at 2 places)
+     
+Attention: this example uses the following HACS Lovelace cards (so you will need to install these§ if you are planning to you the examples):
+     
+- https://github.com/iantrich/config-template-card
+- https://github.com/RomRider/apexcharts-card
+- https://github.com/custom-cards/dual-gauge-card
 
 ```
 type: vertical-stack
