@@ -283,28 +283,29 @@ class TelenetClient:
             log_debug(
                 f"[TelenetClient|products] Parent product {a_product.get('identifier')} {a_product.get('productType')}"
             )
-            for product in a_product.get("children"):
-                log_debug(
-                    f"[TelenetClient|products] Child product {product.get('identifier')} {product.get('productType')}"
-                )
-                if product.get("productType") == "dtv":
-                    dtv_found = True
-                if "options" in product and len(product.get("options")):
-                    for option in product.get("options"):
-                        if "identifier" in option:
-                            self.add_product(
-                                product=option,
-                                plan_identifier=plan_identifier,
-                                state_prop="label",
-                                plan_label=plan_label,
-                            )
+            if a_product.get("children"):
+                for product in a_product.get("children"):
+                    log_debug(
+                        f"[TelenetClient|products] Child product {product.get('identifier')} {product.get('productType')}"
+                    )
+                    if product.get("productType") == "dtv":
+                        dtv_found = True
+                    if "options" in product and len(product.get("options")):
+                        for option in product.get("options"):
+                            if "identifier" in option:
+                                self.add_product(
+                                    product=option,
+                                    plan_identifier=plan_identifier,
+                                    state_prop="label",
+                                    plan_label=plan_label,
+                                )
 
-                self.add_product(
-                    product=product,
-                    plan_identifier=plan_identifier,
-                    state_prop="label",
-                    plan_label=plan_label,
-                )
+                    self.add_product(
+                        product=product,
+                        plan_identifier=plan_identifier,
+                        state_prop="label",
+                        plan_label=plan_label,
+                    )
             if dtv_found and a_product.get("productType") == "dtv":
                 log_debug("[TelenetClient|products] DTV child found & ignoring")
                 self.all_products.get(
