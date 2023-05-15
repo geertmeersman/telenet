@@ -1,5 +1,19 @@
 # Changelog
 
+## [v3.1.7](https://github.com/geertmeersman/telenet/tree/v3.1.7) (2023-05-15)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.6...v3.1.7)
+
+**Closed issues:**
+
+- please help a noob with chart [\#143](https://github.com/geertmeersman/telenet/issues/143)
+- Exception with mobile only account with limited access [\#140](https://github.com/geertmeersman/telenet/issues/140)
+- I seem to be missing the actual usage data [\#139](https://github.com/geertmeersman/telenet/issues/139)
+
+**Merged pull requests:**
+
+- Mobile only / No children fix, fixes \#140 [\#144](https://github.com/geertmeersman/telenet/pull/144) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.6](https://github.com/geertmeersman/telenet/tree/v3.1.6) (2023-05-13)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.5...v3.1.6)
