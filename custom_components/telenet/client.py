@@ -447,9 +447,10 @@ class TelenetClient:
                 period_used_percentage = round(
                     100 * period_used_seconds / period_length_seconds, 1
                 )
+
                 attributes = {
                     "identifier": identifier,
-                    "last_update": usage.get("totalUsage").get("lastUsageDate"),
+                    "last_update": f"{usage.get('totalUsage').get('lastUsageDate')}+0200",
                     "start_date": billcycle.get("start_date"),
                     "end_date": billcycle.get("end_date"),
                     "days_until": usage.get("daysUntil"),
