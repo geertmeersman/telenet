@@ -1,6 +1,7 @@
 """Telenet sensor platform."""
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -22,7 +23,8 @@ from .const import DOMAIN
 from .entity import TelenetEntity
 from .models import TelenetProduct
 from .utils import format_entity_name
-from .utils import log_debug
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -43,6 +45,8 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     TelenetSensorDescription(key="wifi", icon="mdi:wifi"),
     TelenetSensorDescription(key="qr", icon="mdi:qrcode-scan"),
     TelenetSensorDescription(key="user", icon="mdi:face-man"),
+    TelenetSensorDescription(key="mailbox", icon="mdi:email-arrow-left"),
+    TelenetSensorDescription(key="customer", icon="mdi:human-greeting-variant"),
     TelenetSensorDescription(
         key="euro",
         icon="mdi:currency-eur",
@@ -80,7 +84,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Telenet sensors."""
-    log_debug("[sensor|async_setup_entry|async_add_entities|start]")
+    _LOGGER.debug("[sensor|async_setup_entry|async_add_entities|start]")
     coordinator: TelenetDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities: list[TelenetSensor] = []
 
@@ -88,7 +92,7 @@ async def async_setup_entry(
         description.key: description for description in SENSOR_DESCRIPTIONS
     }
 
-    # log_debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
+    # _LOGGER.debug(f"[sensor|async_setup_entry|async_add_entities|SUPPORTED_KEYS] {SUPPORTED_KEYS}")
 
     if coordinator.data is not None:
         for product in coordinator.data:
@@ -105,7 +109,7 @@ async def async_setup_entry(
                     icon=description.icon,
                 )
 
-                log_debug(
+                _LOGGER.debug(
                     f"[sensor|async_setup_entry|adding] {product.product_identifier}"
                 )
                 entities.append(
@@ -116,7 +120,7 @@ async def async_setup_entry(
                     )
                 )
             else:
-                log_debug(
+                _LOGGER.debug(
                     f"[sensor|async_setup_entry|no support type found] {product.product_identifier}, type: {product.product_description_key}, keys: {SUPPORTED_KEYS.get(product.product_description_key)}",
                     True,
                 )

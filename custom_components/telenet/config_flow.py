@@ -1,4 +1,5 @@
 """Config flow to configure the Telenet integration."""
+import logging
 from abc import ABC
 from abc import abstractmethod
 from typing import Any
@@ -30,7 +31,8 @@ from .const import NAME
 from .exceptions import BadCredentialsException
 from .exceptions import TelenetServiceException
 from .models import TelenetConfigEntryData
-from .utils import log_debug
+
+_LOGGER = logging.getLogger(__name__)
 
 DEFAULT_ENTRY_DATA = TelenetConfigEntryData(
     username=None,
@@ -93,7 +95,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                     f"{DOMAIN}_" + test["user_details"].get("customer_number")
                 )
                 self._abort_if_unique_id_configured()
-                log_debug(f"New account {self.new_title} added")
+                _LOGGER.debug(f"New account {self.new_title} added")
                 return self.finish_flow()
             errors = test["errors"]
         fields = {
@@ -124,7 +126,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 self.new_entry_data |= TelenetConfigEntryData(
                     language=user_input[CONF_LANGUAGE],
                 )
-                log_debug(f"Language set to : {user_input[CONF_LANGUAGE]}")
+                _LOGGER.debug(f"Language set to : {user_input[CONF_LANGUAGE]}")
                 return self.finish_flow()
 
         fields = {
@@ -149,7 +151,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 user_details = await self.async_validate_input(user_input)
             except AssertionError as exception:
                 errors["base"] = "cannot_connect"
-                log_debug(f"[async_step_password|login] AssertionError {exception}")
+                _LOGGER.debug(f"[async_step_password|login] AssertionError {exception}")
             except ConnectionError:
                 errors["base"] = "cannot_connect"
             except TelenetServiceException:
@@ -158,7 +160,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 errors["base"] = "invalid_auth"
             except Exception as exception:
                 errors["base"] = "unknown"
-                log_debug(exception)
+                _LOGGER.debug(exception)
         return {"user_details": user_details, "errors": errors}
 
     async def async_step_password(self, user_input: dict | None = None) -> FlowResult:
@@ -172,7 +174,7 @@ class TelenetCommonFlow(ABC, FlowHandler):
                 self.new_entry_data |= TelenetConfigEntryData(
                     password=user_input[CONF_PASSWORD],
                 )
-                log_debug(
+                _LOGGER.debug(
                     f"Password changed for {test['user_details'].get('customer_number')}"
                 )
                 return self.finish_flow()

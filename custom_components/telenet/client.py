@@ -1,6 +1,7 @@
 """Telenet API Client."""
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 
 from requests import (
@@ -28,8 +29,9 @@ from .utils import float_to_timestring
 from .utils import format_entity_name
 from .utils import get_json_dict_path
 from .utils import get_localized
-from .utils import log_debug
 from .utils import str_to_float
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class TelenetClient:
@@ -62,6 +64,7 @@ class TelenetClient:
         self.addresses = {}
         self.request_error = {}
         self.total_cost = 0
+        self._simdetails = []
 
     def request(
         self,
@@ -75,16 +78,16 @@ class TelenetClient:
     ) -> dict:
         """Send a request to Telenet."""
         if data is None:
-            log_debug(f"{caller} Calling GET {url}")
+            _LOGGER.debug(f"{caller} Calling GET {url}")
             response = self.session.get(url, timeout=REQUEST_TIMEOUT)
         else:
-            log_debug(f"{caller} Calling POST {url}")
+            _LOGGER.debug(f"{caller} Calling POST {url}")
             response = self.session.post(url, data, timeout=REQUEST_TIMEOUT)
-        log_debug(
+        _LOGGER.debug(
             f"{caller} http status code = {response.status_code} (expecting {expected})"
         )
         if log:
-            log_debug(f"{caller} Response:\n{response.text}")
+            _LOGGER.debug(f"{caller} Response:\n{response.text}")
         if expected is not None and response.status_code != expected:
             if response.status_code == 404:
                 self.request_error = response.json()
@@ -103,7 +106,7 @@ class TelenetClient:
                 r = response.text
                 if r.find("code") != -1:
                     if response.json().get("code") not in ["OCAPI-ERR-667"]:
-                        log_debug(
+                        _LOGGER.debug(
                             f"[{caller}] Telenet Service Access Forbidden for {self.username}: {response.status_code} => {response.json()}",
                         )
                         self.request_error = response.json()
@@ -112,7 +115,7 @@ class TelenetClient:
                         f"{response.json().get('cause')} for {self.username}"
                     )
 
-            log_debug(
+            _LOGGER.debug(
                 f"[TelenetClient|request] Received a HTTP {response.status_code}, nothing to worry about! We give it another try :-)"
             )
             self.login()
@@ -125,12 +128,12 @@ class TelenetClient:
     def login(self) -> dict:
         """Start a new Telenet session with a user & password."""
 
-        log_debug("[TelenetClient|login|start]")
+        _LOGGER.debug("[TelenetClient|login|start]")
         tokens = []
         token_fetch_count = 0
         while len(tokens) != 2:
             response = self.request(
-                f"{self.environment.ocapi}/oauth/userdetails",
+                f"{self.environment.ocapi_oauth}/userdetails",
                 "[TelenetClient|login]",
                 None,
                 None,
@@ -173,7 +176,7 @@ class TelenetClient:
             raise BadCredentialsException(response.text)
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
         response = self.request(
-            "https://api.prd.telenet.be/ocapi/oauth/userdetails",
+            f"{self.environment.ocapi_oauth}/userdetails",
             "[TelenetClient|login|user_details]",
             None,
             200,
@@ -184,12 +187,13 @@ class TelenetClient:
                 f"HTTP {response.status_code} Missing customer number"
             )
         self.user_details = user_details
+        del self.user_details["scopes"]
         return response.json()
 
     def add_product_type(self, product_type):
         """Add a discovered product type."""
         if product_type not in self.product_types:
-            log_debug(f"[TelenetClient|add_product_type] {product_type}")
+            _LOGGER.debug(f"[TelenetClient|add_product_type] {product_type}")
             self.product_types.append(product_type)
 
     def add_product(
@@ -200,7 +204,7 @@ class TelenetClient:
         if identifier in self.all_products:
             return False
         type = product.get("productType")
-        log_debug(
+        _LOGGER.debug(
             f"[TelenetClient|add_product] {identifier}, productType: {type}, plan_label: {plan_label}"
         )
         product_price = None
@@ -212,13 +216,12 @@ class TelenetClient:
                 )
                 price = str_to_float(salespricevatincl.get("value"))
                 if price > 0:
-                    log_debug(
+                    _LOGGER.debug(
                         f"[TelenetClient|add_product] Sales Price found for {identifier} {type}: {salespricevatincl}"
                     )
                     product_price = salespricevatincl
             except Exception:
                 pass
-
         else:
             product_info = {}
         try:
@@ -227,6 +230,11 @@ class TelenetClient:
             ).get("name")
         except Exception:
             state = product.get("label")
+
+        product_extra_attributes = {}
+        if type == "mobile":
+            product_extra_attributes = self.get_simdetail(identifier)
+
         self.all_products[identifier] = TelenetProduct(
             product_identifier=identifier,
             product_type=type,
@@ -240,6 +248,7 @@ class TelenetClient:
             product_info=product_info,
             product_address=self.address(product.get("addressId")),
             product_price=product_price,
+            product_extra_attributes=product_extra_attributes,
         )
         self.add_product_type(type)
         return True
@@ -252,16 +261,16 @@ class TelenetClient:
         """List all Telenet products."""
         if len(self.all_products) > 0 and force_refresh is False:
             """Return the Telenet products present in the Client session"""
-            log_debug("[TelenetClient|products] Returning cached products")
+            _LOGGER.debug("[TelenetClient|products] Returning cached products")
             return [self.all_products.get(product) for product in self.all_products]
         self.login()
         self.total_cost = 0
-        log_debug("[TelenetClient|products] Fetching active products from Telenet")
+        _LOGGER.debug("[TelenetClient|products] Fetching active products from Telenet")
         """ Refresh products """
         self.all_products = {}
         self.product_types = []
         response = self.request(
-            "https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products?status=ACTIVE",
+            f"{self.environment.ocapi_public}/product-service/v1/products?status=ACTIVE",
             "[TelenetClient|products]",
             None,
             200,
@@ -280,12 +289,12 @@ class TelenetClient:
                 plan_label=plan_label,
             )
             dtv_found = False
-            log_debug(
+            _LOGGER.debug(
                 f"[TelenetClient|products] Parent product {a_product.get('identifier')} {a_product.get('productType')}"
             )
             if a_product.get("children"):
                 for product in a_product.get("children"):
-                    log_debug(
+                    _LOGGER.debug(
                         f"[TelenetClient|products] Child product {product.get('identifier')} {product.get('productType')}"
                     )
                     if product.get("productType") == "dtv":
@@ -307,7 +316,7 @@ class TelenetClient:
                         plan_label=plan_label,
                     )
             if dtv_found and a_product.get("productType") == "dtv":
-                log_debug("[TelenetClient|products] DTV child found & ignoring")
+                _LOGGER.debug("[TelenetClient|products] DTV child found & ignoring")
                 self.all_products.get(
                     plan_identifier
                 ).product_ignore_extra_sensor = True
@@ -364,7 +373,7 @@ class TelenetClient:
                     self.language, product_specs.get("localizedcontent")
                 ).get("name")
             }
-            log_debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}")
+            _LOGGER.debug(f"[TelenetClient|create_extra_sensors] {identifier} {type}")
             if product.product_price is not None:
                 product_without_specurl = product
                 product_without_specurl.specurl = None
@@ -391,7 +400,7 @@ class TelenetClient:
                     billcycle.get("end_date"),
                 )
                 if product_usage is False:
-                    log_debug(
+                    _LOGGER.debug(
                         "[create_extra_sensors|internet|product_usage] Failed to fetch, skipping"
                     )
                     continue
@@ -473,7 +482,7 @@ class TelenetClient:
 
                 product_daily_usage = product_daily_usage.get("CURRENT")
                 if product_daily_usage is False:
-                    log_debug(
+                    _LOGGER.debug(
                         "[create_extra_sensors|internet|product_daily_usage] Failed to fetch, skipping"
                     )
                 else:
@@ -499,7 +508,7 @@ class TelenetClient:
 
                 modem = self.modems(identifier)
                 if modem is False:
-                    log_debug(
+                    _LOGGER.debug(
                         "[create_extra_sensors|internet|modem] Failed to fetch, skipping"
                     )
 
@@ -595,13 +604,14 @@ class TelenetClient:
                             )
                         )
                 if modem is not False:
+                    modem_settings = self.modem_settings(modem.get("mac"))
                     new_products.update(
                         self.construct_extra_sensor(
                             product,
                             "modem",
                             "modem",
                             modem.get("name"),
-                            self.create_extra_attributes_list(modem),
+                            self.create_extra_attributes_list(modem) | modem_settings,
                         )
                     )
                     network_topology = clean_ipv6(
@@ -657,13 +667,13 @@ class TelenetClient:
                         billcycle.get("end_date"),
                     )
                     if product_usage is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|dtv|product_usage] Failed to fetch, skipping"
                         )
                         continue
                     devices = self.device_details(type, identifier)
                     if devices is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|dtv|devices] Failed to fetch, skipping"
                         )
                         continue
@@ -712,13 +722,13 @@ class TelenetClient:
                     )
                     usage = self.mobile_bundle_usage(plan_identifier, identifier)
                     if usage is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|mobile|usage] Failed to fetch, skipping"
                         )
                         continue
                     next_billing_date = usage.get("nextBillingDate")
                     if next_billing_date is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|mobile|next_billing_date] Failed to fetch, skipping"
                         )
                         continue
@@ -732,13 +742,13 @@ class TelenetClient:
                     }
                     bundleusage = self.mobile_bundle_usage(plan_identifier)
                     if bundleusage is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|mobile|bundleusage] Failed to fetch, skipping"
                         )
                         continue
                     if self.all_products.get(bundle_key) is None:
                         """Bundle mobile sensors"""
-                        log_debug(
+                        _LOGGER.debug(
                             f"[TelenetClient|create_extra_sensors] Create Bundle Sensor BundleId: {plan_identifier}"
                         )
                         self.total_cost += str_to_float(
@@ -873,12 +883,12 @@ class TelenetClient:
                             )
                         )
                 else:
-                    log_debug(
+                    _LOGGER.debug(
                         f"[TelenetClient|MOBILE] {type} BundleId: {plan_identifier}, id: {identifier}, {product.product_description_key}"
                     )
                     usage = self.mobile_usage(identifier)
                     if usage is False:
-                        log_debug(
+                        _LOGGER.debug(
                             "[create_extra_sensors|mobile|usage] Failed to fetch, skipping"
                         )
                         continue
@@ -1012,6 +1022,59 @@ class TelenetClient:
                 )
             }
         )
+
+        product_name = "customer"
+        product_key = format_entity_name(
+            f"{self.user_details.get('customer_number')} {product_name}"
+        )
+        customer = self.customer()
+        new_products.update(
+            {
+                product_key: TelenetProduct(
+                    product_identifier=f"{product_name}",
+                    product_type="customer",
+                    product_description_key="customer",
+                    product_name=f"{product_name}",
+                    product_key=product_key,
+                    product_plan_identifier=self.user_details.get("customer_number"),
+                    product_plan_label="Customer",
+                    product_state=customer.get("accountNumber"),
+                    product_extra_attributes=customer,
+                    product_extra_sensor=True,
+                )
+            }
+        )
+
+        mailboxes = self.mailboxesandaliases()
+        for mailbox in mailboxes.get("mailboxes"):
+            if len(mailbox.get("aliases")):
+                product_name = (
+                    f"Mailbox {mailbox.get('aliases')[0].get('mailboxAliasId')}"
+                )
+            else:
+                product_name = mailbox.get("mailboxUUID")
+            product_key = format_entity_name(
+                f"{self.user_details.get('customer_number')} {product_name}"
+            )
+            new_products.update(
+                {
+                    product_key: TelenetProduct(
+                        product_identifier=f"{product_name}",
+                        product_type="mailbox",
+                        product_description_key="mailbox",
+                        product_name=f"{product_name}",
+                        product_key=product_key,
+                        product_plan_identifier=self.user_details.get(
+                            "customer_number"
+                        ),
+                        product_plan_label="Customer",
+                        product_state=mailbox.get("virus"),
+                        product_extra_attributes=mailbox,
+                        product_extra_sensor=True,
+                    )
+                }
+            )
+
         self.all_products.update(new_products)
         return True
 
@@ -1031,7 +1094,7 @@ class TelenetClient:
                     info = product.product_subscription_info
                 else:
                     info = self.plan_products.get(product.product_identifier)
-                log_debug(
+                _LOGGER.debug(
                     f"[TelenetClient|set_extra_attributes] Setting extra attributes for {product.product_identifier} Length: {len(info)}"
                 )
 
@@ -1063,9 +1126,9 @@ class TelenetClient:
     def plan_info(self):
         """Fetch PLAN product subscriptions."""
         self.plan_products = {}
-        log_debug("[TelenetClient|plan_info] Fetching plan info from Telenet")
+        _LOGGER.debug("[TelenetClient|plan_info] Fetching plan info from Telenet")
         response = self.request(
-            "https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes=PLAN",
+            f"{self.environment.ocapi_public}/product-service/v1/product-subscriptions?producttypes=PLAN",
             "[TelenetClient|planInfo]",
             None,
             200,
@@ -1078,11 +1141,11 @@ class TelenetClient:
 
     def bill_cycles(self, product_type, product_identifier, count=1):
         """Fetch bill cycles."""
-        log_debug(
+        _LOGGER.debug(
             f"[TelenetClient|bill_cycle] Fetching bill_cycles info from Telenet for {product_identifier} ({product_type})"
         )
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
+            f"{self.environment.ocapi_public}/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
             "[TelenetClient|bill_cycles]",
             None,
             200,
@@ -1105,7 +1168,7 @@ class TelenetClient:
     def product_usage(self, product_type, product_identifier, startDate, endDate):
         """Fetch product_usage."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
+            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
             "[TelenetClient|product_usage]",
             None,
             200,
@@ -1119,7 +1182,7 @@ class TelenetClient:
     ):
         """Fetch daily usage."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
+            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
             "[TelenetClient|product_daily_usage]",
             None,
             None,
@@ -1133,11 +1196,11 @@ class TelenetClient:
     def product_subscriptions(self):
         """Fetch product subscriptions for all product types."""
         for product_type in self.product_types:
-            log_debug(
+            _LOGGER.debug(
                 f"[TelenetClient|product_subscriptions] Fetching product plan infos from Telenet for {product_type}"
             )
             response = self.request(
-                f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/product-subscriptions?producttypes={product_type.upper()}",
+                f"{self.environment.ocapi_public}/product-service/v1/product-subscriptions?producttypes={product_type.upper()}",
                 "[TelenetClient|product_subscriptions]",
                 None,
                 200,
@@ -1149,10 +1212,31 @@ class TelenetClient:
                     product.get("identifier")
                 ].product_subscription_info = product
 
+    def get_simdetail(self, mobile):
+        """Fetch sim details."""
+        if len(self._simdetails) == 0:
+            self._simdetails = self.simdetails()
+        for simdetail in self._simdetails:
+            if simdetail.get("mobile") == mobile:
+                return simdetail
+        return None
+
+    def simdetails(self):
+        """Fetch mobile usage."""
+        response = self.request(
+            f"{self.environment.ocapi_public}/mobile-service/v2/simdetails?status=ACTIVATION_IN_PROGRESS",
+            "[TelenetClient|simdetails]",
+            None,
+            200,
+        )
+        if response is False:
+            return False
+        return response.json()
+
     def mobile_usage(self, product_identifier):
         """Fetch mobile usage."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{product_identifier}/usages",
+            f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{product_identifier}/usages",
             "[TelenetClient|mobile_usage]",
             None,
             200,
@@ -1165,14 +1249,14 @@ class TelenetClient:
         """Fetch mobile bundle usage."""
         if line_identifier is not None:
             response = self.request(
-                f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle&lineIdentifier={line_identifier}",
+                f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle&lineIdentifier={line_identifier}",
                 "[TelenetClient|mobile_bundle_usage line_identifier]",
                 None,
                 200,
             )
         else:
             response = self.request(
-                f"https://api.prd.telenet.be/ocapi/public/api/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle",
+                f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle",
                 "[TelenetClient|mobile_bundle_usage bundle]",
                 None,
                 200,
@@ -1181,10 +1265,34 @@ class TelenetClient:
             return False
         return response.json()
 
+    def mailboxesandaliases(self):
+        """Fetch mailboxesandaliases info."""
+        response = self.request(
+            f"{self.environment.ocapi_public}/mailbox-mgmt-service/v1/mailboxesandaliases",
+            "[TelenetClient|mailboxesandaliases]",
+            None,
+            200,
+        )
+        if response is False:
+            return False
+        return response.json()
+
     def modems(self, product_identifier):
         """Fetch modem info."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems?productIdentifier={product_identifier}",
+            f"{self.environment.ocapi_public}/resource-service/v1/modems?productIdentifier={product_identifier}",
+            "[TelenetClient|modems]",
+            None,
+            200,
+        )
+        if response is False:
+            return False
+        return response.json()
+
+    def modem_settings(self, mac):
+        """Fetch modem advanced settings info."""
+        response = self.request(
+            f"{self.environment.ocapi_public}/resource-service/v1/modems/{mac}/advance-settings",
             "[TelenetClient|modems]",
             None,
             200,
@@ -1196,7 +1304,7 @@ class TelenetClient:
     def network_topology(self, mac):
         """Fetch network topology."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/network-topology/{mac}?withClients=true",
+            f"{self.environment.ocapi_public}/resource-service/v1/network-topology/{mac}?withClients=true",
             "[TelenetClient|network_topology]",
             None,
             200,
@@ -1208,7 +1316,7 @@ class TelenetClient:
     def wireless_settings(self, mac, product_identifier):
         """Fetch wireless settings."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}",
+            f"{self.environment.ocapi_public}/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}",
             "[TelenetClient|wireless_settings]",
             None,
             None,
@@ -1220,7 +1328,7 @@ class TelenetClient:
     def device_details(self, product_type, product_identifier):
         """Fetch device details."""
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/product-service/v1/products/{product_type}/{product_identifier}/devicedetails",
+            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/devicedetails",
             "[TelenetClient|device_details]",
             None,
             200,
@@ -1231,13 +1339,13 @@ class TelenetClient:
 
     def address(self, address_id):
         """Fetch address."""
-        log_debug(f"[TelenetClient|address] Fetching address {address_id}")
+        _LOGGER.debug(f"[TelenetClient|address] Fetching address {address_id}")
         if address_id is None or len(address_id) == 0:
             return {}
         if self.addresses.get(address_id) is not None:
             return self.addresses.get(address_id)
         response = self.request(
-            f"https://api.prd.telenet.be/ocapi/public/api/contact-service/v1/contact/addresses/{address_id}",
+            f"{self.environment.ocapi_public}/contact-service/v1/contact/addresses/{address_id}",
             "[TelenetClient|address]",
             None,
             200,
@@ -1245,4 +1353,16 @@ class TelenetClient:
         if response is False:
             return False
         self.addresses |= {address_id: response.json()}
+        return response.json()
+
+    def customer(self):
+        """Fetch customer info."""
+        response = self.request(
+            f"{self.environment.ocapi_public}/customer-service/v1/customers",
+            "[TelenetClient|customer]",
+            None,
+            200,
+        )
+        if response is False:
+            return False
         return response.json()
