@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import pytz
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo
@@ -52,7 +53,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         )
         self._product_key = self.product.product_key
         self.client = coordinator.client
-        self.last_synced = datetime.now()
+        self.last_synced = datetime.now(pytz.timezone("UTC"))
         self._attr_name = f"{self.product.product_identifier}".capitalize()
         self._product = product
         log_debug(f"[TelenetEntity|init] {self._product_key}")
@@ -63,7 +64,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         if len(self.coordinator.data):
             for product in self.coordinator.data:
                 if self._product_key == product.product_key:
-                    self.last_synced = datetime.now()
+                    self.last_synced = datetime.now(pytz.timezone("UTC"))
                     self._product = product
                     self.async_write_ha_state()
                     return
