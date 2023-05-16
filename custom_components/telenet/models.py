@@ -19,6 +19,8 @@ class TelenetEnvironment:
     """Class to describe a Telenet environment."""
 
     ocapi: str
+    ocapi_public: str
+    ocapi_oauth: str
     openid: str
     referer: str
     x_alt_referer: str

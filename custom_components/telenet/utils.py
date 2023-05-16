@@ -6,17 +6,7 @@ import re
 
 from jsonpath import jsonpath
 
-from .const import SHOW_DEBUG_AS_WARNING
-
 _LOGGER = logging.getLogger(__name__)
-
-
-def log_debug(input, force=False) -> None:
-    """Log to logger as debug or force as warning."""
-    if SHOW_DEBUG_AS_WARNING is True or force is True:
-        _LOGGER.warning(input)
-    else:
-        _LOGGER.debug(input)
 
 
 def str_to_float(input) -> float:
@@ -31,7 +21,7 @@ def float_to_timestring(float_time, unit_type) -> str:
         float_time = float_time * 60 * 60
     elif unit_type.lower() == "minutes":
         float_time = float_time * 60
-    # log_debug(f"[float_to_timestring] Float Time {float_time}")
+    # _LOGGER.debug(f"[float_to_timestring] Float Time {float_time}")
     hours, seconds = divmod(float_time, 3600)  # split to hours and seconds
     minutes, seconds = divmod(seconds, 60)  # split the seconds to minutes and seconds
     result = ""
@@ -65,7 +55,7 @@ def sizeof_fmt(num, suffix="b"):
 
 def get_json_dict_path(dictionary, path):
     """Fetch info based on jsonpath from dict."""
-    # log_debug(f"[get_json_dict_path] Path: {path}, Dict: {dictionary}")
+    # _LOGGER.debug(f"[get_json_dict_path] Path: {path}, Dict: {dictionary}")
     json_dict = jsonpath(dictionary, path)
     if isinstance(json_dict, list):
         json_dict = json_dict[0]
@@ -74,7 +64,7 @@ def get_json_dict_path(dictionary, path):
 
 def get_localized(language, localizedcontent):
     """Fetch localized content."""
-    # log_debug(f"[get_localized] {language} {localizedcontent}")
+    # _LOGGER.debug(f"[get_localized] {language} {localizedcontent}")
     for lang in localizedcontent:
         if language == lang.get("locale"):
             return lang
@@ -83,12 +73,12 @@ def get_localized(language, localizedcontent):
 
 def clean_ipv6(data):
     """Clean ipv6 addresses from  the list."""
-    # log_debug("[clean_ipv6] " + str(data))
+    # _LOGGER.debug("[clean_ipv6] " + str(data))
     if isinstance(data, list):
         for idx, item in enumerate(data):
             if "ipType" in item and "ipAddress" in item:
                 if item["ipType"] == "IPv6":
-                    log_debug(f"[utils|clean_ipv6] IPv6 address removed: {item}")
+                    _LOGGER.debug(f"[utils|clean_ipv6] IPv6 address removed: {item}")
                     del data[idx]
             else:
                 data[idx] = clean_ipv6(data[idx])

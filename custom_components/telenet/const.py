@@ -1,6 +1,5 @@
 """Constants used by Telenet."""
 import json
-import logging
 from datetime import timedelta
 from pathlib import Path
 from typing import Final
@@ -9,10 +8,6 @@ from homeassistant.const import Platform
 
 from .models import TelenetEnvironment
 
-SHOW_DEBUG_AS_WARNING = False
-
-_LOGGER = logging.getLogger(__name__)
-
 PLATFORMS: Final = [Platform.SENSOR]
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
 
@@ -20,6 +15,8 @@ ATTRIBUTION: Final = "Data provided by Telenet"
 
 DEFAULT_TELENET_ENVIRONMENT = TelenetEnvironment(
     ocapi="https://api.prd.telenet.be/ocapi",
+    ocapi_public="https://api.prd.telenet.be/ocapi/public/api",
+    ocapi_oauth="https://api.prd.telenet.be/ocapi/oauth",
     openid="https://login.prd.telenet.be/openid",
     referer="https://www2.telenet.be/residential/nl/mijn-telenet",
     x_alt_referer="https://www2.telenet.be/",

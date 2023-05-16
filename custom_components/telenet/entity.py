@@ -1,6 +1,7 @@
 """Base Telenet entity."""
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 
 import pytz
@@ -18,7 +19,8 @@ from .const import VERSION
 from .const import WEBSITE
 from .models import TelenetProduct
 from .utils import format_entity_name
-from .utils import log_debug
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
@@ -56,7 +58,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
         self.last_synced = datetime.now(pytz.timezone("UTC"))
         self._attr_name = f"{self.product.product_identifier}".capitalize()
         self._product = product
-        log_debug(f"[TelenetEntity|init] {self._product_key}")
+        _LOGGER.debug(f"[TelenetEntity|init] {self._product_key}")
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -68,7 +70,7 @@ class TelenetEntity(CoordinatorEntity[TelenetDataUpdateCoordinator]):
                     self._product = product
                     self.async_write_ha_state()
                     return
-        log_debug(
+        _LOGGER.debug(
             f"[TelenetEntity|_handle_coordinator_update] {self._attr_unique_id}: async_write_ha_state ignored since API fetch failed or not found",
             True,
         )
