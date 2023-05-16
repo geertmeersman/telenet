@@ -1,5 +1,15 @@
 # Changelog
 
+## [v3.1.8](https://github.com/geertmeersman/telenet/tree/v3.1.8) (2023-05-16)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.7...v3.1.8)
+
+**Merged pull requests:**
+
+- Correcting Telenet lastUpdate, adding timezone +0200, references \#147 [\#148](https://github.com/geertmeersman/telenet/pull/148) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump ruff from 0.0.265 to 0.0.267 [\#146](https://github.com/geertmeersman/telenet/pull/146) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump danielchabr/pr-labels-checker from 3.1 to 3.3 [\#145](https://github.com/geertmeersman/telenet/pull/145) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.1.7](https://github.com/geertmeersman/telenet/tree/v3.1.7) (2023-05-15)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.6...v3.1.7)
