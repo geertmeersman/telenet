@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.1.9](https://github.com/geertmeersman/telenet/tree/v3.1.9) (2023-05-16)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.8...v3.1.9)
+
+**Implemented enhancements:**
+
+- New sensors: customer, mailboxes, simdetails, modem advanced info [\#149](https://github.com/geertmeersman/telenet/pull/149) ([geertmeersman](https://github.com/geertmeersman))
+
+**Closed issues:**
+
+- Issue with "Last Update" date  shown in Markdown code example [\#147](https://github.com/geertmeersman/telenet/issues/147)
+
 ## [v3.1.8](https://github.com/geertmeersman/telenet/tree/v3.1.8) (2023-05-16)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.7...v3.1.8)
