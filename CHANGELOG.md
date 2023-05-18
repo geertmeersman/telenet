@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.10](https://github.com/geertmeersman/telenet/tree/v3.1.10) (2023-05-18)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.9...v3.1.10)
+
+**Implemented enhancements:**
+
+- Decrease connection timeout to 3 seconds [\#152](https://github.com/geertmeersman/telenet/pull/152) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.9](https://github.com/geertmeersman/telenet/tree/v3.1.9) (2023-05-16)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.8...v3.1.9)
@@ -622,7 +630,7 @@
 
 ## [0.2.7](https://github.com/geertmeersman/telenet/tree/0.2.7) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.7)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.7)
 
 **Merged pull requests:**
 
@@ -639,13 +647,13 @@
 - Merge pull request \#3 from geertmeersman/main [\#4](https://github.com/geertmeersman/telenet/pull/4) ([geertmeersman](https://github.com/geertmeersman))
 - Merge [\#3](https://github.com/geertmeersman/telenet/pull/3) ([geertmeersman](https://github.com/geertmeersman))
 
-## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
-
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.3...0.2.2)
-
 ## [0.2.3](https://github.com/geertmeersman/telenet/tree/0.2.3) (2023-03-26)
 
-[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.3)
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.2...0.2.3)
+
+## [0.2.2](https://github.com/geertmeersman/telenet/tree/0.2.2) (2023-03-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/0.2.1...0.2.2)
 
 ## [0.2.1](https://github.com/geertmeersman/telenet/tree/0.2.1) (2023-03-25)
 
