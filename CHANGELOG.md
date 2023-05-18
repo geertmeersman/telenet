@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.11](https://github.com/geertmeersman/telenet/tree/v3.1.11) (2023-05-18)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.10...v3.1.11)
+
+**Closed issues:**
+
+- after update requestedby HACS [\#151](https://github.com/geertmeersman/telenet/issues/151)
+
 ## [v3.1.10](https://github.com/geertmeersman/telenet/tree/v3.1.10) (2023-05-18)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.9...v3.1.10)
