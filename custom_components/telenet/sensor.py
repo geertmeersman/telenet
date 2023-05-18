@@ -45,7 +45,7 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
     TelenetSensorDescription(key="wifi", icon="mdi:wifi"),
     TelenetSensorDescription(key="qr", icon="mdi:qrcode-scan"),
     TelenetSensorDescription(key="user", icon="mdi:face-man"),
-    TelenetSensorDescription(key="mailbox", icon="mdi:email-arrow-left"),
+    TelenetSensorDescription(key="mailbox", icon="mdi:email"),
     TelenetSensorDescription(key="customer", icon="mdi:human-greeting-variant"),
     TelenetSensorDescription(
         key="euro",

@@ -32,7 +32,7 @@ DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 COORDINATOR_UPDATE_INTERVAL = timedelta(minutes=15)
 CONNECTION_RETRY = 5
-REQUEST_TIMEOUT = 3
+REQUEST_TIMEOUT = 10
 DEFAULT_LANGUAGE = "nl"
 LANGUAGE_CHOICES = ["nl", "fr", "en"]
 WEBSITE = "https://mijn.telenet.be/mijntelenet/"

@@ -1048,32 +1048,50 @@ class TelenetClient:
         mailboxes = self.mailboxesandaliases()
         for mailbox in mailboxes.get("mailboxes"):
             if len(mailbox.get("aliases")):
-                product_name = (
-                    f"Mailbox {mailbox.get('aliases')[0].get('mailboxAliasId')}"
-                )
+                for alias in mailbox.get("aliases"):
+                    product_name = f"Alias {alias.get('mailboxAliasId')}"
+                    product_key = format_entity_name(product_name)
+                    new_products.update(
+                        {
+                            product_key: TelenetProduct(
+                                product_identifier=product_name,
+                                product_type="mailbox",
+                                product_description_key="mailbox",
+                                product_name=alias.get("mailboxAliasId"),
+                                product_key=product_key,
+                                product_plan_identifier=self.user_details.get(
+                                    "customer_number"
+                                ),
+                                product_plan_label="Customer",
+                                product_state=mailbox.get("virus"),
+                                product_extra_attributes=mailbox,
+                                product_extra_sensor=True,
+                            )
+                        }
+                    )
             else:
                 product_name = mailbox.get("mailboxUUID")
-            product_key = format_entity_name(
-                f"{self.user_details.get('customer_number')} {product_name}"
-            )
-            new_products.update(
-                {
-                    product_key: TelenetProduct(
-                        product_identifier=f"{product_name}",
-                        product_type="mailbox",
-                        product_description_key="mailbox",
-                        product_name=f"{product_name}",
-                        product_key=product_key,
-                        product_plan_identifier=self.user_details.get(
-                            "customer_number"
-                        ),
-                        product_plan_label="Customer",
-                        product_state=mailbox.get("virus"),
-                        product_extra_attributes=mailbox,
-                        product_extra_sensor=True,
-                    )
-                }
-            )
+                product_key = format_entity_name(
+                    f"{self.user_details.get('customer_number')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="mailbox",
+                            product_description_key="mailbox",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=mailbox.get("virus"),
+                            product_extra_attributes=mailbox,
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
 
         self.all_products.update(new_products)
         return True
