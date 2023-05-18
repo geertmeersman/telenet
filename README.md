@@ -118,8 +118,10 @@ recorder:
 <details><summary>Show markdown code</summary>
 
 **Replace &lt;identifier&gt; by your Telenet identifier**
-     
+
 (Only at 2 places)
+     
+You can find your Telenet identifier by going to "/developer-tools/state" and you filter on internet_usage
      
 Attention: this example uses the following HACS Lovelace cards (so you will need to install these§ if you are planning to you the examples):
      
