@@ -82,14 +82,9 @@ logger:
     custom_components.telenet: debug
 ```
 
-2. If you receive this exception in the logs:
+2. The below lovelace examples, are mostly made for the recent Telenet IT platform.
 
-```
-No products found. Either the API is currently down or you are not migrated to the new Telenet IT system yet.
-```
-
-This might mean that your account is not migrated yet to the new Telenet IT platform. I only support the newest API, which is rolling out since beginning of 2023. So you'll need to be patient and hope Telenet migrates your account soon.
-If your interface still has this kind of layout, your account is not migrated yet to the new Telenet platform
+If your interface still has this kind of layout, you are on the V1 API Version
 
 ![API V1](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/api_v1.png)
 
@@ -120,11 +115,11 @@ recorder:
 **Replace &lt;identifier&gt; by your Telenet identifier**
 
 (Only at 2 places)
-     
+
 You can find your Telenet identifier by going to "/developer-tools/state" and filter on internet_usage
-     
+
 Attention: this example uses the following HACS Lovelace cards (so you will need to install these§ if you are planning to you the examples):
-     
+
 - https://github.com/iantrich/config-template-card
 - https://github.com/RomRider/apexcharts-card
 - https://github.com/custom-cards/dual-gauge-card

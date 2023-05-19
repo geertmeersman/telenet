@@ -1407,7 +1407,7 @@ class TelenetClient:
         return response.json()
 
     def buildv1(self, api_v1_call):
-        """Build V1 Sensors"""
+        """Build V1 Sensors."""
         new_products = {}
         if "accounts" in api_v1_call and len(api_v1_call.get("accounts")):
             for account in api_v1_call.get("accounts"):
@@ -1470,12 +1470,10 @@ class TelenetClient:
                 ):
                     total_volume += (
                         int(
-                            (
-                                details.get("product")
-                                .get("characteristics")
-                                .get("service_category_limit")
-                                .get("value")
-                            )
+                            details.get("product")
+                            .get("characteristics")
+                            .get("service_category_limit")
+                            .get("value")
                         )
                         * 1048576
                     )
@@ -1596,6 +1594,120 @@ class TelenetClient:
                         )
                     }
                 )
+
+        if "modems" in api_v1_call and len(api_v1_call.get("modems")):
+            modem = api_v1_call.get("modems")[0]
+            product_name = "modem"
+            product_key = format_entity_name(
+                f"{internetusage.get('businessidentifier')} {product_name}"
+            )
+            new_products.update(
+                {
+                    product_key: TelenetProduct(
+                        product_identifier=f"{product_name}",
+                        product_type="modem",
+                        product_description_key="modem",
+                        product_name=f"{product_name}",
+                        product_key=product_key,
+                        product_plan_identifier=self.user_details.get(
+                            "customer_number"
+                        ),
+                        product_plan_label="Customer",
+                        product_state=modem.get("hardware"),
+                        product_extra_attributes=modem,
+                        product_extra_sensor=True,
+                    )
+                }
+            )
+        if "digitaltvdetails" in api_v1_call and len(
+            api_v1_call.get("digitaltvdetails")
+        ):
+            for dtv in api_v1_call.get("digitaltvdetails"):
+                for device in dtv.get("devices"):
+                    product_name = (
+                        f"{dtv.get('identifier')} {device.get('serialnumber')}"
+                    )
+                    product_key = format_entity_name(
+                        f"{internetusage.get('businessidentifier')} {product_name}"
+                    )
+                    new_products.update(
+                        {
+                            product_key: TelenetProduct(
+                                product_identifier=f"{product_name}",
+                                product_type="dtv",
+                                product_description_key="dtv",
+                                product_name=f"{product_name}",
+                                product_key=product_key,
+                                product_plan_identifier=self.user_details.get(
+                                    "customer_number"
+                                ),
+                                product_plan_label="Customer",
+                                product_state=device.get("type"),
+                                product_extra_attributes=dtv,
+                                product_extra_sensor=True,
+                            )
+                        }
+                    )
+        if "digitaltvunbilledusage" in api_v1_call and len(
+            api_v1_call.get("digitaltvunbilledusage")
+        ):
+            for dtv in api_v1_call.get("digitaltvunbilledusage"):
+                product_name = f"{dtv.get('identifier')} usage"
+                product_key = format_entity_name(
+                    f"{internetusage.get('businessidentifier')} {product_name}"
+                )
+                cost = 0
+                if "dtvusage" in dtv:
+                    cost += str_to_float(dtv.get("dtvusage").get("total"))
+                if "tvodusage" in dtv:
+                    cost += str_to_float(dtv.get("tvodusage").get("total"))
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="dtv",
+                            product_description_key="euro",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=cost,
+                            product_extra_attributes=dtv,
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
+        if "bills" in api_v1_call and len(api_v1_call.get("bills")):
+            amount = 0
+            bills = {}
+            for bills_array in api_v1_call.get("bills"):
+                for bill in bills_array.get("bills"):
+                    if not bill.get("paid"):
+                        amount += str_to_float(bill.get("billamount").get("amount"))
+            product_name = "open invoices"
+            product_key = format_entity_name(
+                f"{internetusage.get('businessidentifier')} {product_name}"
+            )
+            new_products.update(
+                {
+                    product_key: TelenetProduct(
+                        product_identifier=f"{product_name}",
+                        product_type="invoice",
+                        product_description_key="euro",
+                        product_name=f"{product_name}",
+                        product_key=product_key,
+                        product_plan_identifier=self.user_details.get(
+                            "customer_number"
+                        ),
+                        product_plan_label="Customer",
+                        product_state=amount,
+                        product_extra_attributes=bills,
+                        product_extra_sensor=True,
+                    )
+                }
+            )
 
         if len(new_products):
             self.all_products.update(new_products)
