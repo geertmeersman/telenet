@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.13](https://github.com/geertmeersman/telenet/tree/v3.1.13) (2023-05-19)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.12...v3.1.13)
+
+**Merged pull requests:**
+
+- Fix API endpoint [\#155](https://github.com/geertmeersman/telenet/pull/155) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.12](https://github.com/geertmeersman/telenet/tree/v3.1.12) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.11...v3.1.12)
