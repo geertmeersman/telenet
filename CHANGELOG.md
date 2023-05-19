@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.17](https://github.com/geertmeersman/telenet/tree/v3.1.17) (2023-05-19)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.16...v3.1.17)
+
+**Merged pull requests:**
+
+- V1 API: Total usage included offpeak usage [\#160](https://github.com/geertmeersman/telenet/pull/160) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.16](https://github.com/geertmeersman/telenet/tree/v3.1.16) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.15...v3.1.16)
