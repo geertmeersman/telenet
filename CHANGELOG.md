@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.16](https://github.com/geertmeersman/telenet/tree/v3.1.16) (2023-05-19)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.15...v3.1.16)
+
+**Implemented enhancements:**
+
+- V1 API: Off peak usage & total usage added [\#159](https://github.com/geertmeersman/telenet/pull/159) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.15](https://github.com/geertmeersman/telenet/tree/v3.1.15) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.14...v3.1.15)
@@ -31,10 +39,6 @@
 ## [v3.1.12](https://github.com/geertmeersman/telenet/tree/v3.1.12) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.11...v3.1.12)
-
-**Closed issues:**
-
-- Recursive error on modem advanced settings [\#153](https://github.com/geertmeersman/telenet/issues/153)
 
 **Merged pull requests:**
 
