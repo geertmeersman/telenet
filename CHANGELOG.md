@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.1.14](https://github.com/geertmeersman/telenet/tree/v3.1.14) (2023-05-19)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.13...v3.1.14)
+
+**Implemented enhancements:**
+
+- Telenet V1 API Support [\#157](https://github.com/geertmeersman/telenet/pull/157) ([geertmeersman](https://github.com/geertmeersman))
+
+**Merged pull requests:**
+
+- Sync [\#156](https://github.com/geertmeersman/telenet/pull/156) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.13](https://github.com/geertmeersman/telenet/tree/v3.1.13) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.12...v3.1.13)
