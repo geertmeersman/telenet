@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.15](https://github.com/geertmeersman/telenet/tree/v3.1.15) (2023-05-19)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.14...v3.1.15)
+
+**Implemented enhancements:**
+
+- V1 API: DTV & invoices [\#158](https://github.com/geertmeersman/telenet/pull/158) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.14](https://github.com/geertmeersman/telenet/tree/v3.1.14) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.13...v3.1.14)
