@@ -276,9 +276,14 @@ class TelenetClient:
             200,
         )
         if response is False:
-            raise TelenetServiceException(
-                "No products found. Either the API is currently down or you are not migrated to the new Telenet IT system yet."
-            )
+            api_v1_call = self.api_v1_call()
+            if api_v1_call and len(api_v1_call.get("customerproductholding")):
+                self.buildv1(api_v1_call)
+                return [self.all_products.get(product) for product in self.all_products]
+            else:
+                raise TelenetServiceException(
+                    "No products found. Either the API is currently down or you are not migrated to the new Telenet IT system yet."
+                )
         for a_product in response.json():
             plan_identifier = a_product.get("identifier")
             plan_label = a_product.get("label")
@@ -1386,3 +1391,211 @@ class TelenetClient:
         if response is False:
             return False
         return response.json()
+
+    # https://api.prd.telenet.be/ocapi/public/?p=customerproductholding,eligibleproducts
+    # V1 API calls
+    def api_v1_call(self):
+        """Fetch all details for V1."""
+        response = self.request(
+            f"{self.environment.ocapi_public}/?p=accounts,bills,customerproductholding,eligibleproducts,contactdetails,modems,modemdetails,internetusage,internetusagereminder,digitaltvdetails,digitaltvlimits,digitaltvbilledusage,digitaltvunbilledusage,mobilesubscriptions",
+            "[TelenetClient|customerproductholding]",
+            None,
+            200,
+        )
+        if response is False:
+            return False
+        return response.json()
+
+    def buildv1(self, api_v1_call):
+        """Build V1 Sensors"""
+        new_products = {}
+        if "accounts" in api_v1_call and len(api_v1_call.get("accounts")):
+            for account in api_v1_call.get("accounts"):
+                product_name = "customer"
+                product_key = format_entity_name(
+                    f"{self.user_details.get('customer_number')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="customer",
+                            product_description_key="customer",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=account.get("accountnumber"),
+                            product_extra_attributes=account,
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
+        product_name = "user details"
+        product_key = format_entity_name(
+            f"{self.user_details.get('customer_number')} {product_name}"
+        )
+        new_products.update(
+            {
+                product_key: TelenetProduct(
+                    product_identifier=f"{product_name}",
+                    product_type="user",
+                    product_description_key="user",
+                    product_name=f"{product_name}",
+                    product_key=product_key,
+                    product_plan_identifier=self.user_details.get("customer_number"),
+                    product_plan_label="Customer",
+                    product_state=self.user_details.get("first_name"),
+                    product_extra_attributes=self.user_details,
+                    product_extra_sensor=True,
+                )
+            }
+        )
+
+        if "internetusage" in api_v1_call and len(api_v1_call.get("internetusage")):
+            for internetusage in api_v1_call.get("internetusage"):
+                usage = internetusage.get("availableperiods")[0].get("usages")[0]
+                specurl = usage.get("specurl")
+                details = self.product_details(specurl)
+                total_volume = usage.get("extendedvolume").get("volume")
+                if (
+                    type(
+                        details.get("product")
+                        .get("characteristics")
+                        .get("service_category_limit")
+                    )
+                    == dict
+                ):
+                    total_volume += (
+                        int(
+                            (
+                                details.get("product")
+                                .get("characteristics")
+                                .get("service_category_limit")
+                                .get("value")
+                            )
+                        )
+                        * 1048576
+                    )
+                elif (
+                    type(
+                        details.get("product")
+                        .get("characteristics")
+                        .get("elementarycharacteristics")
+                    )
+                    == list
+                ):
+                    for elem in (
+                        details.get("product")
+                        .get("characteristics")
+                        .get("elementarycharacteristics")
+                    ):
+                        if elem.get("key") == "internet_usage_limit":
+                            total_volume += int(elem.get("value")) * 1048576
+                            break
+                else:
+                    total_volume += usage.get("includedvolume")
+                total_usage = usage.get("totalusage").get("peak") + usage.get(
+                    "totalusage"
+                ).get("wifree")
+                usage_pct = 100 * total_usage / total_volume
+                period_start = datetime.strptime(
+                    usage.get("periodstart"), "%Y-%m-%dT%H:%M:%S.0%z"
+                )
+                period_end = datetime.strptime(
+                    usage.get("periodend"), "%Y-%m-%dT%H:%M:%S.0%z"
+                )
+                period_length = period_end - period_start
+                period_length_days = period_length.days
+                period_length_seconds = period_length.total_seconds()
+                period_used = datetime.now(period_start.tzinfo) - period_start
+                period_used_seconds = period_used.total_seconds()
+                period_used_percentage = round(
+                    100 * period_used_seconds / period_length_seconds, 1
+                )
+                if period_used_percentage > 100:
+                    period_used_percentage = 100
+                identifier = internetusage.get("businessidentifier")
+                product_name = "internet usage"
+                product_key = format_entity_name(
+                    f"{internetusage.get('businessidentifier')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="usage",
+                            product_description_key="usage_percentage",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=round(usage_pct, 2),
+                            product_extra_attributes={
+                                "last_update": internetusage.get("lastupdated"),
+                                "identifier": identifier,
+                                "start_date": usage.get("periodstart"),
+                                "end_date": usage.get("periodend"),
+                                "days_until": period_length_days,
+                                "total_volume": f"{total_volume/1048576} GB",
+                                "wifree_usage": f"{round(usage.get('totalusage').get('wifree')/1048576)} GB",
+                                "total_usage": f"{round(total_usage/1048576)} GB",
+                                "peak_usage": f"{round(usage.get('totalusage').get('peak')/1048576)} GB",
+                                "used_percentage": round(usage_pct, 2),
+                                "period_used_percentage": period_used_percentage,
+                                "period_remaining_percentage": (
+                                    100 - period_used_percentage
+                                ),
+                                "squeezed": usage_pct >= 100,
+                                "period_length": period_length_days,
+                            },
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
+
+                daily_peak = []
+                daily_off_peak = []
+                daily_date = []
+
+                dailyusages = usage.get("totalusage").get("dailyusages")
+                if len(dailyusages) != 0:
+                    for day in dailyusages:
+                        if "peak" in day:
+                            daily_peak.append(day.get("peak") / 1048576)
+                            daily_off_peak.append(day.get("offpeak") / 1048576)
+                        daily_date.append(day.get("date"))
+
+                product_name = "internet daily usage"
+                product_key = format_entity_name(
+                    f"{internetusage.get('businessidentifier')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="usage",
+                            product_description_key="data_usage",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=usage.get("totalusage").get("peak") / 1048576,
+                            product_extra_attributes={
+                                "daily_peak": daily_peak,
+                                "daily_off_peak": daily_off_peak,
+                                "daily_date": daily_date,
+                            },
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
+
+        if len(new_products):
+            self.all_products.update(new_products)
