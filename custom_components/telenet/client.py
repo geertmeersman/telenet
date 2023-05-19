@@ -270,7 +270,7 @@ class TelenetClient:
         self.all_products = {}
         self.product_types = []
         response = self.request(
-            f"{self.environment.ocapi_public}/product-service/v1/products?status=ACTIVE",
+            f"{self.environment.ocapi_public_api}/product-service/v1/products?status=ACTIVE",
             "[TelenetClient|products]",
             None,
             200,
@@ -1148,7 +1148,7 @@ class TelenetClient:
         self.plan_products = {}
         _LOGGER.debug("[TelenetClient|plan_info] Fetching plan info from Telenet")
         response = self.request(
-            f"{self.environment.ocapi_public}/product-service/v1/product-subscriptions?producttypes=PLAN",
+            f"{self.environment.ocapi_public_api}/product-service/v1/product-subscriptions?producttypes=PLAN",
             "[TelenetClient|planInfo]",
             None,
             200,
@@ -1165,7 +1165,7 @@ class TelenetClient:
             f"[TelenetClient|bill_cycle] Fetching bill_cycles info from Telenet for {product_identifier} ({product_type})"
         )
         response = self.request(
-            f"{self.environment.ocapi_public}/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
+            f"{self.environment.ocapi_public_api}/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
             "[TelenetClient|bill_cycles]",
             None,
             200,
@@ -1188,7 +1188,7 @@ class TelenetClient:
     def product_usage(self, product_type, product_identifier, startDate, endDate):
         """Fetch product_usage."""
         response = self.request(
-            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
+            f"{self.environment.ocapi_public_api}/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
             "[TelenetClient|product_usage]",
             None,
             200,
@@ -1202,7 +1202,7 @@ class TelenetClient:
     ):
         """Fetch daily usage."""
         response = self.request(
-            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
+            f"{self.environment.ocapi_public_api}/product-service/v1/products/{product_type}/{product_identifier}/dailyusage?billcycle={bill_cycle}&fromDate={from_date}&toDate={to_date}",
             "[TelenetClient|product_daily_usage]",
             None,
             None,
@@ -1220,7 +1220,7 @@ class TelenetClient:
                 f"[TelenetClient|product_subscriptions] Fetching product plan infos from Telenet for {product_type}"
             )
             response = self.request(
-                f"{self.environment.ocapi_public}/product-service/v1/product-subscriptions?producttypes={product_type.upper()}",
+                f"{self.environment.ocapi_public_api}/product-service/v1/product-subscriptions?producttypes={product_type.upper()}",
                 "[TelenetClient|product_subscriptions]",
                 None,
                 200,
@@ -1244,7 +1244,7 @@ class TelenetClient:
     def simdetails(self):
         """Fetch mobile usage."""
         response = self.request(
-            f"{self.environment.ocapi_public}/mobile-service/v2/simdetails?status=ACTIVATION_IN_PROGRESS",
+            f"{self.environment.ocapi_public_api}/mobile-service/v2/simdetails?status=ACTIVATION_IN_PROGRESS",
             "[TelenetClient|simdetails]",
             None,
             200,
@@ -1256,7 +1256,7 @@ class TelenetClient:
     def mobile_usage(self, product_identifier):
         """Fetch mobile usage."""
         response = self.request(
-            f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{product_identifier}/usages",
+            f"{self.environment.ocapi_public_api}/mobile-service/v3/mobilesubscriptions/{product_identifier}/usages",
             "[TelenetClient|mobile_usage]",
             None,
             200,
@@ -1269,14 +1269,14 @@ class TelenetClient:
         """Fetch mobile bundle usage."""
         if line_identifier is not None:
             response = self.request(
-                f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle&lineIdentifier={line_identifier}",
+                f"{self.environment.ocapi_public_api}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle&lineIdentifier={line_identifier}",
                 "[TelenetClient|mobile_bundle_usage line_identifier]",
                 None,
                 200,
             )
         else:
             response = self.request(
-                f"{self.environment.ocapi_public}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle",
+                f"{self.environment.ocapi_public_api}/mobile-service/v3/mobilesubscriptions/{bundle_identifier}/usages?type=bundle",
                 "[TelenetClient|mobile_bundle_usage bundle]",
                 None,
                 200,
@@ -1288,7 +1288,7 @@ class TelenetClient:
     def mailboxesandaliases(self):
         """Fetch mailboxesandaliases info."""
         response = self.request(
-            f"{self.environment.ocapi_public}/mailbox-mgmt-service/v1/mailboxesandaliases",
+            f"{self.environment.ocapi_public_api}/mailbox-mgmt-service/v1/mailboxesandaliases",
             "[TelenetClient|mailboxesandaliases]",
             None,
             200,
@@ -1300,7 +1300,7 @@ class TelenetClient:
     def modems(self, product_identifier):
         """Fetch modem info."""
         response = self.request(
-            f"{self.environment.ocapi_public}/resource-service/v1/modems?productIdentifier={product_identifier}",
+            f"{self.environment.ocapi_public_api}/resource-service/v1/modems?productIdentifier={product_identifier}",
             "[TelenetClient|modems]",
             None,
             200,
@@ -1312,7 +1312,7 @@ class TelenetClient:
     def modem_settings(self, mac):
         """Fetch modem advanced settings info."""
         response = self.request(
-            f"{self.environment.ocapi_public}/resource-service/v1/modems/{mac}/advance-settings",
+            f"{self.environment.ocapi_public_api}/resource-service/v1/modems/{mac}/advance-settings",
             "[TelenetClient|modems]",
             None,
             None,
@@ -1324,7 +1324,7 @@ class TelenetClient:
     def network_topology(self, mac):
         """Fetch network topology."""
         response = self.request(
-            f"{self.environment.ocapi_public}/resource-service/v1/network-topology/{mac}?withClients=true",
+            f"{self.environment.ocapi_public_api}/resource-service/v1/network-topology/{mac}?withClients=true",
             "[TelenetClient|network_topology]",
             None,
             200,
@@ -1336,7 +1336,7 @@ class TelenetClient:
     def wireless_settings(self, mac, product_identifier):
         """Fetch wireless settings."""
         response = self.request(
-            f"{self.environment.ocapi_public}/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}",
+            f"{self.environment.ocapi_public_api}/resource-service/v1/modems/{mac}/wireless-settings?withmetadata=true&withwirelessservice=true&productidentifier={product_identifier}",
             "[TelenetClient|wireless_settings]",
             None,
             None,
@@ -1348,7 +1348,7 @@ class TelenetClient:
     def device_details(self, product_type, product_identifier):
         """Fetch device details."""
         response = self.request(
-            f"{self.environment.ocapi_public}/product-service/v1/products/{product_type}/{product_identifier}/devicedetails",
+            f"{self.environment.ocapi_public_api}/product-service/v1/products/{product_type}/{product_identifier}/devicedetails",
             "[TelenetClient|device_details]",
             None,
             200,
@@ -1365,7 +1365,7 @@ class TelenetClient:
         if self.addresses.get(address_id) is not None:
             return self.addresses.get(address_id)
         response = self.request(
-            f"{self.environment.ocapi_public}/contact-service/v1/contact/addresses/{address_id}",
+            f"{self.environment.ocapi_public_api}/contact-service/v1/contact/addresses/{address_id}",
             "[TelenetClient|address]",
             None,
             200,
@@ -1378,7 +1378,7 @@ class TelenetClient:
     def customer(self):
         """Fetch customer info."""
         response = self.request(
-            f"{self.environment.ocapi_public}/customer-service/v1/customers",
+            f"{self.environment.ocapi_public_api}/customer-service/v1/customers",
             "[TelenetClient|customer]",
             None,
             200,
