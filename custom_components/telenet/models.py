@@ -20,6 +20,7 @@ class TelenetEnvironment:
 
     ocapi: str
     ocapi_public: str
+    ocapi_public_api: str
     ocapi_oauth: str
     openid: str
     referer: str
