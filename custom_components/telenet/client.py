@@ -605,15 +605,17 @@ class TelenetClient:
                         )
                 if modem is not False:
                     modem_settings = self.modem_settings(modem.get("mac"))
-                    new_products.update(
-                        self.construct_extra_sensor(
-                            product,
-                            "modem",
-                            "modem",
-                            modem.get("name"),
-                            self.create_extra_attributes_list(modem) | modem_settings,
+                    if modem_settings is not False:
+                        new_products.update(
+                            self.construct_extra_sensor(
+                                product,
+                                "modem",
+                                "modem",
+                                modem.get("name"),
+                                self.create_extra_attributes_list(modem)
+                                | modem_settings,
+                            )
                         )
-                    )
                     network_topology = clean_ipv6(
                         self.network_topology(modem.get("mac"))
                     )
@@ -1313,9 +1315,9 @@ class TelenetClient:
             f"{self.environment.ocapi_public}/resource-service/v1/modems/{mac}/advance-settings",
             "[TelenetClient|modems]",
             None,
-            200,
+            None,
         )
-        if response is False:
+        if response is False or response.status_code == 500:
             return False
         return response.json()
 
