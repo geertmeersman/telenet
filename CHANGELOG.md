@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.18](https://github.com/geertmeersman/telenet/tree/v3.1.18) (2023-05-21)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.17...v3.1.18)
+
+**Merged pull requests:**
+
+- str\_to\_float function fix [\#161](https://github.com/geertmeersman/telenet/pull/161) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.17](https://github.com/geertmeersman/telenet/tree/v3.1.17) (2023-05-19)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.16...v3.1.17)
