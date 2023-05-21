@@ -11,7 +11,9 @@ _LOGGER = logging.getLogger(__name__)
 
 def str_to_float(input) -> float:
     """Transform float to string."""
-    return float(input.replace(",", "."))
+    if isinstance(input, str):
+        return float(input.replace(",", "."))
+    return input
 
 
 def float_to_timestring(float_time, unit_type) -> str:
