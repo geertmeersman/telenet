@@ -1125,25 +1125,25 @@ class TelenetClient:
                 else:
                     info = self.plan_products.get(product.product_identifier)
                 _LOGGER.debug(
-                    f"[TelenetClient|set_extra_attributes] Setting extra attributes for {product.product_identifier} Length: {len(info)}"
+                    f"[TelenetClient|set_extra_attributes] Setting extra attributes for {product.product_identifier}"
                 )
-
-                extra_attributes = {}
-                if product.product_type == "internet":
-                    attributes = TelenetInternetProductExtraAttributes()
-                elif product.product_type == "mobile":
-                    attributes = TelenetMobileProductExtraAttributes()
-                elif product.product_type == "dtv":
-                    attributes = TelenetDtvProductExtraAttributes()
-                elif product.product_type == "telephone":
-                    attributes = TelenetTelephoneProductExtraAttributes()
-                elif product.product_type == "bundle":
-                    attributes = TelenetBundleProductExtraAttributes()
-                for key in dir(attributes):
-                    if key[0:2] != "__":
-                        if key in info:
-                            extra_attributes[key] = info.get(key)
-                product.product_extra_attributes |= extra_attributes
+                if info and len(info):
+                    extra_attributes = {}
+                    if product.product_type == "internet":
+                        attributes = TelenetInternetProductExtraAttributes()
+                    elif product.product_type == "mobile":
+                        attributes = TelenetMobileProductExtraAttributes()
+                    elif product.product_type == "dtv":
+                        attributes = TelenetDtvProductExtraAttributes()
+                    elif product.product_type == "telephone":
+                        attributes = TelenetTelephoneProductExtraAttributes()
+                    elif product.product_type == "bundle":
+                        attributes = TelenetBundleProductExtraAttributes()
+                    for key in dir(attributes):
+                        if key[0:2] != "__":
+                            if key in info:
+                                extra_attributes[key] = info.get(key)
+                    product.product_extra_attributes |= extra_attributes
         return True
 
     def product_details(self, url):
