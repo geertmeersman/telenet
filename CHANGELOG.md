@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.20](https://github.com/geertmeersman/telenet/tree/v3.1.20) (2023-05-24)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.19...v3.1.20)
+
+**Merged pull requests:**
+
+- Fix if product.product\_subscription\_info is None [\#164](https://github.com/geertmeersman/telenet/pull/164) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.19](https://github.com/geertmeersman/telenet/tree/v3.1.19) (2023-05-24)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.18...v3.1.19)
