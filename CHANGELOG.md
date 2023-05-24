@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.1.19](https://github.com/geertmeersman/telenet/tree/v3.1.19) (2023-05-24)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.18...v3.1.19)
+
+**Implemented enhancements:**
+
+- Ignore Error 500 [\#163](https://github.com/geertmeersman/telenet/pull/163) ([geertmeersman](https://github.com/geertmeersman))
+
+**Merged pull requests:**
+
+- build\(deps\): bump ruff from 0.0.267 to 0.0.269 [\#162](https://github.com/geertmeersman/telenet/pull/162) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.1.18](https://github.com/geertmeersman/telenet/tree/v3.1.18) (2023-05-21)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.17...v3.1.18)
