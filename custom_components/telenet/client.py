@@ -1056,7 +1056,7 @@ class TelenetClient:
 
         mailboxes = self.mailboxesandaliases()
         for mailbox in mailboxes.get("mailboxes"):
-            if len(mailbox.get("aliases")):
+            if "aliases" in mailbox and len(mailbox.get("aliases")):
                 for alias in mailbox.get("aliases"):
                     product_name = f"Alias {alias.get('mailboxAliasId')}"
                     product_key = format_entity_name(product_name)
@@ -1117,7 +1117,10 @@ class TelenetClient:
         for product in self.all_products:
             product = self.all_products[product]
             if not product.product_extra_sensor:
-                if len(product.product_subscription_info) > 0:
+                if (
+                    product.product_subscription_info
+                    and len(product.product_subscription_info) > 0
+                ):
                     info = product.product_subscription_info
                 else:
                     info = self.plan_products.get(product.product_identifier)
