@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.21](https://github.com/geertmeersman/telenet/tree/v3.1.21) (2023-05-25)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.20...v3.1.21)
+
+**Merged pull requests:**
+
+- fix: Restore offpeak usage [\#165](https://github.com/geertmeersman/telenet/pull/165) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.1.20](https://github.com/geertmeersman/telenet/tree/v3.1.20) (2023-05-24)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.19...v3.1.20)
