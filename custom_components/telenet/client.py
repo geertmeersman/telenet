@@ -1480,7 +1480,6 @@ class TelenetClient:
                                 .get("characteristics")
                                 .get("service_category_limit")
                                 .get("value")
-                            )
                         )
                         * 1048576
                     )
