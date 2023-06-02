@@ -17,10 +17,9 @@ repos:
       - id: isort
         args: [--filter-files]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
+    rev: v1.3.0
     hooks:
       - id: mypy
-        language: system
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.7.1
     hooks:
@@ -38,11 +37,3 @@ repos:
       - id: forbid-new-submodules
       - id: mixed-line-ending
       - id: trailing-whitespace
-  - repo: local
-    hooks:
-      - id: reorder-python-imports
-        name: Reorder python imports
-        entry: reorder-python-imports
-        language: system
-        types: [python]
-        args: [--application-directories=custom_components]

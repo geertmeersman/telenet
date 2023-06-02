@@ -4,21 +4,15 @@ from __future__ import annotations
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_LANGUAGE
-from homeassistant.const import CONF_PASSWORD
-from homeassistant.const import CONF_USERNAME
+from homeassistant.const import CONF_LANGUAGE, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.helpers.update_coordinator import UpdateFailed
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from requests.exceptions import ConnectionError
 
 from .client import TelenetClient
-from .const import COORDINATOR_UPDATE_INTERVAL
-from .const import DOMAIN
-from .const import PLATFORMS
-from .exceptions import TelenetException
-from .exceptions import TelenetServiceException
+from .const import COORDINATOR_UPDATE_INTERVAL, DOMAIN, PLATFORMS
+from .exceptions import TelenetException, TelenetServiceException
 from .models import TelenetProduct
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,6 +71,7 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=COORDINATOR_UPDATE_INTERVAL,
         )
+        self._debug = _LOGGER.isEnabledFor(logging.DEBUG)
         self._config_entry_id = config_entry_id
         self._device_registry = dev_reg
         self.client = client
@@ -84,18 +79,25 @@ class TelenetDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict | None:
         """Update data."""
-        try:
+        if self._debug:
             products = await self.hass.async_add_executor_job(
                 self.client.products_refreshed
             )
-        except ConnectionError as exception:
-            raise UpdateFailed(f"ConnectionError {exception}") from exception
-        except TelenetServiceException as exception:
-            raise UpdateFailed(f"TelenetServiceException {exception}") from exception
-        except TelenetException as exception:
-            raise UpdateFailed(f"TelenetException {exception}") from exception
-        except Exception as exception:
-            raise UpdateFailed(f"Exception {exception}") from exception
+        else:
+            try:
+                products = await self.hass.async_add_executor_job(
+                    self.client.products_refreshed
+                )
+            except ConnectionError as exception:
+                raise UpdateFailed(f"ConnectionError {exception}") from exception
+            except TelenetServiceException as exception:
+                raise UpdateFailed(
+                    f"TelenetServiceException {exception}"
+                ) from exception
+            except TelenetException as exception:
+                raise UpdateFailed(f"TelenetException {exception}") from exception
+            except Exception as exception:
+                raise UpdateFailed(f"Exception {exception}") from exception
 
         products: list[TelenetProduct] = products
 
