@@ -1181,7 +1181,7 @@ class TelenetClient:
             f"{self.environment.ocapi_public_api}/billing-service/v1/account/products/{product_identifier}/billcycle-details?producttype={product_type}&count={count}",
             "[TelenetClient|bill_cycles]",
             None,
-            200,
+            None,
         )
         if response is False:
             return False
