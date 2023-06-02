@@ -430,7 +430,7 @@ class TelenetClient:
                         cycle.get("startDate"),
                         cycle.get("endDate"),
                     )
-                    if len(daily_usage) == 0:
+                    if not daily_usage or len(daily_usage) == 0:
                         continue
                     product_daily_usage |= {cycle.get("billCycle"): daily_usage}
                     for day in (
@@ -1204,7 +1204,7 @@ class TelenetClient:
             f"{self.environment.ocapi_public_api}/product-service/v1/products/{product_type}/{product_identifier}/usage?fromDate={startDate}&toDate={endDate}",
             "[TelenetClient|product_usage]",
             None,
-            200,
+            None,
         )
         if response is False:
             return False
