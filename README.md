@@ -306,24 +306,24 @@ content: >
 
   ## Modem info
 
+  {% set topology = states.sensor.telenet_<identifier>_internet_network.attributes %}
+
   |||
 
   |----:|----:|
 
-  |**Type**|{{state_attr("sensor.telenet_<identifier>_internet_network","modemType")}}|
+  |**Type**|{{topology.modemType|default}}|
 
-  |**Model**|{{state_attr("sensor.telenet_<identifier>_internet_network","model")}}|
+  |**Model**|{{topology.model|default}}|
 
-  |**Last seen**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeen")}}|
+  |**Last seen**|{{topology.lastSeen|default}}|
 
-  |**Last seen light**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeenLight")}}|
+  |**Last seen light**|{{topology.lastSeenLight|default}}|
 
-  |**Public IP Adress**|{{state_attr("sensor.telenet_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+  |**Public IP Adress**|{{topology.ipAddressInfos[0].ipAddress|default}}|
 
 
   ## Network clients
-
-  {% set topology = states.sensor.telenet_as81402_internet_network.attributes %}
 
   ### {{topology.modemType|default}} {{topology.deviceName|default}} ({{topology.model}})
   |Client|IP|Interface|Vendor
