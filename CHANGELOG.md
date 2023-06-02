@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.2](https://github.com/geertmeersman/telenet/tree/v3.2.2) (2023-06-02)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.1...v3.2.2)
+
+**Merged pull requests:**
+
+- fix: Bypass billcycles on 500 for specific products [\#173](https://github.com/geertmeersman/telenet/pull/173) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.2.1](https://github.com/geertmeersman/telenet/tree/v3.2.1) (2023-06-02)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.0...v3.2.1)
