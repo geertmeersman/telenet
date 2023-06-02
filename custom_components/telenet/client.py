@@ -1,35 +1,38 @@
 """Telenet API Client."""
 from __future__ import annotations
 
-import logging
 from datetime import datetime
+import logging
 
-from requests import (
-    Session,
+from requests import Session
+
+from .const import (
+    BASE_HEADERS,
+    CONNECTION_RETRY,
+    DATE_FORMAT,
+    DATETIME_FORMAT,
+    DEFAULT_LANGUAGE,
+    DEFAULT_TELENET_ENVIRONMENT,
+    REQUEST_TIMEOUT,
 )
-
-from .const import BASE_HEADERS
-from .const import CONNECTION_RETRY
-from .const import DATE_FORMAT
-from .const import DATETIME_FORMAT
-from .const import DEFAULT_LANGUAGE
-from .const import DEFAULT_TELENET_ENVIRONMENT
-from .const import REQUEST_TIMEOUT
-from .exceptions import BadCredentialsException
-from .exceptions import TelenetServiceException
-from .models import TelenetBundleProductExtraAttributes
-from .models import TelenetDtvProductExtraAttributes
-from .models import TelenetEnvironment
-from .models import TelenetInternetProductExtraAttributes
-from .models import TelenetMobileProductExtraAttributes
-from .models import TelenetProduct
-from .models import TelenetTelephoneProductExtraAttributes
-from .utils import clean_ipv6
-from .utils import float_to_timestring
-from .utils import format_entity_name
-from .utils import get_json_dict_path
-from .utils import get_localized
-from .utils import str_to_float
+from .exceptions import BadCredentialsException, TelenetServiceException
+from .models import (
+    TelenetBundleProductExtraAttributes,
+    TelenetDtvProductExtraAttributes,
+    TelenetEnvironment,
+    TelenetInternetProductExtraAttributes,
+    TelenetMobileProductExtraAttributes,
+    TelenetProduct,
+    TelenetTelephoneProductExtraAttributes,
+)
+from .utils import (
+    clean_ipv6,
+    float_to_timestring,
+    format_entity_name,
+    get_json_dict_path,
+    get_localized,
+    str_to_float,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -1475,12 +1478,10 @@ class TelenetClient:
                 ):
                     total_volume += (
                         int(
-                            (
-                                details.get("product")
-                                .get("characteristics")
-                                .get("service_category_limit")
-                                .get("value")
-                            )
+                            details.get("product")
+                            .get("characteristics")
+                            .get("service_category_limit")
+                            .get("value")
                         )
                         * 1048576
                     )
