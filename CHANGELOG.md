@@ -1,5 +1,21 @@
 # Changelog
 
+## [v3.2.0](https://github.com/geertmeersman/telenet/tree/v3.2.0) (2023-06-02)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.21...v3.2.0)
+
+**Closed issues:**
+
+- Attribute total\_usage of sensor.telenet\_\*\*\*\*\*\*\_internet\_usage incorrect [\#166](https://github.com/geertmeersman/telenet/issues/166)
+- Recursive error on modem advanced settings [\#153](https://github.com/geertmeersman/telenet/issues/153)
+
+**Merged pull requests:**
+
+- fix: Improved debug [\#171](https://github.com/geertmeersman/telenet/pull/171) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump pytest-cov from 4.0.0 to 4.1.0 [\#169](https://github.com/geertmeersman/telenet/pull/169) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump ruff from 0.0.269 to 0.0.270 [\#168](https://github.com/geertmeersman/telenet/pull/168) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump actions/setup-python from 4.6.0 to 4.6.1 [\#167](https://github.com/geertmeersman/telenet/pull/167) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.1.21](https://github.com/geertmeersman/telenet/tree/v3.1.21) (2023-05-25)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.20...v3.1.21)
@@ -20,12 +36,9 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.18...v3.1.19)
 
-**Implemented enhancements:**
-
-- Ignore Error 500 [\#163](https://github.com/geertmeersman/telenet/pull/163) ([geertmeersman](https://github.com/geertmeersman))
-
 **Merged pull requests:**
 
+- Ignore Error 500 [\#163](https://github.com/geertmeersman/telenet/pull/163) ([geertmeersman](https://github.com/geertmeersman))
 - build\(deps\): bump ruff from 0.0.267 to 0.0.269 [\#162](https://github.com/geertmeersman/telenet/pull/162) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v3.1.18](https://github.com/geertmeersman/telenet/tree/v3.1.18) (2023-05-21)
@@ -48,7 +61,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.15...v3.1.16)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - V1 API: Off peak usage & total usage added [\#159](https://github.com/geertmeersman/telenet/pull/159) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -56,7 +69,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.14...v3.1.15)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - V1 API: DTV & invoices [\#158](https://github.com/geertmeersman/telenet/pull/158) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -64,12 +77,9 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.13...v3.1.14)
 
-**Implemented enhancements:**
-
-- Telenet V1 API Support [\#157](https://github.com/geertmeersman/telenet/pull/157) ([geertmeersman](https://github.com/geertmeersman))
-
 **Merged pull requests:**
 
+- Telenet V1 API Support [\#157](https://github.com/geertmeersman/telenet/pull/157) ([geertmeersman](https://github.com/geertmeersman))
 - Sync [\#156](https://github.com/geertmeersman/telenet/pull/156) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.1.13](https://github.com/geertmeersman/telenet/tree/v3.1.13) (2023-05-19)
@@ -100,7 +110,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.9...v3.1.10)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Decrease connection timeout to 3 seconds [\#152](https://github.com/geertmeersman/telenet/pull/152) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -108,13 +118,13 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.8...v3.1.9)
 
-**Implemented enhancements:**
-
-- New sensors: customer, mailboxes, simdetails, modem advanced info [\#149](https://github.com/geertmeersman/telenet/pull/149) ([geertmeersman](https://github.com/geertmeersman))
-
 **Closed issues:**
 
 - Issue with "Last Update" date  shown in Markdown code example [\#147](https://github.com/geertmeersman/telenet/issues/147)
+
+**Merged pull requests:**
+
+- New sensors: customer, mailboxes, simdetails, modem advanced info [\#149](https://github.com/geertmeersman/telenet/pull/149) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.1.8](https://github.com/geertmeersman/telenet/tree/v3.1.8) (2023-05-16)
 
@@ -171,25 +181,25 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.3...v3.1.4)
 
-**Implemented enhancements:**
-
-- Config flow improvement for language option [\#134](https://github.com/geertmeersman/telenet/pull/134) ([geertmeersman](https://github.com/geertmeersman))
-
 **Closed issues:**
 
 - Username is not always an email [\#132](https://github.com/geertmeersman/telenet/issues/132)
+
+**Merged pull requests:**
+
+- Config flow improvement for language option [\#134](https://github.com/geertmeersman/telenet/pull/134) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.1.3](https://github.com/geertmeersman/telenet/tree/v3.1.3) (2023-05-10)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.2...v3.1.3)
 
-**Implemented enhancements:**
-
-- Config flow:  Remove email validator & language choice improvement [\#133](https://github.com/geertmeersman/telenet/pull/133) ([geertmeersman](https://github.com/geertmeersman))
-
 **Documentation:**
 
 - chore: fix spelling [\#131](https://github.com/geertmeersman/telenet/pull/131) ([CumpsD](https://github.com/CumpsD))
+
+**Merged pull requests:**
+
+- Config flow:  Remove email validator & language choice improvement [\#133](https://github.com/geertmeersman/telenet/pull/133) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.1.2](https://github.com/geertmeersman/telenet/tree/v3.1.2) (2023-05-10)
 
@@ -211,17 +221,13 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.0...v3.1.1)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Raise TelenetServiceException when no products are found [\#122](https://github.com/geertmeersman/telenet/pull/122) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.1.0](https://github.com/geertmeersman/telenet/tree/v3.1.0) (2023-04-25)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.16...v3.1.0)
-
-**Implemented enhancements:**
-
-- Manually launch version & release workflow [\#117](https://github.com/geertmeersman/telenet/pull/117) ([geertmeersman](https://github.com/geertmeersman))
 
 **Closed issues:**
 
@@ -232,6 +238,7 @@
 - Catch product error, fixes \#120 [\#121](https://github.com/geertmeersman/telenet/pull/121) ([geertmeersman](https://github.com/geertmeersman))
 - build\(deps\): bump actions/setup-python from 4.5.0 to 4.6.0 [\#119](https://github.com/geertmeersman/telenet/pull/119) ([dependabot[bot]](https://github.com/apps/dependabot))
 - build\(deps\): bump ruff from 0.0.261 to 0.0.262 [\#118](https://github.com/geertmeersman/telenet/pull/118) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Manually launch version & release workflow [\#117](https://github.com/geertmeersman/telenet/pull/117) ([geertmeersman](https://github.com/geertmeersman))
 
 ## [v3.0.16](https://github.com/geertmeersman/telenet/tree/v3.0.16) (2023-04-21)
 
@@ -313,7 +320,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.6...v3.0.7)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - CODEOWNERS file added [\#106](https://github.com/geertmeersman/telenet/pull/106) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -361,7 +368,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.0.0...v3.0.1)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Fix update with override [\#100](https://github.com/geertmeersman/telenet/pull/100) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -386,7 +393,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.1.0...v2.1.1)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Add sales price [\#96](https://github.com/geertmeersman/telenet/pull/96) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -394,7 +401,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.18...v2.1.0)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - Catch Telenet ocapi errors [\#95](https://github.com/geertmeersman/telenet/pull/95) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -434,7 +441,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.13...v2.0.14)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - fix: Renamed sensor.telenet\_internet\_internet\_usage to sensor.telenet\_internet\_usage [\#90](https://github.com/geertmeersman/telenet/pull/90) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -466,7 +473,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.8...v2.0.9)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - fix: sensor name without entity id  [\#87](https://github.com/geertmeersman/telenet/pull/87) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -482,7 +489,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.6...v2.0.7)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - fix: Entity id aligned with sensor name [\#85](https://github.com/geertmeersman/telenet/pull/85) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -502,7 +509,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v2.0.3...v2.0.4)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - feat: Create dependency-review.yml [\#79](https://github.com/geertmeersman/telenet/pull/79) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -562,7 +569,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v0.3.2...v0.3.3)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - fix: Product info sensor and AssertionError improvement [\#75](https://github.com/geertmeersman/telenet/pull/75) ([geertmeersman](https://github.com/geertmeersman))
 
@@ -570,7 +577,7 @@
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v0.3.1...v0.3.2)
 
-**Implemented enhancements:**
+**Merged pull requests:**
 
 - fix: Config flow connection test improvement [\#74](https://github.com/geertmeersman/telenet/pull/74) ([geertmeersman](https://github.com/geertmeersman))
 
