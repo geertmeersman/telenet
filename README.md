@@ -306,29 +306,51 @@ content: >
 
   ## Modem info
 
+  {% set topology = states.sensor.telenet_<identifier>_internet_network.attributes %}
+
   |||
 
   |----:|----:|
 
-  |**Type**|{{state_attr("sensor.telenet_<identifier>_internet_network","modemType")}}|
+  |**Type**|{{topology.modemType|default}}|
 
-  |**Model**|{{state_attr("sensor.telenet_<identifier>_internet_network","model")}}|
+  |**Model**|{{topology.model|default}}|
 
-  |**Last seen**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeen")}}|
+  |**Last seen**|{{topology.lastSeen|default}}|
 
-  |**Last seen light**|{{state_attr("sensor.telenet_<identifier>_internet_network","lastSeenLight")}}|
+  |**Last seen light**|{{topology.lastSeenLight|default}}|
 
-  |**Public IP Adress**|{{state_attr("sensor.telenet_<identifier>_internet_network","ipAddressInfos")[0].ipAddress}}|
+  |**Public IP Adress**|{{topology.ipAddressInfos[0].ipAddress|default}}|
 
 
   ## Network clients
 
-  |Name|IP|Interface|Vendor
+  ### {{topology.modemType|default}} {{topology.deviceName|default}} ({{topology.model}})
 
-  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<identifier>_internet_network","clients") %}
+  |Client|IP|Interface|Vendor
 
-  {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
-  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|{%-endif %}{%-endfor %}
+  |----:|----:|----:|----:|
+  {% for item in topology.clients %}
+  {{item["name"]|default("|")}}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
+  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|
+  {%-endif %}
+  {%endfor %}
+
+  {%- for child in topology.children %}
+
+  ---
+
+  ### {{child.type|default}} {{child.deviceName|default}} ({{topology.model}})
+
+  |Client|IP|Interface|Vendor
+
+  |----:|----:|----:|----:|
+  {% for item in child.clients %}
+  {{item["name"]|default("|")}}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
+  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|
+  {%-endif %}
+  {%endfor %}
+  {%-endfor %}
 
   ## Wifi Settings
 
@@ -341,6 +363,7 @@ content: >
   |**HomeSpot enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","homeSpotEnabled")}}|
 
   |**Wps enabled**|{{state_attr("sensor.telenet_<identifier>_internet_wifi","wifiWpsEnabled")}}|
+
 
 ```
 
