@@ -323,12 +323,28 @@ content: >
 
   ## Network clients
 
-  |Name|IP|Interface|Vendor
+  {% set topology = states.sensor.telenet_as81402_internet_network.attributes %}
 
-  |----:|----:|----:|----:|{% for item in state_attr("sensor.telenet_<identifier>_internet_network","clients") %}
+  ### {{topology.modemType|default}} {{topology.deviceName|default}} ({{topology.model}})
+  |Client|IP|Interface|Vendor
+  |----:|----:|----:|----:|
+  {%- for item in topology.clients %}
+  {{item["name"]|default("|")}}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
+  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|
+  {%-endif %}
+  {%-endfor %}
 
-  {%if "name" in item %}{{item["name"]}}{% else %}|{%-endif %}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
-  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|{%-endif %}{%-endfor %}
+  {%- for child in topology.children %}
+  ---
+  ### {{child.type|default}} {{child.deviceName|default}} ({{topology.model}})
+  |Client|IP|Interface|Vendor
+  |----:|----:|----:|----:|
+  {%- for item in child.clients %}
+  {{item["name"]|default("|")}}|{%for ip in item["ipAddressInfos"] %}{%if ip["ipType"] == "IPv4" %}{{ip["ipAddress"]}}{%-endif %}
+  {%-endfor %}|{{item["connectedInterface"]}}|{%if "vendor" in item %}{{item["vendor"]}}{% else %}|
+  {%-endif %}
+  {%-endfor %}
+  {%-endfor %}
 
   ## Wifi Settings
 
