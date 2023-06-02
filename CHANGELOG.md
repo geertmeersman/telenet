@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.1](https://github.com/geertmeersman/telenet/tree/v3.2.1) (2023-06-02)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.0...v3.2.1)
+
+**Merged pull requests:**
+
+- fix: pass HTTP 500 responses for product usage [\#172](https://github.com/geertmeersman/telenet/pull/172) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.2.0](https://github.com/geertmeersman/telenet/tree/v3.2.0) (2023-06-02)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.1.21...v3.2.0)
