@@ -672,6 +672,11 @@ class TelenetClient:
                 """ ------------------- """
                 if not product.product_ignore_extra_sensor:
                     billcycle = self.bill_cycles(type, identifier, 1)
+                    if billcycle is False:
+                        _LOGGER.debug(
+                            "[create_extra_sensors|dtv|billcycle] Failed to fetch, skipping"
+                        )
+                        continue
                     product_usage = self.product_usage(
                         type,
                         identifier,
