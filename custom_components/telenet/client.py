@@ -1613,29 +1613,29 @@ class TelenetClient:
                 )
 
         if "modems" in api_v1_call and len(api_v1_call.get("modems")):
-            modem = api_v1_call.get("modems")[0]
-            product_name = "modem"
-            product_key = format_entity_name(
-                f"{internetusage.get('businessidentifier')} {product_name}"
-            )
-            new_products.update(
-                {
-                    product_key: TelenetProduct(
-                        product_identifier=f"{product_name}",
-                        product_type="modem",
-                        product_description_key="modem",
-                        product_name=f"{product_name}",
-                        product_key=product_key,
-                        product_plan_identifier=self.user_details.get(
-                            "customer_number"
-                        ),
-                        product_plan_label="Customer",
-                        product_state=modem.get("hardware"),
-                        product_extra_attributes=modem,
-                        product_extra_sensor=True,
-                    )
-                }
-            )
+            for modem in api_v1_call.get("modems"):
+                product_name = "modem"
+                product_key = format_entity_name(
+                    f"{modem.get('internetlineidentifier')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="modem",
+                            product_description_key="modem",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=modem.get("hardware"),
+                            product_extra_attributes=modem,
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
         if "digitaltvdetails" in api_v1_call and len(
             api_v1_call.get("digitaltvdetails")
         ):
