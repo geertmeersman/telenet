@@ -1,5 +1,14 @@
 # Changelog
 
+## [v3.2.4](https://github.com/geertmeersman/telenet/tree/v3.2.4) (2023-06-05)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.3...v3.2.4)
+
+**Merged pull requests:**
+
+- V1 API: Fix multiple modems [\#176](https://github.com/geertmeersman/telenet/pull/176) ([principis](https://github.com/principis))
+- docs: improved lovelace example for network clients [\#175](https://github.com/geertmeersman/telenet/pull/175) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.2.3](https://github.com/geertmeersman/telenet/tree/v3.2.3) (2023-06-02)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.2...v3.2.3)
