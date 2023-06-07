@@ -19,9 +19,10 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 <!-- [START BADGES] -->
 <!-- Please keep comment here to allow auto update -->
 
+[![discord](https://img.shields.io/discord/1094193683332612116?style=for-the-badge&logo=discord&label=Reach%20out%20on%20DISCORD)](https://discord.gg/jPHKexJ3ad)
+
 [![maintainer](https://img.shields.io/badge/maintainer-Geert%20Meersman-green?style=for-the-badge&logo=github)](https://github.com/geertmeersman)
 [![buyme_coffee](https://img.shields.io/badge/Buy%20me%20a%20Duvel-donate-yellow?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/geertmeersman)
-[![discord](https://img.shields.io/discord/1094193683332612116?style=for-the-badge&logo=discord&label=Reach%20out%20on%20DISCORD)](https://discord.gg/jPHKexJ3ad)
 
 [![MIT License](https://img.shields.io/github/license/geertmeersman/telenet?style=flat-square)](https://github.com/geertmeersman/telenet/blob/master/LICENSE)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=flat-square)](https://github.com/hacs/integration)
@@ -55,7 +56,8 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
     - [Manual](#manual)
   - [Contributions are welcome!](#contributions-are-welcome)
   - [Troubleshooting](#troubleshooting)
-  - [Configuration tip](#configuration-tip)
+    - [ENABLING DEBUG LOGGING](#enabling-debug-logging)
+    - [DISABLE DEBUG LOGGING AND DOWNLOAD LOGS](#disable-debug-logging-and-download-logs)
   - [Lovelace examples](#lovelace-examples)
     - [Internet info and peak/off-peak usage Apex graph](#internet-info-and-peakoff-peak-usage-apex-graph)
     - [Auto entities for costs](#auto-entities-for-costs)
@@ -67,6 +69,12 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 ## Installation
 
 ### Using [HACS](https://hacs.xyz/) (recommended)
+
+**Click on this button:**
+
+[![Open your Home Assistant instance and open the repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=geertmeersman&repository=telenet&category=integration)
+
+**or follow these steps:**
 
 1. Simply search for `Telenet` in HACS and install it easily.
 2. Restart Home Assistant
@@ -92,36 +100,25 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ## Troubleshooting
 
-1. You can enable logging for this integration specifically and share your logs, so I can have a deep dive investigation. To enable logging, update your `configuration.yaml` like this, we can get more information in Configuration -> Logs page
+### ENABLING DEBUG LOGGING
 
-```
-logger:
-  default: warning
-  logs:
-    custom_components.telenet: debug
-```
+To enable debug logging, go to Settings -> Devices & Services and then click the triple dots for the Telenet integration and click Enable Debug Logging.
 
-2. The below lovelace examples, are mostly made for the recent Telenet IT platform.
+![enable-debug-logging](https://raw.githubusercontent.com/geertmeersman/telenet/main/images/screenshots/enable-debug-logging.gif)
+
+### DISABLE DEBUG LOGGING AND DOWNLOAD LOGS
+
+Once you enable debug logging, you ideally need to make the error happen. Run your automation, change up your device or whatever was giving you an error and then come back and disable Debug Logging. Disabling debug logging is the same as enabling, but now you will see Disable Debug Logging. After you disable debug logging, it will automatically prompt you to download your log file. Please provide this logfile.
+
+![disable-debug-logging](https://raw.githubusercontent.com/geertmeersman/telenet/main/images/screenshots/disable-debug-logging.gif)
+
+The below lovelace examples, are mostly made for the recent Telenet IT platform.
 
 If your interface still has this kind of layout, you are on the V1 API Version
 
 ![API V1](https://github.com/geertmeersman/telenet/raw/main/images/screenshots/api_v1.png)
 
 3. If none of the above helped, you can always create an issue on Github or reach out on [Discord](https://discord.gg/jPHKexJ3ad)
-
-## Configuration tip
-
-You can exclude some sensors as they contain quite some information, like e.g.
-
-```
-recorder:
-  exclude:
-    entity_globs:
-      - sensor.telenet_*_internet_daily_usage
-      - sensor.telenet_*_internet_usage
-      - sensor.telenet_*_internet_network
-      - sensor.telenet_*_internet_wifi
-```
 
 ## Lovelace examples
 
