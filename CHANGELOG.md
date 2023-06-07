@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.5](https://github.com/geertmeersman/telenet/tree/v3.2.5) (2023-06-07)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.4...v3.2.5)
+
+**Merged pull requests:**
+
+- fix: throw Telenet service exception when http \> 404 during login [\#177](https://github.com/geertmeersman/telenet/pull/177) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.2.4](https://github.com/geertmeersman/telenet/tree/v3.2.4) (2023-06-05)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.3...v3.2.4)
