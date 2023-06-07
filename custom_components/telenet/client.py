@@ -78,6 +78,7 @@ class TelenetClient:
         log=False,
         retrying=False,
         connection_retry_left=CONNECTION_RETRY,
+        return_false=True,
     ) -> dict:
         """Send a request to Telenet."""
         if data is None:
@@ -126,7 +127,7 @@ class TelenetClient:
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
-        if response.status_code > 404:
+        if response.status_code > 404 and return_false is True:
             return False
         return response
 
@@ -142,7 +143,12 @@ class TelenetClient:
                 "[TelenetClient|login]",
                 None,
                 None,
+                return_false=False,
             )
+            if response.status_code > 404:
+                raise TelenetServiceException(
+                    f"HTTP {response.status_code} {response.text}"
+                )
             if response.status_code == 200:
                 # Return if already authenticated
                 return response.json()
@@ -1335,7 +1341,7 @@ class TelenetClient:
             None,
             None,
         )
-        if response is False or response.status_code == 500:
+        if response is False or response.status_code > 404:
             return False
         return response.json()
 
@@ -1613,29 +1619,29 @@ class TelenetClient:
                 )
 
         if "modems" in api_v1_call and len(api_v1_call.get("modems")):
-            modem = api_v1_call.get("modems")[0]
-            product_name = "modem"
-            product_key = format_entity_name(
-                f"{internetusage.get('businessidentifier')} {product_name}"
-            )
-            new_products.update(
-                {
-                    product_key: TelenetProduct(
-                        product_identifier=f"{product_name}",
-                        product_type="modem",
-                        product_description_key="modem",
-                        product_name=f"{product_name}",
-                        product_key=product_key,
-                        product_plan_identifier=self.user_details.get(
-                            "customer_number"
-                        ),
-                        product_plan_label="Customer",
-                        product_state=modem.get("hardware"),
-                        product_extra_attributes=modem,
-                        product_extra_sensor=True,
-                    )
-                }
-            )
+            for modem in api_v1_call.get("modems"):
+                product_name = "modem"
+                product_key = format_entity_name(
+                    f"{modem.get('internetlineidentifier')} {product_name}"
+                )
+                new_products.update(
+                    {
+                        product_key: TelenetProduct(
+                            product_identifier=f"{product_name}",
+                            product_type="modem",
+                            product_description_key="modem",
+                            product_name=f"{product_name}",
+                            product_key=product_key,
+                            product_plan_identifier=self.user_details.get(
+                                "customer_number"
+                            ),
+                            product_plan_label="Customer",
+                            product_state=modem.get("hardware"),
+                            product_extra_attributes=modem,
+                            product_extra_sensor=True,
+                        )
+                    }
+                )
         if "digitaltvdetails" in api_v1_call and len(
             api_v1_call.get("digitaltvdetails")
         ):
