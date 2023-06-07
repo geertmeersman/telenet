@@ -78,6 +78,7 @@ class TelenetClient:
         log=False,
         retrying=False,
         connection_retry_left=CONNECTION_RETRY,
+        return_false=True,
     ) -> dict:
         """Send a request to Telenet."""
         if data is None:
@@ -126,7 +127,7 @@ class TelenetClient:
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
-        if response.status_code > 404:
+        if response.status_code > 404 and return_false is True:
             return False
         return response
 
@@ -142,7 +143,12 @@ class TelenetClient:
                 "[TelenetClient|login]",
                 None,
                 None,
+                return_false=False,
             )
+            if response.status_code > 404:
+                raise TelenetServiceException(
+                    f"HTTP {response.status_code} {response.text}"
+                )
             if response.status_code == 200:
                 # Return if already authenticated
                 return response.json()
@@ -1335,7 +1341,7 @@ class TelenetClient:
             None,
             None,
         )
-        if response is False or response.status_code == 500:
+        if response is False or response.status_code > 404:
             return False
         return response.json()
 
