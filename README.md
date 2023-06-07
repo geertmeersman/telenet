@@ -45,6 +45,25 @@ A Home Assistant integration allowing to monitor your mobile, internet, dtv and 
 
 <!-- [END BADGES] -->
 
+## Table of Contents
+
+- [Telenet for Home Assistant](#telenet-for-home-assistant)
+  - [Features](#features)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Using HACS (recommended)](#using-hacs-recommended)
+    - [Manual](#manual)
+  - [Contributions are welcome!](#contributions-are-welcome)
+  - [Troubleshooting](#troubleshooting)
+  - [Configuration tip](#configuration-tip)
+  - [Lovelace examples](#lovelace-examples)
+    - [Internet info and peak/off-peak usage Apex graph](#internet-info-and-peakoff-peak-usage-apex-graph)
+    - [Auto entities for costs](#auto-entities-for-costs)
+    - [Network \& Wifi info](#network--wifi-info)
+  - [Sensors logic](#sensors-logic)
+  - [Screenshots](#screenshots)
+  - [Code origin](#code-origin)
+
 ## Installation
 
 ### Using [HACS](https://hacs.xyz/) (recommended)
