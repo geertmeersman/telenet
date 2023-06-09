@@ -1122,8 +1122,9 @@ class TelenetClient:
     def create_extra_attributes_list(self, attr_list):
         """Create extra attributes for a sensor."""
         attributes = {}
-        for key in attr_list:
-            attributes[key] = attr_list[key]
+        if isinstance(attr_list, dict):
+            for key in attr_list:
+                attributes[key] = attr_list[key]
         return attributes
 
     def set_extra_attributes(self) -> bool:
