@@ -1,5 +1,14 @@
 # Changelog
 
+## [v3.2.6](https://github.com/geertmeersman/telenet/tree/v3.2.6) (2023-06-09)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.5...v3.2.6)
+
+**Merged pull requests:**
+
+- fix: create\_extra\_attributes\_list [\#180](https://github.com/geertmeersman/telenet/pull/180) ([geertmeersman](https://github.com/geertmeersman))
+- docs: TOC & Troubleshooting [\#178](https://github.com/geertmeersman/telenet/pull/178) ([geertmeersman](https://github.com/geertmeersman))
+
 ## [v3.2.5](https://github.com/geertmeersman/telenet/tree/v3.2.5) (2023-06-07)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.4...v3.2.5)
