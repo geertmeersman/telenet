@@ -127,7 +127,7 @@ class TelenetClient:
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
-        if response.status_code > 404 and return_false is True:
+        if response is False or (response.status_code > 404 and return_false is True):
             return False
         return response
 
