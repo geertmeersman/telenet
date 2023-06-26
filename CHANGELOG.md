@@ -1,5 +1,29 @@
 # Changelog
 
+## [v3.2.7](https://github.com/geertmeersman/telenet/tree/v3.2.7) (2023-06-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.7-beta.6...v3.2.7)
+
+**Merged pull requests:**
+
+- fix: V1 check if peak usage is present [\#187](https://github.com/geertmeersman/telenet/pull/187) ([geertmeersman](https://github.com/geertmeersman))
+- Create FUNDING.yml [\#183](https://github.com/geertmeersman/telenet/pull/183) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump ruff from 0.0.270 to 0.0.272 [\#182](https://github.com/geertmeersman/telenet/pull/182) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v3.2.7-beta.6](https://github.com/geertmeersman/telenet/tree/v3.2.7-beta.6) (2023-06-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.7-beta.5...v3.2.7-beta.6)
+
+## [v3.2.7-beta.5](https://github.com/geertmeersman/telenet/tree/v3.2.7-beta.5) (2023-06-26)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.6...v3.2.7-beta.5)
+
+**Closed issues:**
+
+- offpeak\_usage 0 [\#185](https://github.com/geertmeersman/telenet/issues/185)
+- Struggling with template [\#184](https://github.com/geertmeersman/telenet/issues/184)
+- Login protected by Recaptcha [\#181](https://github.com/geertmeersman/telenet/issues/181)
+
 ## [v3.2.6](https://github.com/geertmeersman/telenet/tree/v3.2.6) (2023-06-09)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.5...v3.2.6)
