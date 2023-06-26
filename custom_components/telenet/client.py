@@ -1599,33 +1599,37 @@ class TelenetClient:
                             daily_peak.append(day.get("peak") / 1048576)
                             daily_off_peak.append(day.get("offpeak") / 1048576)
                         daily_date.append(day.get("date"))
-
-                product_name = "internet daily usage"
-                product_key = format_entity_name(
-                    f"{internetusage.get('businessidentifier')} {product_name}"
-                )
-                new_products.update(
-                    {
-                        product_key: TelenetProduct(
-                            product_identifier=f"{product_name}",
-                            product_type="usage",
-                            product_description_key="data_usage",
-                            product_name=f"{product_name}",
-                            product_key=product_key,
-                            product_plan_identifier=self.user_details.get(
-                                "customer_number"
-                            ),
-                            product_plan_label="Customer",
-                            product_state=usage.get("totalusage").get("peak") / 1048576,
-                            product_extra_attributes={
-                                "daily_peak": daily_peak,
-                                "daily_off_peak": daily_off_peak,
-                                "daily_date": daily_date,
-                            },
-                            product_extra_sensor=True,
+                    product_name = "internet daily usage"
+                    product_key = format_entity_name(
+                        f"{internetusage.get('businessidentifier')} {product_name}"
+                    )
+                    if "peak" in usage.get("totalusage"):
+                        state = usage.get("totalusage").get("peak") / 1048576
+                    else:
+                        state = total_usage
+                    if len(daily_peak):
+                        new_products.update(
+                            {
+                                product_key: TelenetProduct(
+                                    product_identifier=f"{product_name}",
+                                    product_type="usage",
+                                    product_description_key="data_usage",
+                                    product_name=f"{product_name}",
+                                    product_key=product_key,
+                                    product_plan_identifier=self.user_details.get(
+                                        "customer_number"
+                                    ),
+                                    product_plan_label="Customer",
+                                    product_state=usage.get("totalusage").get("peak") / 1048576,
+                                    product_extra_attributes={
+                                        "daily_peak": daily_peak,
+                                        "daily_off_peak": daily_off_peak,
+                                        "daily_date": daily_date,
+                                    },
+                                    product_extra_sensor=True,
+                                )
+                            }
                         )
-                    }
-                )
 
         if "modems" in api_v1_call and len(api_v1_call.get("modems")):
             for modem in api_v1_call.get("modems"):
