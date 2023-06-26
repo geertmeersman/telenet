@@ -1522,8 +1522,7 @@ class TelenetClient:
                     usage_pct = 100 * total_usage / total_volume
                 else:
                     usage_pct =  usage.get("usedpercentage")
-                    for u in usage.get("totalusage").get("dailyusages"):
-                        total_usage += (u.get("included") + u.get("extended"))
+                    total_usage = usage.get("totalusage").get("includedvolume") + usage.get("totalusage").get("includedvolume")
                 period_start = datetime.strptime(
                     usage.get("periodstart"), "%Y-%m-%dT%H:%M:%S.0%z"
                 )
