@@ -29,6 +29,7 @@ BASE_HEADERS = {
     "x-alt-referer": DEFAULT_TELENET_ENVIRONMENT.x_alt_referer,
 }
 
+MEGA = 1048576
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 COORDINATOR_UPDATE_INTERVAL = timedelta(minutes=15)
