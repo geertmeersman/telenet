@@ -1591,6 +1591,7 @@ class TelenetClient:
                 daily_peak = []
                 daily_off_peak = []
                 daily_date = []
+                daily_volume = []
 
                 dailyusages = usage.get("totalusage").get("dailyusages")
                 if len(dailyusages) != 0:
@@ -1598,6 +1599,8 @@ class TelenetClient:
                         if "peak" in day:
                             daily_peak.append(day.get("peak") / 1048576)
                             daily_off_peak.append(day.get("offpeak") / 1048576)
+                        else:
+                            daily_volume.append((day.get("included") + day.get("extended"))/ 1048576)
                         daily_date.append(day.get("date"))
                     product_name = "internet daily usage"
                     product_key = format_entity_name(
@@ -1607,14 +1610,14 @@ class TelenetClient:
                         state = usage.get("totalusage").get("peak") / 1048576
                     else:
                         state = total_usage
-                    if len(daily_peak):
+                    if len(daily_peak) > 0 or len(daily_volume) > 0:
                         new_products.update(
                             {
                                 product_key: TelenetProduct(
-                                    product_identifier=f"{product_name}",
+                                    product_identifier=product_name,
                                     product_type="usage",
                                     product_description_key="data_usage",
-                                    product_name=f"{product_name}",
+                                    product_name=product_name,
                                     product_key=product_key,
                                     product_plan_identifier=self.user_details.get(
                                         "customer_number"
@@ -1624,6 +1627,7 @@ class TelenetClient:
                                     product_extra_attributes={
                                         "daily_peak": daily_peak,
                                         "daily_off_peak": daily_off_peak,
+                                        "daily_volume": daily_volume,
                                         "daily_date": daily_date,
                                     },
                                     product_extra_sensor=True,
