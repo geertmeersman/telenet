@@ -1122,9 +1122,8 @@ class TelenetClient:
     def create_extra_attributes_list(self, attr_list):
         """Create extra attributes for a sensor."""
         attributes = {}
-        if isinstance(attr_list, dict):
-            for key in attr_list:
-                attributes[key] = attr_list[key]
+        for key in attr_list:
+            attributes[key] = attr_list[key]
         return attributes
 
     def set_extra_attributes(self) -> bool:
@@ -1515,9 +1514,11 @@ class TelenetClient:
                             break
                 else:
                     total_volume += usage.get("includedvolume")
-                total_usage = usage.get("totalusage").get("peak") + usage.get(
-                    "totalusage"
-                ).get("wifree")
+                total_usage = 0
+                if "peak" in usage.get("totalusage"):
+                    total_usage += usage.get("totalusage").get("peak")
+                if "wifree" in usage.get("totalusage"):
+                    total_usage += usage.get("totalusage").get("wifree")
                 usage_pct = 100 * total_usage / total_volume
                 period_start = datetime.strptime(
                     usage.get("periodstart"), "%Y-%m-%dT%H:%M:%S.0%z"
