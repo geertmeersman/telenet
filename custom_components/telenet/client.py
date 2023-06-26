@@ -1520,9 +1520,15 @@ class TelenetClient:
                 if "peak" in usage.get("totalusage"):
                     total_usage += usage.get("totalusage").get("peak")
                     usage_pct = 100 * total_usage / total_volume
+                    total_usage_with_offpeak = round((total_usage+usage.get('totalusage').get('offpeak'))/1048576)
+                    peak_usage = round(usage.get('totalusage').get('peak')/1048576)
+                    offpeak_usage = round(usage.get('totalusage').get('peak')/1048576)
                 else:
                     usage_pct =  usage.get("usedpercentage")
                     total_usage = usage.get("totalusage").get("includedvolume") + usage.get("totalusage").get("includedvolume")
+                    total_usage_with_offpeak = total_usage/1048576
+                    peak_usage = 0
+                    offpeak_usage = 0
                 period_start = datetime.strptime(
                     usage.get("periodstart"), "%Y-%m-%dT%H:%M:%S.0%z"
                 )
@@ -1557,14 +1563,6 @@ class TelenetClient:
                             ),
                             product_plan_label="Customer",
                             product_state=round(usage_pct, 2),
-                            if "offpeak" in usage.get('totalusage'):
-                                total_usage_with_offpeak = round((total_usage+usage.get('totalusage').get('offpeak'))/1048576)
-                                peak_usage = round(usage.get('totalusage').get('peak')/1048576)
-                                offpeak_usage = round(usage.get('totalusage').get('peak')/1048576)
-                            else:
-                                total_usage_with_offpeak = total_usage/1048576
-                                peak_usage = 0
-                                offpeak_usage = 0
                             product_extra_attributes={
                                 "last_update": internetusage.get("lastupdated"),
                                 "identifier": identifier,
