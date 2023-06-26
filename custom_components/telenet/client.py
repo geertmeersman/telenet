@@ -1572,9 +1572,9 @@ class TelenetClient:
                                 "total_volume": f"{total_volume/1048576} GB",
                                 "wifree_usage": f"{round(usage.get('totalusage').get('wifree')/1048576)} GB",
                                 "total_usage": f"{round(total_usage/1048576)} GB",
-                                "total_usage_with_offpeak": f"{total_usage_with_offpeak} GB",
-                                "peak_usage": f"{peak_usage} GB",
-                                "offpeak_usage": f"{offpeak_usage} GB",
+                                "total_usage_with_offpeak": f"{round(total_usage_with_offpeak)} GB",
+                                "peak_usage": f"{round(peak_usage)} GB",
+                                "offpeak_usage": f"{round(offpeak_usage)} GB",
                                 "used_percentage": round(usage_pct, 2),
                                 "period_used_percentage": period_used_percentage,
                                 "period_remaining_percentage": (
