@@ -1620,7 +1620,7 @@ class TelenetClient:
                                         "customer_number"
                                     ),
                                     product_plan_label="Customer",
-                                    product_state=usage.get("totalusage").get("peak") / 1048576,
+                                    product_state=state,
                                     product_extra_attributes={
                                         "daily_peak": daily_peak,
                                         "daily_off_peak": daily_off_peak,
