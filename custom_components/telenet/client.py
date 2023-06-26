@@ -14,6 +14,7 @@ from .const import (
     DEFAULT_LANGUAGE,
     DEFAULT_TELENET_ENVIRONMENT,
     REQUEST_TIMEOUT,
+    MEGA,
 )
 from .exceptions import BadCredentialsException, TelenetServiceException
 from .models import (
@@ -127,7 +128,7 @@ class TelenetClient:
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
-        if response.status_code > 404 and return_false is True:
+        if isinstance(response, bool) or (response.status_code >= 404 and return_false is True):
             return False
         return response
 
@@ -284,7 +285,7 @@ class TelenetClient:
             f"{self.environment.ocapi_public_api}/product-service/v1/products?status=ACTIVE",
             "[TelenetClient|products]",
             None,
-            200,
+            None,
         )
         if response is False:
             api_v1_call = self.api_v1_call()
@@ -1122,9 +1123,8 @@ class TelenetClient:
     def create_extra_attributes_list(self, attr_list):
         """Create extra attributes for a sensor."""
         attributes = {}
-        if isinstance(attr_list, dict):
-            for key in attr_list:
-                attributes[key] = attr_list[key]
+        for key in attr_list:
+            attributes[key] = attr_list[key]
         return attributes
 
     def set_extra_attributes(self) -> bool:
@@ -1495,7 +1495,7 @@ class TelenetClient:
                             .get("service_category_limit")
                             .get("value")
                         )
-                        * 1048576
+                        * MEGA
                     )
                 elif (
                     type(
@@ -1511,14 +1511,25 @@ class TelenetClient:
                         .get("elementarycharacteristics")
                     ):
                         if elem.get("key") == "internet_usage_limit":
-                            total_volume += int(elem.get("value")) * 1048576
+                            total_volume += int(elem.get("value")) * MEGA
                             break
                 else:
                     total_volume += usage.get("includedvolume")
-                total_usage = usage.get("totalusage").get("peak") + usage.get(
-                    "totalusage"
-                ).get("wifree")
-                usage_pct = 100 * total_usage / total_volume
+                total_usage = 0
+                if "wifree" in usage.get("totalusage"):
+                    total_usage += usage.get("totalusage").get("wifree")
+                if "peak" in usage.get("totalusage"):
+                    total_usage += usage.get("totalusage").get("peak")
+                    usage_pct = 100 * total_usage / total_volume
+                    total_usage_with_offpeak = round((total_usage+usage.get('totalusage').get('offpeak'))/MEGA)
+                    peak_usage = round(usage.get('totalusage').get('peak')/MEGA)
+                    offpeak_usage = round(usage.get('totalusage').get('peak')/MEGA)
+                else:
+                    usage_pct =  usage.get("usedpercentage")
+                    total_usage = usage.get("totalusage").get("includedvolume") + usage.get("totalusage").get("includedvolume")
+                    total_usage_with_offpeak = total_usage/MEGA
+                    peak_usage = 0
+                    offpeak_usage = 0
                 period_start = datetime.strptime(
                     usage.get("periodstart"), "%Y-%m-%dT%H:%M:%S.0%z"
                 )
@@ -1559,14 +1570,12 @@ class TelenetClient:
                                 "start_date": usage.get("periodstart"),
                                 "end_date": usage.get("periodend"),
                                 "days_until": period_length_days,
-                                "total_volume": f"{total_volume/1048576} GB",
-                                "wifree_usage": f"{round(usage.get('totalusage').get('wifree')/1048576)} GB",
-                                "total_usage": f"{round(total_usage/1048576)} GB",
-                                "total_usage_with_offpeak": f"{round((total_usage+usage.get('totalusage').get('offpeak'))/1048576)}",
-                                "peak_usage": f"{round(usage.get('totalusage').get('peak')/1048576)} GB",
-                                "offpeak_usage": round(
-                                    usage.get("totalusage").get("offpeak") / 1048576
-                                ),
+                                "total_volume": f"{total_volume/MEGA} GB",
+                                "wifree_usage": f"{round(usage.get('totalusage').get('wifree')/MEGA)} GB",
+                                "total_usage": f"{round(total_usage/MEGA)} GB",
+                                "total_usage_with_offpeak": f"{round(total_usage_with_offpeak)} GB",
+                                "peak_usage": f"{round(peak_usage)} GB",
+                                "offpeak_usage": f"{round(offpeak_usage)} GB",
                                 "used_percentage": round(usage_pct, 2),
                                 "period_used_percentage": period_used_percentage,
                                 "period_remaining_percentage": (
@@ -1583,41 +1592,49 @@ class TelenetClient:
                 daily_peak = []
                 daily_off_peak = []
                 daily_date = []
+                daily_volume = []
 
                 dailyusages = usage.get("totalusage").get("dailyusages")
                 if len(dailyusages) != 0:
                     for day in dailyusages:
                         if "peak" in day:
-                            daily_peak.append(day.get("peak") / 1048576)
-                            daily_off_peak.append(day.get("offpeak") / 1048576)
+                            daily_peak.append(day.get("peak") / MEGA)
+                            daily_off_peak.append(day.get("offpeak") / MEGA)
+                        else:
+                            daily_volume.append((day.get("included") + day.get("extended"))/ MEGA)
                         daily_date.append(day.get("date"))
-
-                product_name = "internet daily usage"
-                product_key = format_entity_name(
-                    f"{internetusage.get('businessidentifier')} {product_name}"
-                )
-                new_products.update(
-                    {
-                        product_key: TelenetProduct(
-                            product_identifier=f"{product_name}",
-                            product_type="usage",
-                            product_description_key="data_usage",
-                            product_name=f"{product_name}",
-                            product_key=product_key,
-                            product_plan_identifier=self.user_details.get(
-                                "customer_number"
-                            ),
-                            product_plan_label="Customer",
-                            product_state=usage.get("totalusage").get("peak") / 1048576,
-                            product_extra_attributes={
-                                "daily_peak": daily_peak,
-                                "daily_off_peak": daily_off_peak,
-                                "daily_date": daily_date,
-                            },
-                            product_extra_sensor=True,
+                    product_name = "internet daily usage"
+                    product_key = format_entity_name(
+                        f"{internetusage.get('businessidentifier')} {product_name}"
+                    )
+                    if "peak" in usage.get("totalusage"):
+                        state = usage.get("totalusage").get("peak") / MEGA
+                    else:
+                        state = total_usage / MEGA
+                    if len(daily_peak) > 0 or len(daily_volume) > 0:
+                        new_products.update(
+                            {
+                                product_key: TelenetProduct(
+                                    product_identifier=product_name,
+                                    product_type="usage",
+                                    product_description_key="data_usage",
+                                    product_name=product_name,
+                                    product_key=product_key,
+                                    product_plan_identifier=self.user_details.get(
+                                        "customer_number"
+                                    ),
+                                    product_plan_label="Customer",
+                                    product_state=state,
+                                    product_extra_attributes={
+                                        "daily_peak": daily_peak,
+                                        "daily_off_peak": daily_off_peak,
+                                        "daily_volume": daily_volume,
+                                        "daily_date": daily_date,
+                                    },
+                                    product_extra_sensor=True,
+                                )
+                            }
                         )
-                    }
-                )
 
         if "modems" in api_v1_call and len(api_v1_call.get("modems")):
             for modem in api_v1_call.get("modems"):
