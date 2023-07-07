@@ -43,4 +43,4 @@ ignore = [
 fixture-parentheses = false
 
 [mccabe]
-max-complexity = 50
+max-complexity = 55
