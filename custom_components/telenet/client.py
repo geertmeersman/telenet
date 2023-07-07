@@ -13,8 +13,8 @@ from .const import (
     DATETIME_FORMAT,
     DEFAULT_LANGUAGE,
     DEFAULT_TELENET_ENVIRONMENT,
-    REQUEST_TIMEOUT,
     MEGA,
+    REQUEST_TIMEOUT,
 )
 from .exceptions import BadCredentialsException, TelenetServiceException
 from .models import (
@@ -128,7 +128,9 @@ class TelenetClient:
                 url, caller, data, expected, log, True, connection_retry_left - 1
             )
         self.session.headers["X-TOKEN-XSRF"] = self.session.cookies.get("TOKEN-XSRF")
-        if isinstance(response, bool) or (response.status_code >= 404 and return_false is True):
+        if isinstance(response, bool) or (
+            response.status_code >= 404 and return_false is True
+        ):
             return False
         return response
 
@@ -453,14 +455,17 @@ class TelenetClient:
                             daily_total.append(day.get("total"))
                         daily_date.append(day.get("date"))
 
-                usage_pct = (
-                    100
-                    * usage.get("totalUsage").get("units")
-                    / (
-                        usage.get("allocatedUsage").get("units")
-                        + usage.get("extendedUsage").get("volume")
+                if category == "UNLIMITED":
+                    usage_pct = 0
+                else:
+                    usage_pct = (
+                        100
+                        * usage.get("totalUsage").get("units")
+                        / (
+                            usage.get("allocatedUsage").get("units")
+                            + usage.get("extendedUsage").get("volume")
+                        )
                     )
-                )
                 period_length = datetime.strptime(
                     billcycle.get("end_date"), DATE_FORMAT
                 ) - datetime.strptime(billcycle.get("start_date"), DATE_FORMAT)
@@ -476,6 +481,7 @@ class TelenetClient:
 
                 attributes = {
                     "identifier": identifier,
+                    "category": category,
                     "last_update": f"{usage.get('totalUsage').get('lastUsageDate')}+0200",
                     "start_date": billcycle.get("start_date"),
                     "end_date": billcycle.get("end_date"),
@@ -1521,13 +1527,17 @@ class TelenetClient:
                 if "peak" in usage.get("totalusage"):
                     total_usage += usage.get("totalusage").get("peak")
                     usage_pct = 100 * total_usage / total_volume
-                    total_usage_with_offpeak = round((total_usage+usage.get('totalusage').get('offpeak'))/MEGA)
-                    peak_usage = round(usage.get('totalusage').get('peak')/MEGA)
-                    offpeak_usage = round(usage.get('totalusage').get('peak')/MEGA)
+                    total_usage_with_offpeak = round(
+                        (total_usage + usage.get("totalusage").get("offpeak")) / MEGA
+                    )
+                    peak_usage = round(usage.get("totalusage").get("peak") / MEGA)
+                    offpeak_usage = round(usage.get("totalusage").get("peak") / MEGA)
                 else:
-                    usage_pct =  usage.get("usedpercentage")
-                    total_usage = usage.get("totalusage").get("includedvolume") + usage.get("totalusage").get("includedvolume")
-                    total_usage_with_offpeak = total_usage/MEGA
+                    usage_pct = usage.get("usedpercentage")
+                    total_usage = usage.get("totalusage").get(
+                        "includedvolume"
+                    ) + usage.get("totalusage").get("includedvolume")
+                    total_usage_with_offpeak = total_usage / MEGA
                     peak_usage = 0
                     offpeak_usage = 0
                 period_start = datetime.strptime(
@@ -1601,7 +1611,9 @@ class TelenetClient:
                             daily_peak.append(day.get("peak") / MEGA)
                             daily_off_peak.append(day.get("offpeak") / MEGA)
                         else:
-                            daily_volume.append((day.get("included") + day.get("extended"))/ MEGA)
+                            daily_volume.append(
+                                (day.get("included") + day.get("extended")) / MEGA
+                            )
                         daily_date.append(day.get("date"))
                     product_name = "internet daily usage"
                     product_key = format_entity_name(
