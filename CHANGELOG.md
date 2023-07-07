@@ -1,5 +1,30 @@
 # Changelog
 
+## [v3.2.8](https://github.com/geertmeersman/telenet/tree/v3.2.8) (2023-07-07)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.8-beta.4...v3.2.8)
+
+**Closed issues:**
+
+- Configuring integration fails: "Division by zero" [\#190](https://github.com/geertmeersman/telenet/issues/190)
+
+**Merged pull requests:**
+
+- fix: Division by zero fix when unlimited, fixes \#190 [\#191](https://github.com/geertmeersman/telenet/pull/191) ([geertmeersman](https://github.com/geertmeersman))
+- build\(deps\): bump ruff from 0.0.275 to 0.0.276 [\#189](https://github.com/geertmeersman/telenet/pull/189) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v3.2.8-beta.4](https://github.com/geertmeersman/telenet/tree/v3.2.8-beta.4) (2023-07-07)
+
+[Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.7...v3.2.8-beta.4)
+
+**Closed issues:**
+
+- Unexpected error fetching telenet data: unsupported operand type\(s\) for +: 'NoneType' and 'int' [\#186](https://github.com/geertmeersman/telenet/issues/186)
+
+**Merged pull requests:**
+
+- build\(deps\): bump ruff from 0.0.272 to 0.0.275 [\#188](https://github.com/geertmeersman/telenet/pull/188) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.2.7](https://github.com/geertmeersman/telenet/tree/v3.2.7) (2023-06-26)
 
 [Full Changelog](https://github.com/geertmeersman/telenet/compare/v3.2.7-beta.6...v3.2.7)
